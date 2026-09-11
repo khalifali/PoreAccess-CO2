@@ -1,2 +1,24 @@
-# DEM snapshots; not required for the current analysis
+# Intermediate DEM trajectories remain local; retain final QA snapshots.
 *.dump
+!particles_final*.dump
+!contacts_final*.dump
+
+# Python and LaTeX build products
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.aux
+*.nav
+*.snm
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+/beamer/**/*.log
+/beamer/**/*.out
+/paper/*.log
+/paper/*.out
+/concept/*.log
+/concept/*.out
+/proposal/*.log
+/proposal/*.out

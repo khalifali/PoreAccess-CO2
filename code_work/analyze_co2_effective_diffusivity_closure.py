@@ -62,8 +62,9 @@ def read_homogeneous(path):
     qa_column = "qa_pass" if "qa_pass" in df else ("case_qa_pass" if "case_qa_pass" in df else None)
     if qa_column:
         ok = df[qa_column].astype(str).str.lower().isin(["true", "1", "yes"])
-        if ok.any():
-            df = df[ok].copy()
+        if not ok.any():
+            raise ValueError("No homogeneous cases passed QA")
+        df = df[ok].copy()
     return df
 
 

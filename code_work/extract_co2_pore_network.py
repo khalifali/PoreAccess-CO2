@@ -240,7 +240,10 @@ def process_case(dump: Path, outdir: Path, args) -> dict:
                 if new_i == j or key in edge_keys: continue
                 try: fc, frc = circumcenter_triangle(xyz[face])
                 except np.linalg.LinAlgError: continue
-                aperture = max(float(frc-np.mean(radii[face])), args.min_throat_radius)
+                aperture = float(frc-np.mean(radii[face]))
+                # Never turn a closed aperture into an artificial conducting edge.
+                if aperture <= args.min_throat_radius:
+                    continue
                 length = float(np.linalg.norm(pores[new_i]-pores[j]))
                 if length <= args.min_throat_length: continue
                 edge_keys.add(key)
@@ -260,6 +263,8 @@ def process_case(dump: Path, outdir: Path, args) -> dict:
     cylinder_vol = math.pi*args.tube_radius**2*(top-zlo)
     solid_vol = solid_volume_in_cylinder(xyz,radii,args.tube_radius,zlo,top,args.quadrature_order)
     void_vol = cylinder_vol-solid_vol
+    if not np.isfinite(void_vol) or not 0 < void_vol < cylinder_vol:
+        raise ValueError("Invalid void volume: check particle geometry and bed bounds")
     seed_match = re.search(r"co2_13x_seed_(\d+)", str(dump))
     seed = int(seed_match.group(1)) if seed_match else args.sobol_seed
     pvol, sample_counts, sampled_eps, nsamples = conservative_pore_volumes(
@@ -322,11 +327,11 @@ def arguments():
     src.add_argument("--case",type=Path,help="one co2_13x_seed_* directory or particle dump")
     src.add_argument("--all-cases",action="store_true")
     p.add_argument("--root",type=Path,default=Path(".")); p.add_argument("--pattern",default="particles_final*.dump")
-    p.add_argument("--output-root",type=Path,default=Path("co2_pore_networks"))
+    p.add_argument("--output-root",type=Path,default=Path("co2_pore_networks_power22"))
     p.add_argument("--tube-radius",type=float,default=.008); p.add_argument("--bottom",type=float,default=0.)
     p.add_argument("--bed-top-percentile",type=float,default=99.)
     p.add_argument("--boundary-layer-dp",type=float,default=1.25)
-    p.add_argument("--sobol-power",type=int,default=20,help="allocation samples = 2**power")
+    p.add_argument("--sobol-power",type=int,default=22,help="allocation samples = 2**power")
     p.add_argument("--sobol-seed",type=int,default=18427); p.add_argument("--quadrature-order",type=int,default=48)
     p.add_argument("--radius-tolerance",type=float,default=1e-6)
     p.add_argument("--domain-tolerance",type=float,default=2e-6)

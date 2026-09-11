@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate all non-ParaView figures for the CO2 packed-bed manuscript.
 
-The program creates five publication figures in both PDF and 600 dpi PNG:
+The program creates eleven standalone figures in vector PDF/SVG and 600 dpi PNG:
 
 1. campaign_variability     -- matched porosity and 20 uptake curves
 2. accessibility_responses  -- structure-response correlations
@@ -30,11 +30,11 @@ from scipy.stats import spearmanr
 
 
 COLORS = {
-    "blue": "#236192",
-    "orange": "#D97706",
-    "green": "#2A7F62",
-    "red": "#B33A3A",
-    "purple": "#6C5AA7",
+    "blue": "#0072B2",
+    "orange": "#E69F00",
+    "green": "#009E73",
+    "red": "#D55E00",
+    "purple": "#CC79A7",
     "gray": "#777777",
     "light": "#D7DCE2",
 }
@@ -67,7 +67,7 @@ def parse_args():
                    help="Bed bootstrap samples for the power-closure band.")
     p.add_argument("--random-seed", type=int, default=20260824)
     p.add_argument("--output", type=Path, default=Path("co2_publication_figures"))
-    p.add_argument("--formats", nargs="+", default=["pdf", "png"],
+    p.add_argument("--formats", nargs="+", default=["pdf", "svg", "png"],
                    choices=["pdf", "png", "svg"])
     p.add_argument("--dpi", type=int, default=600)
     p.add_argument("--only", nargs="+",
@@ -80,12 +80,12 @@ def set_style():
     mpl.rcParams.update({
         "font.family": "sans-serif",
         "font.sans-serif": ["DejaVu Sans", "Arial"],
-        "font.size": 9.0,
-        "axes.labelsize": 9.5,
+        "font.size": 11.0,
+        "axes.labelsize": 11.0,
         "axes.titlesize": 10.0,
         "legend.fontsize": 7.8,
-        "xtick.labelsize": 8.2,
-        "ytick.labelsize": 8.2,
+        "xtick.labelsize": 10.0,
+        "ytick.labelsize": 10.0,
         "axes.linewidth": 0.8,
         "lines.linewidth": 1.7,
         "savefig.bbox": "tight",
@@ -130,14 +130,21 @@ def qa_filter(df: pd.DataFrame) -> pd.DataFrame:
     for name in ["case_qa_pass", "qa_pass"]:
         if name in df:
             accepted = df[name].astype(str).str.lower().isin(["true", "1", "yes"])
-            if accepted.any():
-                return df[accepted].copy()
+            if not accepted.any():
+                raise ValueError("No cases passed QA")
+            return df[accepted].copy()
     return df.copy()
 
 
+def single_panels(count):
+    pairs = [plt.subplots(figsize=(5.2, 3.8), constrained_layout=True)
+             for _ in range(count)]
+    return [p[0] for p in pairs], [p[1] for p in pairs]
+
+
 def panel_label(ax, label):
-    ax.text(-0.13, 1.04, label, transform=ax.transAxes, fontsize=11,
-            fontweight="bold", va="bottom", ha="left")
+    # Standalone figures intentionally have no panel letters.
+    pass
 
 
 def clean_axes(ax):
@@ -149,12 +156,25 @@ def clean_axes(ax):
 
 def save_figure(fig, output: Path, stem: str, formats, dpi, manifest):
     output.mkdir(parents=True, exist_ok=True)
+    if isinstance(fig, list):
+        names = {
+            "fig_campaign_variability": ["fig_porosity_variability", "fig_uptake_curves"],
+            "fig_accessibility_responses": ["fig_porosity_uptake", "fig_accessibility_uptake", "fig_accessibility_utilization"],
+            "fig_homogeneous_fits": ["fig_homogeneous_uptake", "fig_homogeneous_residuals"],
+            "fig_diffusivity_closure": ["fig_closure_power_law", "fig_closure_held_out"],
+            "fig_accessibility_depth": ["fig_depth_correlations", "fig_depth_prediction"],
+        }
+        for figure, name in zip(fig, names[stem]):
+            save_figure(figure, output, name, formats, dpi, manifest)
+        return
     written = []
     for fmt in formats:
         path = output / f"{stem}.{fmt}"
         kwargs = {"dpi": dpi} if fmt == "png" else {}
         fig.savefig(path, **kwargs)
-        written.append(str(path.resolve()))
+        if fmt == "svg":
+            path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
+        written.append(str(path))
     plt.close(fig)
     manifest["figures"][stem] = written
     print(f"wrote {', '.join(written)}")
@@ -210,7 +230,7 @@ def figure_campaign(args, campaign, closure, manifest, seed_records):
     seeds = representative_seeds(data, "final_uptake_mol_kg")
     seed_records["campaign_uptake"] = seeds
 
-    fig, axes = plt.subplots(1, 2, figsize=(7.25, 3.05), constrained_layout=True)
+    fig, axes = single_panels(2)
     ax = axes[0]
     order = data.sort_values("seed")
     ax.scatter(np.arange(len(order)), order.porosity, color=COLORS["blue"],
@@ -219,12 +239,12 @@ def figure_campaign(args, campaign, closure, manifest, seed_records):
                label=f"mean = {order.porosity.mean():.4f}")
     ax.set_xlabel("Packing realization (ordered by seed)")
     ax.set_ylabel(r"Robust bulk porosity, $\varepsilon_b$")
-    ax.set_xticks([])
+    ax.set_xticks([0, 4, 9, 14, 19], [1, 5, 10, 15, 20])
     ax.legend(frameon=False)
     clean_axes(ax); panel_label(ax, "a")
 
     ax = axes[1]
-    selected_colors = {"low": COLORS["red"], "median": COLORS["orange"],
+    selected_colors = {"low": COLORS["red"], "median": COLORS["blue"],
                        "high": COLORS["green"]}
     selected_by_seed = {v: k for k, v in seeds.items()}
     used = []
@@ -232,7 +252,7 @@ def figure_campaign(args, campaign, closure, manifest, seed_records):
         path = find_seed_file(args.adsorption_root, int(seed), "timeseries.csv")
         ts = pd.read_csv(path)
         t, q = get_time_loading(ts, path)
-        used.append(str(path.resolve()))
+        used.append(str(path))
         if seed in selected_by_seed:
             level = selected_by_seed[seed]
             ax.plot(t, q, color=selected_colors[level], lw=2.0,
@@ -284,7 +304,7 @@ def figure_accessibility(args, campaign, closure, manifest):
     if len(data) != 20:
         print(f"warning: accessibility figure uses {len(data)} merged beds", file=sys.stderr)
     rng = np.random.default_rng(args.random_seed + 11)
-    fig, axes = plt.subplots(1, 3, figsize=(7.35, 2.75), constrained_layout=True)
+    fig, axes = single_panels(3)
     scatter_with_fit(axes[0], data.porosity, data.final_uptake_mol_kg,
                      r"Bulk porosity, $\varepsilon_b$", r"Uptake at 5000 s [mol kg$^{-1}$]",
                      COLORS["gray"], rng)
@@ -299,7 +319,7 @@ def figure_accessibility(args, campaign, closure, manifest):
                      COLORS["orange"], rng)
     panel_label(axes[2], "c")
     manifest["sources"]["accessibility_responses"] = [
-        str(args.campaign_dataset.resolve()), str(closure.attrs.get("source", "closure dataset"))]
+        str(args.campaign_dataset), str(closure.attrs.get("source", "closure dataset"))]
     save_figure(fig, args.output, "fig_accessibility_responses", args.formats, args.dpi, manifest)
 
 
@@ -307,23 +327,23 @@ def figure_homogeneous(args, hom_summary, manifest, seed_records):
     require_columns(hom_summary, ["seed", "effective_diffusivity_m2_s"], "homogeneous summary")
     seeds = representative_seeds(hom_summary, "effective_diffusivity_m2_s")
     seed_records["effective_diffusivity"] = seeds
-    colors = {"low": COLORS["red"], "median": COLORS["orange"], "high": COLORS["green"]}
-    fig, axes = plt.subplots(1, 2, figsize=(7.25, 3.05), constrained_layout=True)
+    colors = {"low": COLORS["red"], "median": COLORS["blue"], "high": COLORS["green"]}
+    fig, axes = single_panels(2)
     used = []
     for level, seed in seeds.items():
         path = find_seed_file(args.homogeneous_root, seed, "fit_comparison.csv")
         df = pd.read_csv(path)
         require_columns(df, ["time_s", "reference_loading_mol_kg",
                              "homogeneous_loading_mol_kg"], str(path))
-        used.append(str(path.resolve()))
+        used.append(str(path))
         axes[0].plot(df.time_s, df.reference_loading_mol_kg, color=colors[level],
-                     lw=2.1, label=f"network, seed {seed}")
+                     lw=2.1, label=f"seed {seed}")
         axes[0].plot(df.time_s, df.homogeneous_loading_mol_kg, color=colors[level],
-                     lw=1.35, ls="--", label=f"1D model, seed {seed}")
+                     lw=1.35, ls="--", label="_nolegend_")
         residual = df.homogeneous_loading_mol_kg - df.reference_loading_mol_kg
         axes[1].plot(df.time_s, residual, color=colors[level], label=f"seed {seed}")
     axes[0].set_xlabel("Time [s]"); axes[0].set_ylabel("Mean loading [mol kg$^{-1}$]")
-    axes[0].legend(frameon=False, ncol=2, fontsize=6.9, columnspacing=.8)
+    axes[0].legend(frameon=False, ncol=1, fontsize=8.0, title="Solid: network; dashed: fitted 1D")
     clean_axes(axes[0]); panel_label(axes[0], "a")
     axes[1].axhline(0, color="black", lw=.8)
     axes[1].set_xlabel("Time [s]"); axes[1].set_ylabel("1D model $-$ network [mol kg$^{-1}$]")
@@ -365,7 +385,7 @@ def figure_closure(args, closure, predictions, manifest):
     rng = np.random.default_rng(args.random_seed)
     lo, hi, boot = bootstrap_power_band(x, y, xgrid, args.bootstrap, rng)
 
-    fig, axes = plt.subplots(1, 2, figsize=(7.25, 3.05), constrained_layout=True)
+    fig, axes = single_panels(2)
     ax = axes[0]
     ax.scatter(x*1e6, y*1e6, color=COLORS["blue"], s=34,
                edgecolor="white", linewidth=.5, zorder=3)
@@ -395,6 +415,7 @@ def figure_closure(args, closure, predictions, manifest):
         obs = d.observed_D_eff_m2_s.to_numpy()*1e6
         pred = d.loo_predicted_D_eff_m2_s.to_numpy()*1e6
         ax.scatter(obs, pred, color=color, s=28, alpha=.9, label=label,
+                   marker={"porosity_linear": "s", "physical_through_origin": "^", "accessibility_power_law": "o"}[model],
                    edgecolor="white", linewidth=.4)
         all_values.extend(obs); all_values.extend(pred)
     lower, upper = min(all_values), max(all_values)
@@ -402,6 +423,7 @@ def figure_closure(args, closure, predictions, manifest):
     ax.plot([lower-pad, upper+pad], [lower-pad, upper+pad], "k--", lw=1.0,
             label="ideal")
     ax.set_xlim(lower-pad, upper+pad); ax.set_ylim(lower-pad, upper+pad)
+    ax.set_aspect("equal", adjustable="box")
     ax.set_xlabel(r"Observed $D_{\mathrm{eff}}$ [$10^{-6}$ m$^2$ s$^{-1}$]")
     ax.set_ylabel("Leave-one-bed-out prediction [$10^{-6}$ m$^2$ s$^{-1}$]")
     ax.legend(frameon=False); clean_axes(ax); panel_label(ax, "b")
@@ -424,7 +446,7 @@ def figure_depth(args, depth, manifest):
     require_columns(depth, ["depth_dp", "pearson_r", "spearman_rho",
                             "linear_loo_r2"], "depth sensitivity")
     d = depth.sort_values("depth_dp")
-    fig, axes = plt.subplots(1, 2, figsize=(7.25, 2.9), constrained_layout=True)
+    fig, axes = single_panels(2)
     ax = axes[0]
     ax.plot(d.depth_dp, d.pearson_r, "o-", color=COLORS["blue"], label="Pearson $r$")
     ax.plot(d.depth_dp, d.spearman_rho, "s--", color=COLORS["green"], label=r"Spearman $\rho_s$")
@@ -464,7 +486,7 @@ def main():
     closure = None
     if selected & {"campaign", "accessibility", "closure"}:
         closure = prepare_seed(read_csv(closure_path, "closure dataset"), str(closure_path))
-        closure.attrs["source"] = str(closure_path.resolve())
+        closure.attrs["source"] = str(closure_path)
     campaign = None
     if selected & {"campaign", "accessibility"}:
         campaign = qa_filter(prepare_seed(read_csv(args.campaign_dataset, "campaign dataset"),
@@ -482,11 +504,11 @@ def main():
         figure_homogeneous(args, hom, manifest, seed_records)
     if "closure" in selected:
         predictions = prepare_seed(read_csv(prediction_path, "closure predictions"), str(prediction_path))
-        predictions.attrs["source"] = str(prediction_path.resolve())
+        predictions.attrs["source"] = str(prediction_path)
         figure_closure(args, closure, predictions, manifest)
     if "depth" in selected:
         depth = read_csv(depth_path, "depth sensitivity")
-        depth.attrs["source"] = str(depth_path.resolve())
+        depth.attrs["source"] = str(depth_path)
         figure_depth(args, depth, manifest)
 
     rows = []
