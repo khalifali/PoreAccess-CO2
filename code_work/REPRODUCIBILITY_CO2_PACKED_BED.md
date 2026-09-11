@@ -1,3 +1,7 @@
+> Repository cleanup: historical fixed-inlet and preliminary fit outputs were removed.
+> See `../docs/PNM_REVIEW.md` for current audit findings and `../README.md` for the maintained workflow.
+> Old commands below are a development record, not a recommendation to rerun discarded cases.
+
 # Beginner's guide and reproducibility record: zeolite 13X packed-bed CO2 adsorption
 
 ## 1. The research question
@@ -282,7 +286,7 @@ python3 extract_co2_pore_network.py \
 | '--case' / '--all-cases' | one is required | One case or complete campaign |
 | '--root' | current directory | Search root |
 | '--pattern' | 'particles_final*.dump' | Input dump pattern |
-| '--output-root' | 'co2_pore_networks' | 'co2_pore_networks_power22' |
+| '--output-root' | 'co2_pore_networks_power22' | 'co2_pore_networks_power22' |
 | '--tube-radius' | 0.008 m | Tube radius |
 | '--bottom' | 0 m | Lower boundary |
 | '--bed-top-percentile' | 99 | Robust upper boundary |

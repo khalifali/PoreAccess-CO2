@@ -9,7 +9,10 @@ Gas concentration c_p [mol/m3] is stored on pore nodes. Particle loading q_i
 
   dq_i/dt = k_LDF (q*_i - q_i)
 
-where W_ip are normalized particle--pore incidence weights. The Toth isotherm
+The displayed fixed-weight gas sink describes desorption. During positive
+uptake the conservative sink weights are W_ip*max(c_p,0)/(W*max(c,0))_i,
+so an empty pore cannot supply adsorption to its neighbour. W also maps pore
+concentration to particle concentration. W rows sum to one. The Toth isotherm
 is
 
   q* = q_s bP / [1 + (bP)^t]^(1/t),  P = c_particle R T.
@@ -157,6 +160,12 @@ def main():
     adsorption=a.mode=="adsorption"
     if a.diffusivity<=0 or a.inlet_concentration<0 or a.t_end<=0: p.error("invalid transport input")
     if a.tube_radius<=0 or a.inlet_min_distance_dp<=0: p.error("invalid finite-inlet geometry")
+    if (not all(np.isfinite(x) for x in (a.diffusivity, a.inlet_concentration,
+            a.initial_concentration, a.initial_loading, a.temperature, a.particle_density,
+            a.t_end, a.rtol, a.atol)) or a.initial_concentration < 0 or a.initial_loading < 0
+            or a.temperature <= 0 or a.particle_density <= 0 or a.outputs < 2
+            or a.rtol <= 0 or a.atol <= 0):
+        p.error("Invalid initial state, physical parameters, output count, or tolerances")
     if adsorption:
         absent=[x for x in ("qsat","b_pa","k_ldf") if getattr(a,x) is None]
         if absent: p.error("adsorption requires --qsat, --b-pa and --k-ldf")
@@ -166,7 +175,8 @@ def main():
     vol=net["pore_volume"].astype(float); inlet=net["pore_inlet"].astype(bool)
     conns=net["throat_conns"].astype(int); area=net["throat_area"].astype(float); length=net["throat_length"].astype(float)
     if not inlet.any(): sys.exit("Network contains no inlet pores")
-    if np.any(vol<=0) or np.any(area<=0) or np.any(length<=0): sys.exit("Nonpositive network geometry")
+    if any(not np.all(np.isfinite(x)) or np.any(x<=0) for x in (vol,area,length)):
+        sys.exit("Network geometry must be finite and positive")
     npore=len(vol); npart=len(net["particle_id"])
     finite_inlet=a.inlet_boundary=="finite"
     free=np.arange(npore,dtype=int) if finite_inlet else np.flatnonzero(~inlet)
@@ -323,8 +333,11 @@ def main():
     a.output.mkdir(parents=True,exist_ok=True)
     records=[]
     final_c=final_q=None
+    minimum_c=np.inf; minimum_q=np.inf
     for k,t in enumerate(sol.t):
         c,q=unpack(sol.y[:,k]); final_c=c; final_q=q
+        minimum_c=min(minimum_c,float(c.min()))
+        if adsorption: minimum_q=min(minimum_q,float(q.min()))
         gas=float(np.dot(vol,c)); ads=float(np.dot(mass,q)) if adsorption else 0.
         entered=float(sol.y[-1,k]); change=gas+ads-inventory0
         balance=change-entered
@@ -339,7 +352,7 @@ def main():
         w=csv.DictWriter(f,fieldnames=fields);w.writeheader();w.writerows(records)
     np.savez_compressed(a.output/"final_state.npz",pore_concentration=final_c,
         particle_loading=(final_q if adsorption else np.empty(0)),time_s=sol.t[-1])
-    physical_bounds_ok=bool(final_c.min()>=-1e-8 and (not adsorption or final_q.min()>=-1e-8))
+    physical_bounds_ok=bool(minimum_c>=-1e-8 and (not adsorption or minimum_q>=-1e-8))
     metadata={"network":str(a.network),"mode":a.mode,"parameters":vars(a),
       "parameters_units":{"diffusivity":"m2/s","concentration":"mol/m3","qsat":"mol/kg","b_pa":"1/Pa","k_ldf":"1/s"},
       "pore_count":npore,"free_pores":len(free),"fixed_inlet_pores":len(fixed),
@@ -352,10 +365,14 @@ def main():
       "final_maximum_concentration_mol_m3":float(final_c.max()),
       "final_minimum_loading_mol_kg":float(final_q.min()) if adsorption else None,
       "physical_bounds_ok":physical_bounds_ok,
+      "minimum_output_concentration_mol_m3":minimum_c,
+      "minimum_output_loading_mol_kg":minimum_q if adsorption else None,
       "boundary_conditions":{
         "bottom_inlet":("finite diffusive reservoir conductance" if finite_inlet else "fixed concentration"),
         "top":"no external flux","wall":"no external flux"},
-      "incidence_weighting":"adjacent pore-volume normalized per particle"}
+      "incidence_weighting":"adjacent pore-volume normalized per particle",
+      "uptake_sink_weighting":"incidence times positive pore concentration, normalized per particle",
+      "desorption_sink_weighting":"particle-normalized incidence"}
     metadata["inlet_boundary_diagnostics"]={
       "formulation":a.inlet_boundary,
       "labelled_pores":int(inlet.sum()),

@@ -40,6 +40,8 @@ def arguments() -> argparse.Namespace:
     p.add_argument("--particle-diameter", type=float, default=0.0016, help="Bead diameter [m].")
     p.add_argument("--interior-depth-dp", type=float, default=5.0,
                    help="Interior sink plane depth above the lowest pore, in particle diameters.")
+    p.add_argument("--bed-bottom", type=float, default=None,
+                   help="Reference plane z [m]; omitted preserves lowest-pore convention.")
     p.add_argument("--radial-bins", type=int, default=5)
     p.add_argument("--angular-sectors", type=int, default=12)
     p.add_argument("--campaign-dataset", type=Path,
@@ -162,7 +164,7 @@ def extract(path: Path, args: argparse.Namespace) -> dict[str, float | int | str
     inlet_internal_g = float(g[crossing].sum())
     _, _, inlet_g_cv = weighted_stats(g[crossing], np.ones(crossing.sum()))
 
-    z0 = float(xyz[:, 2].min())
+    z0 = float(xyz[:, 2].min()) if args.bed_bottom is None else args.bed_bottom
     interior_z = z0 + args.interior_depth_dp * args.particle_diameter
     interior = xyz[:, 2] >= interior_z
     g_depth, active_depth, depth_spans = effective_conductance(
@@ -185,6 +187,8 @@ def extract(path: Path, args: argparse.Namespace) -> dict[str, float | int | str
         "inlet_internal_conductance_cv": inlet_g_cv,
         "interior_depth_dp": args.interior_depth_dp,
         "interior_plane_z_m": interior_z,
+        "depth_reference_z_m": z0,
+        "depth_reference": "lowest_pore" if args.bed_bottom is None else "bed_bottom",
         "effective_inlet_to_interior_conductance_m3_s": g_depth,
         "effective_inlet_to_interior_active_pores": active_depth,
         "effective_inlet_to_interior_spanning": depth_spans,

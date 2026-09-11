@@ -1,64 +1,99 @@
 {
   "figures": {
-    "fig_campaign_variability": [
-      "/home/khalifa/Projects/CO2bed/co2_publication_figures/fig_campaign_variability.pdf",
-      "/home/khalifa/Projects/CO2bed/co2_publication_figures/fig_campaign_variability.png"
+    "fig_porosity_variability": [
+      "co2_publication_figures/fig_porosity_variability.pdf",
+      "co2_publication_figures/fig_porosity_variability.svg",
+      "co2_publication_figures/fig_porosity_variability.png"
     ],
-    "fig_accessibility_responses": [
-      "/home/khalifa/Projects/CO2bed/co2_publication_figures/fig_accessibility_responses.pdf",
-      "/home/khalifa/Projects/CO2bed/co2_publication_figures/fig_accessibility_responses.png"
+    "fig_uptake_curves": [
+      "co2_publication_figures/fig_uptake_curves.pdf",
+      "co2_publication_figures/fig_uptake_curves.svg",
+      "co2_publication_figures/fig_uptake_curves.png"
     ],
-    "fig_homogeneous_fits": [
-      "/home/khalifa/Projects/CO2bed/co2_publication_figures/fig_homogeneous_fits.pdf",
-      "/home/khalifa/Projects/CO2bed/co2_publication_figures/fig_homogeneous_fits.png"
+    "fig_porosity_uptake": [
+      "co2_publication_figures/fig_porosity_uptake.pdf",
+      "co2_publication_figures/fig_porosity_uptake.svg",
+      "co2_publication_figures/fig_porosity_uptake.png"
     ],
-    "fig_diffusivity_closure": [
-      "/home/khalifa/Projects/CO2bed/co2_publication_figures/fig_diffusivity_closure.pdf",
-      "/home/khalifa/Projects/CO2bed/co2_publication_figures/fig_diffusivity_closure.png"
+    "fig_accessibility_uptake": [
+      "co2_publication_figures/fig_accessibility_uptake.pdf",
+      "co2_publication_figures/fig_accessibility_uptake.svg",
+      "co2_publication_figures/fig_accessibility_uptake.png"
     ],
-    "fig_accessibility_depth": [
-      "/home/khalifa/Projects/CO2bed/co2_publication_figures/fig_accessibility_depth.pdf",
-      "/home/khalifa/Projects/CO2bed/co2_publication_figures/fig_accessibility_depth.png"
+    "fig_accessibility_utilization": [
+      "co2_publication_figures/fig_accessibility_utilization.pdf",
+      "co2_publication_figures/fig_accessibility_utilization.svg",
+      "co2_publication_figures/fig_accessibility_utilization.png"
+    ],
+    "fig_homogeneous_uptake": [
+      "co2_publication_figures/fig_homogeneous_uptake.pdf",
+      "co2_publication_figures/fig_homogeneous_uptake.svg",
+      "co2_publication_figures/fig_homogeneous_uptake.png"
+    ],
+    "fig_homogeneous_residuals": [
+      "co2_publication_figures/fig_homogeneous_residuals.pdf",
+      "co2_publication_figures/fig_homogeneous_residuals.svg",
+      "co2_publication_figures/fig_homogeneous_residuals.png"
+    ],
+    "fig_closure_power_law": [
+      "co2_publication_figures/fig_closure_power_law.pdf",
+      "co2_publication_figures/fig_closure_power_law.svg",
+      "co2_publication_figures/fig_closure_power_law.png"
+    ],
+    "fig_closure_held_out": [
+      "co2_publication_figures/fig_closure_held_out.pdf",
+      "co2_publication_figures/fig_closure_held_out.svg",
+      "co2_publication_figures/fig_closure_held_out.png"
+    ],
+    "fig_depth_correlations": [
+      "co2_publication_figures/fig_depth_correlations.pdf",
+      "co2_publication_figures/fig_depth_correlations.svg",
+      "co2_publication_figures/fig_depth_correlations.png"
+    ],
+    "fig_depth_prediction": [
+      "co2_publication_figures/fig_depth_prediction.pdf",
+      "co2_publication_figures/fig_depth_prediction.svg",
+      "co2_publication_figures/fig_depth_prediction.png"
     ]
   },
   "sources": {
     "campaign_variability": [
-      "/home/khalifa/Projects/CO2bed/co2_adsorption_campaign_finite_inlet_5000s/seed_18427/timeseries.csv",
-      "/home/khalifa/Projects/CO2bed/co2_adsorption_campaign_finite_inlet_5000s/seed_27183/timeseries.csv",
-      "/home/khalifa/Projects/CO2bed/co2_adsorption_campaign_finite_inlet_5000s/seed_31991/timeseries.csv",
-      "/home/khalifa/Projects/CO2bed/co2_adsorption_campaign_finite_inlet_5000s/seed_40213/timeseries.csv",
-      "/home/khalifa/Projects/CO2bed/co2_adsorption_campaign_finite_inlet_5000s/seed_47837/timeseries.csv",
-      "/home/khalifa/Projects/CO2bed/co2_adsorption_campaign_finite_inlet_5000s/seed_52691/timeseries.csv",
-      "/home/khalifa/Projects/CO2bed/co2_adsorption_campaign_finite_inlet_5000s/seed_61417/timeseries.csv",
-      "/home/khalifa/Projects/CO2bed/co2_adsorption_campaign_finite_inlet_5000s/seed_69371/timeseries.csv",
-      "/home/khalifa/Projects/CO2bed/co2_adsorption_campaign_finite_inlet_5000s/seed_74167/timeseries.csv",
-      "/home/khalifa/Projects/CO2bed/co2_adsorption_campaign_finite_inlet_5000s/seed_81929/timeseries.csv",
-      "/home/khalifa/Projects/CO2bed/co2_adsorption_campaign_finite_inlet_5000s/seed_90709/timeseries.csv",
-      "/home/khalifa/Projects/CO2bed/co2_adsorption_campaign_finite_inlet_5000s/seed_98251/timeseries.csv",
-      "/home/khalifa/Projects/CO2bed/co2_adsorption_campaign_finite_inlet_5000s/seed_105019/timeseries.csv",
-      "/home/khalifa/Projects/CO2bed/co2_adsorption_campaign_finite_inlet_5000s/seed_113117/timeseries.csv",
-      "/home/khalifa/Projects/CO2bed/co2_adsorption_campaign_finite_inlet_5000s/seed_121021/timeseries.csv",
-      "/home/khalifa/Projects/CO2bed/co2_adsorption_campaign_finite_inlet_5000s/seed_129121/timeseries.csv",
-      "/home/khalifa/Projects/CO2bed/co2_adsorption_campaign_finite_inlet_5000s/seed_137077/timeseries.csv",
-      "/home/khalifa/Projects/CO2bed/co2_adsorption_campaign_finite_inlet_5000s/seed_145093/timeseries.csv",
-      "/home/khalifa/Projects/CO2bed/co2_adsorption_campaign_finite_inlet_5000s/seed_153133/timeseries.csv",
-      "/home/khalifa/Projects/CO2bed/co2_adsorption_campaign_finite_inlet_5000s/seed_161123/timeseries.csv"
+      "co2_adsorption_campaign_finite_inlet_5000s/seed_18427/timeseries.csv",
+      "co2_adsorption_campaign_finite_inlet_5000s/seed_27183/timeseries.csv",
+      "co2_adsorption_campaign_finite_inlet_5000s/seed_31991/timeseries.csv",
+      "co2_adsorption_campaign_finite_inlet_5000s/seed_40213/timeseries.csv",
+      "co2_adsorption_campaign_finite_inlet_5000s/seed_47837/timeseries.csv",
+      "co2_adsorption_campaign_finite_inlet_5000s/seed_52691/timeseries.csv",
+      "co2_adsorption_campaign_finite_inlet_5000s/seed_61417/timeseries.csv",
+      "co2_adsorption_campaign_finite_inlet_5000s/seed_69371/timeseries.csv",
+      "co2_adsorption_campaign_finite_inlet_5000s/seed_74167/timeseries.csv",
+      "co2_adsorption_campaign_finite_inlet_5000s/seed_81929/timeseries.csv",
+      "co2_adsorption_campaign_finite_inlet_5000s/seed_90709/timeseries.csv",
+      "co2_adsorption_campaign_finite_inlet_5000s/seed_98251/timeseries.csv",
+      "co2_adsorption_campaign_finite_inlet_5000s/seed_105019/timeseries.csv",
+      "co2_adsorption_campaign_finite_inlet_5000s/seed_113117/timeseries.csv",
+      "co2_adsorption_campaign_finite_inlet_5000s/seed_121021/timeseries.csv",
+      "co2_adsorption_campaign_finite_inlet_5000s/seed_129121/timeseries.csv",
+      "co2_adsorption_campaign_finite_inlet_5000s/seed_137077/timeseries.csv",
+      "co2_adsorption_campaign_finite_inlet_5000s/seed_145093/timeseries.csv",
+      "co2_adsorption_campaign_finite_inlet_5000s/seed_153133/timeseries.csv",
+      "co2_adsorption_campaign_finite_inlet_5000s/seed_161123/timeseries.csv"
     ],
     "accessibility_responses": [
-      "/home/khalifa/Projects/CO2bed/co2_adsorption_finite_inlet_analysis/co2_adsorption_campaign_dataset.csv",
-      "/home/khalifa/Projects/CO2bed/co2_effective_diffusivity_closure/closure_dataset.csv"
+      "co2_adsorption_finite_inlet_analysis/co2_adsorption_campaign_dataset.csv",
+      "co2_effective_diffusivity_closure/closure_dataset.csv"
     ],
     "homogeneous_fits": [
-      "/home/khalifa/Projects/CO2bed/co2_homogeneous_campaign_100cells/seed_105019/fit_comparison.csv",
-      "/home/khalifa/Projects/CO2bed/co2_homogeneous_campaign_100cells/seed_121021/fit_comparison.csv",
-      "/home/khalifa/Projects/CO2bed/co2_homogeneous_campaign_100cells/seed_27183/fit_comparison.csv"
+      "co2_homogeneous_campaign_100cells/seed_105019/fit_comparison.csv",
+      "co2_homogeneous_campaign_100cells/seed_121021/fit_comparison.csv",
+      "co2_homogeneous_campaign_100cells/seed_27183/fit_comparison.csv"
     ],
     "diffusivity_closure": [
-      "/home/khalifa/Projects/CO2bed/co2_effective_diffusivity_closure/closure_dataset.csv",
-      "/home/khalifa/Projects/CO2bed/co2_effective_diffusivity_closure/closure_loo_predictions.csv"
+      "co2_effective_diffusivity_closure/closure_dataset.csv",
+      "co2_effective_diffusivity_closure/closure_loo_predictions.csv"
     ],
     "accessibility_depth": [
-      "/home/khalifa/Projects/CO2bed/co2_effective_diffusivity_closure/closure_depth_sensitivity.csv"
+      "co2_effective_diffusivity_closure/closure_depth_sensitivity.csv"
     ]
   },
   "settings": {
@@ -76,15 +111,16 @@
     "output": "co2_publication_figures",
     "formats": [
       "pdf",
+      "svg",
       "png"
     ],
     "dpi": 600,
     "only": null
   },
   "closure_fit": {
-    "power_coefficient_SI": 12622099.429616528,
-    "power_exponent": 2.496907666021332,
-    "dimensionless_coefficient_using_Dm": 0.758901869125774,
+    "power_coefficient_SI": 12622099.429616302,
+    "power_exponent": 2.496907666021331,
+    "dimensionless_coefficient_using_Dm": 0.758901869125768,
     "molecular_diffusivity_m2_s": 1.5e-05,
     "bootstrap_samples": 10000
   }

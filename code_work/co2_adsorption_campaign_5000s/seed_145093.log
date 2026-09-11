@@ -1,5 +1,0 @@
-mode=adsorption, pores=9389, particles=1850, t=5000 s
-final gas=1.854975579e-06 mol, adsorbed=1.783126732e-03 mol
-final mass-balance error=1.265e-13; max=1.265e-13
-final concentration range=[2.105651e-08, 6.050000e+00] mol/m3; physical_bounds_ok=True
-wrote co2_adsorption_campaign_5000s/seed_145093
