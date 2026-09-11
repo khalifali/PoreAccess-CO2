@@ -1,0 +1,415 @@
+{
+  "input": "co2_adsorption_structure_merged.csv",
+  "qa_cases_analyzed": 20,
+  "seeds": [
+    105019,
+    113117,
+    121021,
+    129121,
+    137077,
+    145093,
+    153133,
+    161123,
+    18427,
+    27183,
+    31991,
+    40213,
+    47837,
+    52691,
+    61417,
+    69371,
+    74167,
+    81929,
+    90709,
+    98251
+  ],
+  "targets": [
+    "final_uptake_mol_kg",
+    "t50_final_uptake_s",
+    "underutilized_particle_fraction"
+  ],
+  "candidate_features_used": [
+    "network_analytic_porosity",
+    "network_geometric_tortuosity",
+    "network_inlet_pores",
+    "network_outlet_pores",
+    "network_pore_count",
+    "network_throat_count",
+    "network_mean_degree",
+    "network_degree_cv",
+    "network_mean_pore_volume_m3",
+    "network_median_pore_volume_m3",
+    "network_pore_volume_cv",
+    "network_mean_throat_radius_m",
+    "network_median_throat_radius_m",
+    "network_throat_radius_p10_m",
+    "network_minimum_throat_radius_m",
+    "network_mean_throat_length_m",
+    "network_shortest_inlet_outlet_path_m",
+    "network_total_pore_volume_m3",
+    "inlet_total_pore_volume_m3",
+    "inlet_mean_pore_volume_m3",
+    "inlet_pore_volume_fraction",
+    "inlet_to_internal_throat_count",
+    "inlet_to_internal_unique_second_layer_pores",
+    "inlet_to_internal_throats_per_inlet_pore",
+    "inlet_internal_conductance_m3_s",
+    "inlet_internal_conductance_per_inlet_pore_m3_s",
+    "inlet_internal_conductance_cv",
+    "effective_inlet_to_interior_conductance_m3_s",
+    "effective_inlet_to_outlet_conductance_m3_s",
+    "inlet_radial_coverage",
+    "inlet_polar_cell_coverage",
+    "inlet_radial_mean_over_R",
+    "inlet_radial_std_over_R",
+    "inlet_angular_resultant",
+    "inlet_centroid_offset_over_R",
+    "inlet_mean_pair_distance_over_D",
+    "inlet_min_pair_distance_over_D"
+  ],
+  "reduced_model_features": {
+    "porosity_only_ridge": [
+      "network_analytic_porosity"
+    ],
+    "inlet_count_only_ridge": [
+      "network_inlet_pores"
+    ],
+    "effective_conductance_only_ridge": [
+      "effective_inlet_to_interior_conductance_m3_s"
+    ],
+    "second_layer_only_ridge": [
+      "inlet_to_internal_unique_second_layer_pores"
+    ],
+    "conductance_plus_tortuosity_ridge": [
+      "effective_inlet_to_interior_conductance_m3_s",
+      "network_geometric_tortuosity"
+    ],
+    "conductance_plus_polar_coverage_ridge": [
+      "effective_inlet_to_interior_conductance_m3_s",
+      "inlet_polar_cell_coverage"
+    ],
+    "physical_three_ridge": [
+      "effective_inlet_to_interior_conductance_m3_s",
+      "inlet_to_internal_unique_second_layer_pores",
+      "inlet_polar_cell_coverage"
+    ]
+  },
+  "validation": "leave-one-bed-out cross-validation",
+  "interpretation_warning": "With about 20 independent beds, correlations and models are exploratory. Use effect sizes, bootstrap intervals, permutation tests, and physical reasoning together; do not select conclusions from unadjusted p-values.",
+  "top_spearman_correlations": {
+    "final_uptake_mol_kg": [
+      {
+        "feature": "effective_inlet_to_interior_conductance_m3_s",
+        "spearman_rho": 0.9684210526315788,
+        "spearman_p_fdr": 9.786437062899905e-11
+      },
+      {
+        "feature": "network_inlet_pores",
+        "spearman_rho": 0.7470215268897568,
+        "spearman_p_fdr": 0.00284884451983809
+      },
+      {
+        "feature": "inlet_to_internal_unique_second_layer_pores",
+        "spearman_rho": 0.7036231109323524,
+        "spearman_p_fdr": 0.006030672505098796
+      },
+      {
+        "feature": "inlet_to_internal_throat_count",
+        "spearman_rho": 0.6961177420035345,
+        "spearman_p_fdr": 0.006030672505098796
+      },
+      {
+        "feature": "inlet_polar_cell_coverage",
+        "spearman_rho": 0.636974170613958,
+        "spearman_p_fdr": 0.018683953060867016
+      }
+    ],
+    "t50_final_uptake_s": [
+      {
+        "feature": "inlet_to_internal_unique_second_layer_pores",
+        "spearman_rho": -0.8137291926002233,
+        "spearman_p_fdr": 0.0004720035516227788
+      },
+      {
+        "feature": "inlet_pore_volume_fraction",
+        "spearman_rho": -0.7774436090225564,
+        "spearman_p_fdr": 0.0006476878847337654
+      },
+      {
+        "feature": "inlet_total_pore_volume_m3",
+        "spearman_rho": -0.7729323308270677,
+        "spearman_p_fdr": 0.0006476878847337654
+      },
+      {
+        "feature": "network_inlet_pores",
+        "spearman_rho": -0.7706517996791267,
+        "spearman_p_fdr": 0.0006476878847337654
+      },
+      {
+        "feature": "inlet_to_internal_throat_count",
+        "spearman_rho": -0.739908229027618,
+        "spearman_p_fdr": 0.001421288005774804
+      }
+    ],
+    "underutilized_particle_fraction": [
+      {
+        "feature": "effective_inlet_to_interior_conductance_m3_s",
+        "spearman_rho": -0.9590072133630365,
+        "spearman_p_fdr": 9.896194672862219e-10
+      },
+      {
+        "feature": "network_inlet_pores",
+        "spearman_rho": -0.7419646453686882,
+        "spearman_p_fdr": 0.003335755775390464
+      },
+      {
+        "feature": "inlet_to_internal_throat_count",
+        "spearman_rho": -0.6884490179234664,
+        "spearman_p_fdr": 0.008638247122410304
+      },
+      {
+        "feature": "inlet_to_internal_unique_second_layer_pores",
+        "spearman_rho": -0.6816319500241803,
+        "spearman_p_fdr": 0.008638247122410304
+      },
+      {
+        "feature": "inlet_polar_cell_coverage",
+        "spearman_rho": -0.6427893901935637,
+        "spearman_p_fdr": 0.016558014130009634
+      }
+    ]
+  },
+  "model_metrics": [
+    {
+      "target": "final_uptake_mol_kg",
+      "model": "porosity_only_ridge",
+      "n": 20,
+      "n_features": 1,
+      "loo_r2": -0.22104831992341722,
+      "loo_rmse": 0.03145979525895488,
+      "loo_mae": 0.025484094093351208,
+      "normalized_rmse_by_std": 1.0770310598711843,
+      "mae_improvement_over_global_mean_pct": -11.14051728915476
+    },
+    {
+      "target": "final_uptake_mol_kg",
+      "model": "inlet_count_only_ridge",
+      "n": 20,
+      "n_features": 1,
+      "loo_r2": 0.5252817069636528,
+      "loo_rmse": 0.01961586438696833,
+      "loo_mae": 0.01524498831794037,
+      "normalized_rmse_by_std": 0.6715522156798605,
+      "mae_improvement_over_global_mean_pct": 33.51398399658767
+    },
+    {
+      "target": "final_uptake_mol_kg",
+      "model": "effective_conductance_only_ridge",
+      "n": 20,
+      "n_features": 1,
+      "loo_r2": 0.9244896298997145,
+      "loo_rmse": 0.007823350109037546,
+      "loo_mae": 0.006760433239402813,
+      "normalized_rmse_by_std": 0.2678336267074604,
+      "mae_improvement_over_global_mean_pct": 70.51658793231131
+    },
+    {
+      "target": "final_uptake_mol_kg",
+      "model": "second_layer_only_ridge",
+      "n": 20,
+      "n_features": 1,
+      "loo_r2": 0.5188356528812639,
+      "loo_rmse": 0.019748594234447546,
+      "loo_mae": 0.015639568419369268,
+      "normalized_rmse_by_std": 0.676096242973439,
+      "mae_improvement_over_global_mean_pct": 31.79315231137362
+    },
+    {
+      "target": "final_uptake_mol_kg",
+      "model": "conductance_plus_tortuosity_ridge",
+      "n": 20,
+      "n_features": 2,
+      "loo_r2": 0.9135540297146386,
+      "loo_rmse": 0.008370701270794024,
+      "loo_mae": 0.007230344855523078,
+      "normalized_rmse_by_std": 0.28657228018615716,
+      "mae_improvement_over_global_mean_pct": 68.46722255544219
+    },
+    {
+      "target": "final_uptake_mol_kg",
+      "model": "conductance_plus_polar_coverage_ridge",
+      "n": 20,
+      "n_features": 2,
+      "loo_r2": 0.9080678029827719,
+      "loo_rmse": 0.008632235623833308,
+      "loo_mae": 0.007027694072620824,
+      "normalized_rmse_by_std": 0.29552595007269106,
+      "mae_improvement_over_global_mean_pct": 69.35101747309967
+    },
+    {
+      "target": "final_uptake_mol_kg",
+      "model": "physical_three_ridge",
+      "n": 20,
+      "n_features": 3,
+      "loo_r2": 0.9310935376403644,
+      "loo_rmse": 0.007473420924532814,
+      "loo_mae": 0.005880741371802868,
+      "normalized_rmse_by_std": 0.2558537458034449,
+      "mae_improvement_over_global_mean_pct": 74.3530754630032
+    },
+    {
+      "target": "t50_final_uptake_s",
+      "model": "porosity_only_ridge",
+      "n": 20,
+      "n_features": 1,
+      "loo_r2": -0.08077904031948946,
+      "loo_rmse": 65.19456556628397,
+      "loo_mae": 52.5098227810318,
+      "normalized_rmse_by_std": 1.013281840508116,
+      "mae_improvement_over_global_mean_pct": 0.36788215037616456
+    },
+    {
+      "target": "t50_final_uptake_s",
+      "model": "inlet_count_only_ridge",
+      "n": 20,
+      "n_features": 1,
+      "loo_r2": 0.6172208653897722,
+      "loo_rmse": 38.7986904121505,
+      "loo_mae": 31.270132811094822,
+      "normalized_rmse_by_std": 0.6030258517507492,
+      "mae_improvement_over_global_mean_pct": 40.66806185196632
+    },
+    {
+      "target": "t50_final_uptake_s",
+      "model": "effective_conductance_only_ridge",
+      "n": 20,
+      "n_features": 1,
+      "loo_r2": 0.12129726502866622,
+      "loo_rmse": 58.78464879485844,
+      "loo_mae": 48.39745872046971,
+      "normalized_rmse_by_std": 0.9136561706806161,
+      "mae_improvement_over_global_mean_pct": 8.170680160779755
+    },
+    {
+      "target": "t50_final_uptake_s",
+      "model": "second_layer_only_ridge",
+      "n": 20,
+      "n_features": 1,
+      "loo_r2": 0.650838537180023,
+      "loo_rmse": 37.05579123233365,
+      "loo_mae": 28.949153647569165,
+      "normalized_rmse_by_std": 0.575936966758497,
+      "mae_improvement_over_global_mean_pct": 45.071886837459175
+    },
+    {
+      "target": "t50_final_uptake_s",
+      "model": "conductance_plus_tortuosity_ridge",
+      "n": 20,
+      "n_features": 2,
+      "loo_r2": 0.353399916777298,
+      "loo_rmse": 50.426731198237256,
+      "loo_mae": 42.711705001354424,
+      "normalized_rmse_by_std": 0.7837538383073903,
+      "mae_improvement_over_global_mean_pct": 18.958827113190775
+    },
+    {
+      "target": "t50_final_uptake_s",
+      "model": "conductance_plus_polar_coverage_ridge",
+      "n": 20,
+      "n_features": 2,
+      "loo_r2": 0.11602691776961827,
+      "loo_rmse": 58.9606766651538,
+      "loo_mae": 46.05565437642851,
+      "normalized_rmse_by_std": 0.9163920711785228,
+      "mae_improvement_over_global_mean_pct": 12.614018835892484
+    },
+    {
+      "target": "t50_final_uptake_s",
+      "model": "physical_three_ridge",
+      "n": 20,
+      "n_features": 3,
+      "loo_r2": 0.630910051730052,
+      "loo_rmse": 38.098602691067796,
+      "loo_mae": 29.931749972464104,
+      "normalized_rmse_by_std": 0.5921447887606971,
+      "mae_improvement_over_global_mean_pct": 43.207508942893064
+    },
+    {
+      "target": "underutilized_particle_fraction",
+      "model": "porosity_only_ridge",
+      "n": 20,
+      "n_features": 1,
+      "loo_r2": -0.22665112582278524,
+      "loo_rmse": 0.02084160467892703,
+      "loo_mae": 0.016958063458806204,
+      "normalized_rmse_by_std": 1.0794992216447616,
+      "mae_improvement_over_global_mean_pct": -11.44730869908175
+    },
+    {
+      "target": "underutilized_particle_fraction",
+      "model": "inlet_count_only_ridge",
+      "n": 20,
+      "n_features": 1,
+      "loo_r2": 0.38689119068874067,
+      "loo_rmse": 0.014734635646635054,
+      "loo_mae": 0.011758542318586584,
+      "normalized_rmse_by_std": 0.763186326427365,
+      "mae_improvement_over_global_mean_pct": 22.723611760620937
+    },
+    {
+      "target": "underutilized_particle_fraction",
+      "model": "effective_conductance_only_ridge",
+      "n": 20,
+      "n_features": 1,
+      "loo_r2": 0.8628800403305728,
+      "loo_rmse": 0.006968205684854,
+      "loo_mae": 0.005351854699389596,
+      "normalized_rmse_by_std": 0.36092099091900415,
+      "mae_improvement_over_global_mean_pct": 64.82795313012163
+    },
+    {
+      "target": "underutilized_particle_fraction",
+      "model": "second_layer_only_ridge",
+      "n": 20,
+      "n_features": 1,
+      "loo_r2": 0.4011067112791613,
+      "loo_rmse": 0.014562815463838422,
+      "loo_mae": 0.011319729662546834,
+      "normalized_rmse_by_std": 0.7542868315732397,
+      "mae_improvement_over_global_mean_pct": 25.60746047704559
+    },
+    {
+      "target": "underutilized_particle_fraction",
+      "model": "conductance_plus_tortuosity_ridge",
+      "n": 20,
+      "n_features": 2,
+      "loo_r2": 0.8373795094487384,
+      "loo_rmse": 0.007588540503646677,
+      "loo_mae": 0.0058624070027694045,
+      "normalized_rmse_by_std": 0.3930514801189516,
+      "mae_improvement_over_global_mean_pct": 61.47263603863797
+    },
+    {
+      "target": "underutilized_particle_fraction",
+      "model": "conductance_plus_polar_coverage_ridge",
+      "n": 20,
+      "n_features": 2,
+      "loo_r2": 0.8412147038600759,
+      "loo_rmse": 0.0074985236366580605,
+      "loo_mae": 0.005706826732575487,
+      "normalized_rmse_by_std": 0.38838902061326086,
+      "mae_improvement_over_global_mean_pct": 62.49509962605803
+    },
+    {
+      "target": "underutilized_particle_fraction",
+      "model": "physical_three_ridge",
+      "n": 20,
+      "n_features": 3,
+      "loo_r2": 0.8185051317594365,
+      "loo_rmse": 0.00801683228417882,
+      "loo_mae": 0.006392106904289585,
+      "normalized_rmse_by_std": 0.41523502360534975,
+      "mae_improvement_over_global_mean_pct": 57.99148215653376
+    }
+  ]
+}

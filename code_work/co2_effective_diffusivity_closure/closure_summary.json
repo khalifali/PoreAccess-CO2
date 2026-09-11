@@ -1,0 +1,23 @@
+{
+  "n_beds": 20,
+  "tube_radius_m": 0.008,
+  "tube_area_m2": 0.00020106192982974675,
+  "primary_depth_dp": 5.0,
+  "closure": "D_eff = alpha * (G_access * H / A_tube)",
+  "alpha": 0.1522854763943895,
+  "alpha_bootstrap_95_percent_ci": [
+    0.14267871785272376,
+    0.16162225359637508
+  ],
+  "physical_closure_loo_r2": 0.5548888726573276,
+  "physical_closure_loo_rmse_m2_s": 1.1405758108137298e-07,
+  "porosity_only_loo_r2": -0.2340079358696292,
+  "best_predictive_model": "raw_conductance_linear",
+  "best_model_loo_r2": 0.8977051833619684,
+  "positive_power_closure": "D_eff = C * (G_access * H / A_tube)^n",
+  "power_coefficient_C": 12622099.42961693,
+  "power_exponent_n": 2.4969076660213347,
+  "bootstrap_resamples": 10000,
+  "permutations": 5000,
+  "random_seed": 20260824
+}

@@ -1,0 +1,65 @@
+{
+  "cases": [
+    {
+      "seed": 18427,
+      "source_network": "/home/khalifa/Projects/CO2bed/co2_pore_networks_power22/seed_18427",
+      "labelling_rule": "pore_z <= bottom + inlet_layer_dp * particle_diameter",
+      "bottom_m": 0.0,
+      "particle_diameter_m": 0.0016,
+      "inlet_layer_dp": 0.75,
+      "inlet_cutoff_z_m": 0.0012000000000000001,
+      "original_inlet_pores": 20,
+      "sensitivity_inlet_pores": 68,
+      "pore_count": 9397,
+      "topology_and_geometry_reused": true,
+      "variant_network": "co2_inlet_sensitivity_pilot/networks/seed_18427/layer_0p75dp",
+      "result_directory": "co2_inlet_sensitivity_pilot/results/seed_18427/layer_0p75dp"
+    },
+    {
+      "seed": 18427,
+      "source_network": "/home/khalifa/Projects/CO2bed/co2_pore_networks_power22/seed_18427",
+      "labelling_rule": "pore_z <= bottom + inlet_layer_dp * particle_diameter",
+      "bottom_m": 0.0,
+      "particle_diameter_m": 0.0016,
+      "inlet_layer_dp": 1.0,
+      "inlet_cutoff_z_m": 0.0016,
+      "original_inlet_pores": 20,
+      "sensitivity_inlet_pores": 199,
+      "pore_count": 9397,
+      "topology_and_geometry_reused": true,
+      "variant_network": "co2_inlet_sensitivity_pilot/networks/seed_18427/layer_1dp",
+      "result_directory": "co2_inlet_sensitivity_pilot/results/seed_18427/layer_1dp"
+    },
+    {
+      "seed": 18427,
+      "source_network": "/home/khalifa/Projects/CO2bed/co2_pore_networks_power22/seed_18427",
+      "labelling_rule": "pore_z <= bottom + inlet_layer_dp * particle_diameter",
+      "bottom_m": 0.0,
+      "particle_diameter_m": 0.0016,
+      "inlet_layer_dp": 1.25,
+      "inlet_cutoff_z_m": 0.002,
+      "original_inlet_pores": 20,
+      "sensitivity_inlet_pores": 367,
+      "pore_count": 9397,
+      "topology_and_geometry_reused": true,
+      "variant_network": "co2_inlet_sensitivity_pilot/networks/seed_18427/layer_1p25dp",
+      "result_directory": "co2_inlet_sensitivity_pilot/results/seed_18427/layer_1p25dp"
+    },
+    {
+      "seed": 18427,
+      "source_network": "/home/khalifa/Projects/CO2bed/co2_pore_networks_power22/seed_18427",
+      "labelling_rule": "pore_z <= bottom + inlet_layer_dp * particle_diameter",
+      "bottom_m": 0.0,
+      "particle_diameter_m": 0.0016,
+      "inlet_layer_dp": 1.5,
+      "inlet_cutoff_z_m": 0.0024000000000000002,
+      "original_inlet_pores": 20,
+      "sensitivity_inlet_pores": 437,
+      "pore_count": 9397,
+      "topology_and_geometry_reused": true,
+      "variant_network": "co2_inlet_sensitivity_pilot/networks/seed_18427/layer_1p5dp",
+      "result_directory": "co2_inlet_sensitivity_pilot/results/seed_18427/layer_1p5dp"
+    }
+  ],
+  "failures": []
+}

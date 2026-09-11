@@ -1,0 +1,455 @@
+#!/usr/bin/env python3
+"""Structure--performance analysis for the 20-bed CO2 adsorption campaign.
+
+The script deliberately uses small-sample methods.  Every predictive result is
+obtained with leave-one-bed-out cross-validation (LOOCV); it is not a training
+score.  The purpose is explanation and hypothesis generation, not claiming a
+generally applicable surrogate from only 20 realizations.
+
+Required input
+--------------
+The CSV produced by ``summarize_co2_adsorption_campaign.py``.
+
+Main outputs
+------------
+* descriptor_summary.csv
+* correlations.csv
+* correlation_bootstrap_intervals.csv
+* model_metrics.csv
+* loo_predictions.csv
+* permutation_tests.csv
+* permutation_importance.csv
+* analysis_summary.json / analysis_summary.md
+* figures/*.png and figures/*.pdf
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import math
+import warnings
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from scipy.stats import pearsonr, spearmanr
+from sklearn.base import clone
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.impute import SimpleImputer
+from sklearn.linear_model import Ridge
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.model_selection import LeaveOneOut, cross_val_predict, cross_val_score
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+
+
+DEFAULT_TARGETS = [
+    "final_uptake_mol_kg",
+    "t50_final_uptake_s",
+    "underutilized_particle_fraction",
+]
+
+# Only quantities describing the geometry/network are candidates.  Adsorption
+# outputs and solver settings are intentionally excluded to prevent leakage.
+CANDIDATE_FEATURES = [
+    "network_analytic_porosity",
+    "network_geometric_tortuosity",
+    "network_inlet_pores",
+    "network_outlet_pores",
+    "network_pore_count",
+    "network_throat_count",
+    "network_mean_degree",
+    "network_degree_cv",
+    "network_mean_pore_volume_m3",
+    "network_median_pore_volume_m3",
+    "network_pore_volume_cv",
+    "network_mean_throat_radius_m",
+    "network_median_throat_radius_m",
+    "network_throat_radius_p10_m",
+    "network_minimum_throat_radius_m",
+    "network_mean_throat_length_m",
+    "network_shortest_inlet_outlet_path_m",
+    "network_total_pore_volume_m3",
+]
+
+# A compact, physically interpretable set. Highly redundant size/count
+# descriptors are left out of this model but remain in correlation tables.
+COMPACT_FEATURES = [
+    "network_analytic_porosity",
+    "network_geometric_tortuosity",
+    "network_inlet_pores",
+    "network_throat_radius_p10_m",
+    "network_pore_volume_cv",
+    "network_mean_degree",
+]
+
+
+def parse_args() -> argparse.Namespace:
+    p = argparse.ArgumentParser(
+        description="Relate pore-network structure to CO2 adsorption outcomes."
+    )
+    p.add_argument("--dataset", required=True, type=Path,
+                   help="Campaign dataset CSV.")
+    p.add_argument("--output", default=Path("co2_structure_performance_analysis"),
+                   type=Path, help="Output directory.")
+    p.add_argument("--targets", nargs="+", default=DEFAULT_TARGETS,
+                   help="Response columns to analyse.")
+    p.add_argument("--bootstrap", type=int, default=5000,
+                   help="Bootstrap resamples for Spearman 95%% intervals.")
+    p.add_argument("--permutations", type=int, default=500,
+                   help="Target permutations for LOOCV model tests.")
+    p.add_argument("--seed", type=int, default=20260824,
+                   help="Random seed for reproducible resampling/models.")
+    p.add_argument("--label-seeds", action="store_true",
+                   help="Label points with realization seed in scatter plots.")
+    p.add_argument("--include-failed", action="store_true",
+                   help="Keep cases that did not pass case_qa_pass.")
+    return p.parse_args()
+
+
+def safe_name(text: str) -> str:
+    return "".join(c if c.isalnum() or c in "-_" else "_" for c in text)
+
+
+def fdr_bh(p_values: np.ndarray) -> np.ndarray:
+    """Benjamini-Hochberg adjusted p-values."""
+    p = np.asarray(p_values, dtype=float)
+    out = np.full_like(p, np.nan)
+    ok = np.isfinite(p)
+    vals = p[ok]
+    if not vals.size:
+        return out
+    order = np.argsort(vals)
+    ranked = vals[order]
+    adjusted = ranked * len(ranked) / np.arange(1, len(ranked) + 1)
+    adjusted = np.minimum.accumulate(adjusted[::-1])[::-1]
+    restored = np.empty_like(adjusted)
+    restored[order] = np.minimum(adjusted, 1.0)
+    out[np.where(ok)[0]] = restored
+    return out
+
+
+def correlations(df: pd.DataFrame, features: list[str], targets: list[str]) -> pd.DataFrame:
+    rows = []
+    for target in targets:
+        for feature in features:
+            pair = df[[feature, target]].replace([np.inf, -np.inf], np.nan).dropna()
+            if len(pair) < 4 or pair[feature].nunique() < 2 or pair[target].nunique() < 2:
+                continue
+            pr, pp = pearsonr(pair[feature], pair[target])
+            sr, sp = spearmanr(pair[feature], pair[target])
+            rows.append({"target": target, "feature": feature, "n": len(pair),
+                         "pearson_r": pr, "pearson_p": pp,
+                         "spearman_rho": sr, "spearman_p": sp})
+    ans = pd.DataFrame(rows)
+    if not ans.empty:
+        ans["pearson_p_fdr"] = ans.groupby("target")["pearson_p"].transform(
+            lambda x: fdr_bh(x.to_numpy()))
+        ans["spearman_p_fdr"] = ans.groupby("target")["spearman_p"].transform(
+            lambda x: fdr_bh(x.to_numpy()))
+        ans["abs_spearman_rho"] = ans["spearman_rho"].abs()
+        ans = ans.sort_values(["target", "abs_spearman_rho"], ascending=[True, False])
+    return ans
+
+
+def bootstrap_spearman(df: pd.DataFrame, pairs: pd.DataFrame, n_boot: int,
+                       rng: np.random.Generator) -> pd.DataFrame:
+    rows = []
+    for row in pairs.itertuples(index=False):
+        pair = df[[row.feature, row.target]].dropna().to_numpy(float)
+        vals = []
+        for _ in range(n_boot):
+            sample = pair[rng.integers(0, len(pair), len(pair))]
+            if np.unique(sample[:, 0]).size < 2 or np.unique(sample[:, 1]).size < 2:
+                continue
+            vals.append(spearmanr(sample[:, 0], sample[:, 1]).statistic)
+        a = np.asarray(vals)
+        rows.append({"target": row.target, "feature": row.feature,
+                     "spearman_rho": row.spearman_rho,
+                     "bootstrap_valid": len(a),
+                     "ci95_low": np.quantile(a, 0.025) if len(a) else np.nan,
+                     "ci95_high": np.quantile(a, 0.975) if len(a) else np.nan})
+    return pd.DataFrame(rows)
+
+
+def make_models(seed: int) -> dict[str, object]:
+    def ridge(alpha: float) -> Pipeline:
+        return Pipeline([
+            ("impute", SimpleImputer(strategy="median")),
+            ("scale", StandardScaler()),
+            ("model", Ridge(alpha=alpha)),
+        ])
+    return {
+        "porosity_only_ridge": ridge(1.0),
+        "compact_ridge": ridge(10.0),
+        "compact_random_forest": Pipeline([
+            ("impute", SimpleImputer(strategy="median")),
+            ("model", RandomForestRegressor(
+                n_estimators=200, min_samples_leaf=3, max_features=0.75,
+                random_state=seed, n_jobs=-1)),
+        ]),
+    }
+
+
+def feature_set_for(model_name: str, available: list[str]) -> list[str]:
+    if model_name == "porosity_only_ridge":
+        return ["network_analytic_porosity"]
+    return [x for x in COMPACT_FEATURES if x in available]
+
+
+def metric_row(target: str, model: str, y: np.ndarray, pred: np.ndarray,
+               n_features: int) -> dict[str, float | str | int]:
+    rmse = math.sqrt(mean_squared_error(y, pred))
+    baseline = np.full(len(y), np.mean(y))
+    return {
+        "target": target, "model": model, "n": len(y), "n_features": n_features,
+        "loo_r2": r2_score(y, pred), "loo_rmse": rmse,
+        "loo_mae": mean_absolute_error(y, pred),
+        "normalized_rmse_by_std": rmse / np.std(y, ddof=1),
+        "mae_improvement_over_global_mean_pct":
+            100 * (mean_absolute_error(y, baseline) - mean_absolute_error(y, pred))
+            / mean_absolute_error(y, baseline),
+    }
+
+
+def fit_models(df: pd.DataFrame, features: list[str], targets: list[str], seed: int):
+    loo = LeaveOneOut()
+    metrics, predictions = [], []
+    models = make_models(seed)
+    for target in targets:
+        work = df[["seed", target] + features].dropna(subset=[target]).copy()
+        y = work[target].to_numpy(float)
+        for model_name, model in models.items():
+            fs = feature_set_for(model_name, features)
+            if not fs:
+                continue
+            X = work[fs]
+            pred = cross_val_predict(model, X, y, cv=loo, n_jobs=None)
+            metrics.append(metric_row(target, model_name, y, pred, len(fs)))
+            for s, obs, estimated in zip(work["seed"], y, pred):
+                predictions.append({"seed": int(s), "target": target,
+                                    "model": model_name, "observed": obs,
+                                    "loo_prediction": estimated,
+                                    "residual": obs - estimated})
+    return pd.DataFrame(metrics), pd.DataFrame(predictions)
+
+
+def permutation_tests(df: pd.DataFrame, features: list[str], targets: list[str],
+                      n_perm: int, seed: int) -> pd.DataFrame:
+    """One-sided test: is observed negative LOOCV MSE better than shuffled y?"""
+    rng = np.random.default_rng(seed)
+    loo = LeaveOneOut()
+    # Permuting a 500-tree forest across LOOCV folds is disproportionately
+    # expensive. Test the two inferential ridge baselines here; the forest is
+    # retained as a descriptive nonlinear benchmark in model_metrics.csv.
+    all_models = make_models(seed)
+    models = {k: all_models[k] for k in ("porosity_only_ridge", "compact_ridge")}
+    rows = []
+    for target in targets:
+        work = df[[target] + features].dropna(subset=[target])
+        y = work[target].to_numpy(float)
+        for name, model in models.items():
+            fs = feature_set_for(name, features)
+            X = work[fs]
+            observed = cross_val_score(model, X, y, cv=loo,
+                                       scoring="neg_mean_squared_error").mean()
+            null = np.empty(n_perm)
+            for i in range(n_perm):
+                yp = rng.permutation(y)
+                null[i] = cross_val_score(model, X, yp, cv=loo,
+                                          scoring="neg_mean_squared_error").mean()
+            p = (1 + np.count_nonzero(null >= observed)) / (n_perm + 1)
+            rows.append({"target": target, "model": name,
+                         "observed_neg_mse": observed,
+                         "null_neg_mse_median": np.median(null),
+                         "permutation_p_one_sided": p,
+                         "permutations": n_perm})
+    return pd.DataFrame(rows)
+
+
+def loo_permutation_importance(df: pd.DataFrame, features: list[str], targets: list[str],
+                               seed: int) -> pd.DataFrame:
+    """Permutation importance evaluated on held-out predictions.
+
+    Each feature is shuffled only in the held-out rows while the fold-specific
+    model remains trained on the untouched training beds. Repeated shuffles
+    stabilize the estimate but do not manufacture extra independent beds.
+    """
+    rng = np.random.default_rng(seed)
+    rows = []
+    loo = LeaveOneOut()
+    model = make_models(seed)["compact_ridge"]
+    fs = feature_set_for("compact_ridge", features)
+    for target in targets:
+        work = df[[target] + fs].dropna(subset=[target]).reset_index(drop=True)
+        X, y = work[fs], work[target].to_numpy(float)
+        # Fit each LOOCV fold once, then reuse it for all held-out feature
+        # perturbations. This makes the diagnostic fast even with many repeats.
+        fitted_folds = []
+        base = np.empty_like(y)
+        for train, test in loo.split(X):
+            fitted = clone(model).fit(X.iloc[train], y[train])
+            base[test] = fitted.predict(X.iloc[test])
+            fitted_folds.append((test, fitted))
+        base_mae = mean_absolute_error(y, base)
+        for feature in fs:
+            increases = []
+            # Global held-out-feature permutation, repeated for stability.
+            for _ in range(100):
+                pred = np.empty_like(y)
+                shuffled = X[feature].to_numpy()[rng.permutation(len(X))]
+                for test, fitted in fitted_folds:
+                    xt = X.iloc[test].copy()
+                    xt.loc[:, feature] = shuffled[test]
+                    pred[test] = fitted.predict(xt)
+                increases.append(mean_absolute_error(y, pred) - base_mae)
+            a = np.asarray(increases)
+            rows.append({"target": target, "model": "compact_ridge",
+                         "feature": feature, "baseline_loo_mae": base_mae,
+                         "mae_increase_mean": a.mean(),
+                         "mae_increase_ci95_low": np.quantile(a, .025),
+                         "mae_increase_ci95_high": np.quantile(a, .975)})
+    return pd.DataFrame(rows)
+
+
+def plots(df: pd.DataFrame, corr: pd.DataFrame, preds: pd.DataFrame,
+          targets: list[str], out: Path, label_seeds: bool) -> None:
+    out.mkdir(parents=True, exist_ok=True)
+    plt.rcParams.update({"figure.dpi": 140, "savefig.dpi": 300,
+                         "font.size": 9, "axes.grid": True,
+                         "grid.alpha": 0.25})
+    for target in targets:
+        ranked = corr[corr.target == target].nlargest(6, "abs_spearman_rho")
+        if ranked.empty:
+            continue
+        fig, axes = plt.subplots(2, 3, figsize=(10.2, 6.2), constrained_layout=True)
+        for ax, row in zip(axes.flat, ranked.itertuples(index=False)):
+            ax.scatter(df[row.feature], df[target], s=32, color="#1769aa",
+                       edgecolor="white", linewidth=.5)
+            if label_seeds:
+                for _, r in df.iterrows():
+                    ax.annotate(str(int(r.seed)), (r[row.feature], r[target]),
+                                xytext=(3, 2), textcoords="offset points", fontsize=5)
+            ax.set_xlabel(row.feature.replace("network_", ""))
+            ax.set_ylabel(target)
+            ax.set_title(f"Spearman $\\rho$={row.spearman_rho:.2f}")
+        for ax in axes.flat[len(ranked):]:
+            ax.axis("off")
+        stem = out / f"top_correlations_{safe_name(target)}"
+        fig.savefig(stem.with_suffix(".png"), bbox_inches="tight")
+        fig.savefig(stem.with_suffix(".pdf"), bbox_inches="tight")
+        plt.close(fig)
+
+        sub = preds[preds.target == target]
+        models = list(sub.model.unique())
+        fig, axes = plt.subplots(1, len(models), figsize=(4 * len(models), 3.5),
+                                 squeeze=False, constrained_layout=True)
+        for ax, model_name in zip(axes.flat, models):
+            d = sub[sub.model == model_name]
+            ax.scatter(d.observed, d.loo_prediction, s=34, color="#b64233",
+                       edgecolor="white", linewidth=.5)
+            lo = min(d.observed.min(), d.loo_prediction.min())
+            hi = max(d.observed.max(), d.loo_prediction.max())
+            ax.plot([lo, hi], [lo, hi], "k--", lw=1)
+            ax.set_xlabel("Observed")
+            ax.set_ylabel("LOO prediction")
+            ax.set_title(model_name.replace("_", " "))
+        stem = out / f"loo_predictions_{safe_name(target)}"
+        fig.savefig(stem.with_suffix(".png"), bbox_inches="tight")
+        fig.savefig(stem.with_suffix(".pdf"), bbox_inches="tight")
+        plt.close(fig)
+
+    # Compact correlation heatmap without an optional seaborn dependency.
+    pivot = corr.pivot(index="feature", columns="target", values="spearman_rho")
+    if not pivot.empty:
+        order = pivot.abs().max(axis=1).sort_values(ascending=False).index
+        pivot = pivot.loc[order]
+        fig, ax = plt.subplots(figsize=(8, max(5, .32 * len(pivot))), constrained_layout=True)
+        im = ax.imshow(pivot.to_numpy(), vmin=-1, vmax=1, cmap="coolwarm", aspect="auto")
+        ax.set_xticks(range(len(pivot.columns)), pivot.columns, rotation=25, ha="right")
+        ax.set_yticks(range(len(pivot.index)), [x.replace("network_", "") for x in pivot.index])
+        fig.colorbar(im, ax=ax, label="Spearman correlation")
+        fig.savefig(out / "spearman_correlation_heatmap.png", bbox_inches="tight")
+        fig.savefig(out / "spearman_correlation_heatmap.pdf", bbox_inches="tight")
+        plt.close(fig)
+
+
+def main() -> None:
+    args = parse_args()
+    args.output.mkdir(parents=True, exist_ok=True)
+    df = pd.read_csv(args.dataset)
+    if "seed" not in df:
+        raise SystemExit("Input must contain a 'seed' column.")
+    if not args.include_failed and "case_qa_pass" in df:
+        qa = df["case_qa_pass"].astype(str).str.lower().isin(["true", "1", "yes"])
+        df = df.loc[qa].copy()
+    missing_targets = [x for x in args.targets if x not in df]
+    if missing_targets:
+        raise SystemExit(f"Missing target columns: {missing_targets}")
+    features = [x for x in CANDIDATE_FEATURES if x in df and df[x].nunique(dropna=True) > 1]
+    if "network_analytic_porosity" not in features:
+        raise SystemExit("Required feature 'network_analytic_porosity' is unavailable or constant.")
+    if len(df) < 10:
+        warnings.warn(f"Only {len(df)} QA-passing cases found; results will be very uncertain.")
+
+    numeric = features + args.targets
+    df[numeric] = df[numeric].apply(pd.to_numeric, errors="coerce")
+    desc = df[["seed"] + numeric].describe().T
+    desc.to_csv(args.output / "descriptor_summary.csv")
+
+    corr = correlations(df, features, args.targets)
+    corr.to_csv(args.output / "correlations.csv", index=False)
+    rng = np.random.default_rng(args.seed)
+    boot = bootstrap_spearman(df, corr, args.bootstrap, rng)
+    boot.to_csv(args.output / "correlation_bootstrap_intervals.csv", index=False)
+    metrics, preds = fit_models(df, features, args.targets, args.seed)
+    metrics.to_csv(args.output / "model_metrics.csv", index=False)
+    preds.to_csv(args.output / "loo_predictions.csv", index=False)
+    perm = permutation_tests(df, features, args.targets, args.permutations, args.seed)
+    perm.to_csv(args.output / "permutation_tests.csv", index=False)
+    importance = loo_permutation_importance(df, features, args.targets, args.seed)
+    importance.to_csv(args.output / "permutation_importance.csv", index=False)
+    plots(df, corr, preds, args.targets, args.output / "figures", args.label_seeds)
+
+    top = {}
+    for target in args.targets:
+        c = corr[corr.target == target].head(5)
+        top[target] = c[["feature", "spearman_rho", "spearman_p_fdr"]].to_dict("records")
+    summary = {
+        "input": str(args.dataset), "qa_cases_analyzed": len(df),
+        "seeds": [int(x) for x in df.seed], "targets": args.targets,
+        "candidate_features_used": features,
+        "compact_model_features": [x for x in COMPACT_FEATURES if x in features],
+        "validation": "leave-one-bed-out cross-validation",
+        "interpretation_warning": (
+            "With about 20 independent beds, correlations and models are exploratory. "
+            "Use effect sizes, bootstrap intervals, permutation tests, and physical "
+            "reasoning together; do not select conclusions from unadjusted p-values."),
+        "top_spearman_correlations": top,
+        "model_metrics": metrics.to_dict("records"),
+    }
+    (args.output / "analysis_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+
+    metric_columns = ["target", "model", "loo_r2", "loo_rmse", "loo_mae"]
+    table = ["| " + " | ".join(metric_columns) + " |",
+             "| " + " | ".join(["---"] * len(metric_columns)) + " |"]
+    for _, r in metrics[metric_columns].iterrows():
+        table.append("| " + " | ".join(
+            str(r[c]) if isinstance(r[c], str) else f"{float(r[c]):.5g}"
+            for c in metric_columns) + " |")
+    lines = ["# CO2 structure--performance analysis", "",
+             f"Analysed **{len(df)}** QA-passing, independent bed realizations.", "",
+             "All reported prediction metrics are leave-one-bed-out results. They are not training scores.", "",
+             "## Model comparison", "", *table, "",
+             "## Interpretation", "",
+             "This is an exploratory small-ensemble analysis. A descriptor should be considered physically useful only when its effect is reasonably stable, its bootstrap interval is informative, and the associated model improves on the porosity-only LOOCV baseline. Inlet-pore count describes inlet topology; it is not itself an inlet-area measurement.", ""]
+    (args.output / "analysis_summary.md").write_text("\n".join(lines), encoding="utf-8")
+    print(f"Analysed {len(df)} QA-passing cases with {len(features)} structural descriptors.")
+    print(metrics[["target", "model", "loo_r2", "loo_rmse", "loo_mae"]].to_string(index=False))
+    print(f"Wrote {args.output}")
+
+
+if __name__ == "__main__":
+    main()

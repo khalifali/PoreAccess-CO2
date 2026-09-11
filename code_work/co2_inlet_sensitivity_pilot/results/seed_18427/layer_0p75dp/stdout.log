@@ -1,0 +1,5 @@
+mode=adsorption, pores=9397, particles=1850, t=1000 s
+final gas=1.298915127e-06 mol, adsorbed=1.163043675e-03 mol
+final mass-balance error=1.863e-15; max=1.029e-12
+final concentration range=[4.912184e-15, 6.050000e+00] mol/m3; physical_bounds_ok=True
+wrote co2_inlet_sensitivity_pilot/results/seed_18427/layer_0p75dp

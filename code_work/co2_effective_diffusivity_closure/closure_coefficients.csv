@@ -1,0 +1,10 @@
+model,parameter,estimate
+porosity_linear,intercept,1.606829260217924e-06
+porosity_linear,slope,-1.899504825892163e-06
+raw_conductance_linear,intercept,-1.0860595068567846e-06
+raw_conductance_linear,slope,64.8752065267558
+accessibility_linear,intercept,-1.0662400068457452e-06
+accessibility_linear,slope,0.36236365283829647
+physical_through_origin,alpha,0.1522854763943895
+accessibility_power_law,coefficient,12622099.42961693
+accessibility_power_law,exponent,2.4969076660213347

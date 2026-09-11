@@ -1,0 +1,245 @@
+# ============================================================================
+# Gravity-filled zeolite 13X packed bed for the DEM--pore-network--GNN study
+# Target: LAMMPS stable_22Jul2025_update5 with GRANULAR package
+#
+# Purpose
+#   Generate one mechanically realizable cylindrical packing of commercial,
+#   approximately spherical zeolite 13X beads.  Repeat this input with 20
+#   different seeds while keeping every other setting unchanged.
+#
+# Physical scope
+#   This file generates and relaxes the dry mechanical packing only.
+#   CO2 diffusion, Toth/Langmuir equilibrium, LDF adsorption and graph learning
+#   are implemented later in the Python pore-network workflow.  Adsorption is
+#   deliberately NOT implemented as a LAMMPS particle force or property.
+#
+# Recommended execution
+#   lmp -var seed_realization 18427 -in in.generate_co2_13x_packed_bed.lammps
+#
+# Suggested 20-seed pilot
+#   18427 27183 31991 40213 47837 52691 61417 69371 74167 81929
+#   90709 98251 105019 113117 121021 129121 137077 145093 153133 161123
+#
+# Important differences from in.generate_equal_porosity_psd.lammps
+#   * cylindrical, non-periodic tube rather than a periodic cubic RVE;
+#   * gravity pouring rather than random centers plus diameter expansion;
+#   * fixed particle number and filling protocol, not exactly fixed porosity;
+#   * final bed height and porosity are measured outputs;
+#   * monodisperse 1.6 mm beads isolate stochastic topology in the first pilot.
+# ============================================================================
+
+clear
+units                   si
+dimension               3
+boundary                f f f
+atom_style              sphere
+atom_modify             map array sort 0 0.0
+newton                  off
+comm_modify             vel yes
+
+# ----------------------------------------------------------------------------
+# 1) Case control
+# ----------------------------------------------------------------------------
+variable seed_realization index 18427
+variable outdir string co2_13x_seed_${seed_realization}
+# LAMMPS implements "shell mkdir" as its own command and does not understand
+# the Unix -p option.  Writing "shell mkdir -p ..." therefore creates a real
+# directory named "-p".  The batch cleanup script removes that stray directory.
+shell mkdir ${outdir}
+
+# ----------------------------------------------------------------------------
+# 2) Zeolite bead and column specification
+# ----------------------------------------------------------------------------
+# Commercial 13X beads with radius near 0.8 mm have been used in published CO2
+# kinetic measurements.  The corresponding 1.6 mm diameter is used here.
+# The apparent bead density of 1600 kg/m^3 is a provisional product-scale value
+# and must be replaced if a specific supplier batch is selected/measured.
+variable Ntarget         index 1850
+variable dp              equal 1.60e-3       # bead diameter [m]
+variable density         equal 1600.0         # apparent bead density [kg/m^3]
+
+# Tube-to-particle ratio Dtube/dp = 10.  With N=1850 and porosity near 0.38,
+# the expected settled bed height is approximately 32 mm (Hbed/Dtube about 2).
+variable Dtube           equal 16.0e-3        # inner tube diameter [m]
+variable Rtube           equal 0.5*v_Dtube
+variable Hbox            equal 70.0e-3        # tube + insertion headspace [m]
+
+# The pouring region is above the expected final bed.  Its radius is reduced by
+# one bead radius so inserted centers do not initially overlap the tube wall.
+variable Rinsert         equal v_Rtube-0.5*v_dp
+variable zPourLo         equal 38.0e-3
+variable zPourHi         equal 58.0e-3
+
+variable pi              equal 3.141592653589793
+variable oneBeadVolume   equal v_pi*v_dp^3/6.0
+variable targetSolidVol  equal v_Ntarget*v_oneBeadVolume
+
+print "CO2 sorbent = commercial zeolite 13X (mechanical packing only)"
+print "Realization seed = ${seed_realization}"
+print "Target particle count = ${Ntarget}"
+print "Bead diameter [m] = ${dp}"
+print "Tube diameter [m] = ${Dtube}"
+print "Tube-to-particle diameter ratio = $(v_Dtube/v_dp)"
+print "Target solid volume [m^3] = ${targetSolidVol}"
+
+# ----------------------------------------------------------------------------
+# 3) Simulation box, cylindrical wall and insertion region
+# ----------------------------------------------------------------------------
+region simulationBox block -${Rtube} ${Rtube} -${Rtube} ${Rtube} &
+                           0.0 ${Hbox} units box
+create_box 1 simulationBox
+
+# The region wall includes the cylindrical side, bottom cap at z=0 and a top
+# cap at Hbox.  The top is sufficiently far above the insertion region and does
+# not contact the final bed.  LAMMPS 22Jul2025 supports region walls here.
+region tube cylinder z 0.0 0.0 ${Rtube} 0.0 ${Hbox} side in units box
+region pourZone cylinder z 0.0 0.0 ${Rinsert} ${zPourLo} ${zPourHi} &
+       side in units box
+
+# ----------------------------------------------------------------------------
+# 4) Mechanical contact model
+# ----------------------------------------------------------------------------
+# The Young's modulus is intentionally softened to permit an affordable DEM
+# timestep.  It is not claimed to be the physical modulus of crystalline 13X.
+# A stiffness sensitivity (1e7, 1e8, 1e9 Pa on selected seeds) is mandatory;
+# packing conclusions are accepted only if normalized overlaps and structural
+# descriptors are insensitive over the converged range.
+variable young           equal 1.0e8           # numerical modulus [Pa]
+variable poisson         equal 0.25
+variable restitution     equal 0.30
+variable friction        equal 0.40
+
+pair_style granular
+pair_coeff * * hertz/material ${young} ${poisson} ${restitution} &
+               tangential mindlin_rescale NULL 1.0 ${friction} damping tsuji
+
+# Use the same provisional contact law for beads and the tube.  The 'contacts'
+# keyword makes per-particle wall-contact flags and forces available for output.
+fix tubeWall all wall/gran/region granular &
+    hertz/material ${young} ${poisson} ${restitution} &
+    tangential mindlin_rescale NULL 1.0 ${friction} damping tsuji &
+    region tube contacts
+
+neighbor                2.5e-4 bin
+neigh_modify            delay 0 every 1 check yes
+
+# About 1% of an estimated Rayleigh contact time for the baseline parameters.
+# Confirm timestep independence on at least one realization.
+timestep                2.0e-7
+
+fix integrate all nve/sphere
+fix gravityFix all gravity 9.81 vector 0.0 0.0 -1.0
+
+# Mild global damping accelerates settling without replacing frictional contact
+# dissipation.  It is held fixed across all counterfactual realizations.
+fix backgroundDamping all viscous 1.0e-4
+
+# Dynamic degrees of freedom are needed because fix pour adds particles.
+compute granularTemp all temp/sphere
+compute_modify granularTemp dynamic/dof yes
+
+# ----------------------------------------------------------------------------
+# 5) Gravity pouring
+# ----------------------------------------------------------------------------
+# Insert exactly Ntarget monodisperse beads.  The insertion region is filled at
+# a moderate instantaneous volume fraction; failed overlap attempts are retried.
+fix pouring all pour ${Ntarget} 1 ${seed_realization} &
+    region pourZone diam one ${dp} dens ${density} ${density} &
+    vol 0.20 100 id next
+
+variable sphereVolume atom 4.0*v_pi*radius^3/3.0
+compute solidVolume all reduce sum v_sphereVolume
+variable maxSpeedAtom atom sqrt(vx*vx+vy*vy+vz*vz)
+compute maxSpeed all reduce max v_maxSpeedAtom
+
+thermo                  10000
+thermo_style            custom step time atoms ke c_granularTemp &
+                        c_solidVolume c_maxSpeed
+thermo_modify           lost error flush yes
+
+dump filling all custom 50000 ${outdir}/filling_*.dump &
+     id type x y z vx vy vz omegax omegay omegaz radius mass fx fy fz
+dump_modify filling sort id format line &
+     "%d %d %.12e %.12e %.12e %.12e %.12e %.12e %.12e %.12e %.12e %.12e %.12e %.12e %.12e %.12e"
+
+# The fix-pour setup output reports its estimated insertion duration.  The
+# baseline run provides 0.6 s of physical time.  If fewer than Ntarget beads are
+# present afterward, increase nPour; never accept an incomplete realization.
+variable nPour           index 3000000
+run ${nPour}
+unfix pouring
+
+# ----------------------------------------------------------------------------
+# 6) Final mechanical relaxation
+# ----------------------------------------------------------------------------
+# Stronger, but still moderate, damping is used only after insertion is complete.
+unfix backgroundDamping
+fix finalDamping all viscous 5.0e-4
+
+# Remove any residual global drift without erasing the local packed structure.
+velocity all zero linear
+reset_timestep 0
+
+# A fixed relaxation interval gives every seed the same protocol.  Mechanical
+# acceptance is based on the reported final kinetic energy, maximum speed and
+# stable bed height, not merely on completion of this run.
+variable nRelax          index 4000000
+run ${nRelax}
+
+undump filling
+
+# ----------------------------------------------------------------------------
+# 7) Final geometry and graph-ready diagnostics
+# ----------------------------------------------------------------------------
+variable particleTop atom z+radius
+variable particleBottom atom z-radius
+compute zTop all reduce max v_particleTop
+compute zBottom all reduce min v_particleBottom
+run 0
+
+variable finalAtoms      equal atoms
+variable finalSolidVol   equal c_solidVolume
+variable finalBedHeight  equal c_zTop
+variable finalBedVolume  equal v_pi*v_Rtube*v_Rtube*v_finalBedHeight
+variable finalPacking    equal v_finalSolidVol/v_finalBedVolume
+variable finalPorosity   equal 1.0-v_finalPacking
+variable finalKE         equal ke
+variable finalMaxSpeed   equal c_maxSpeed
+variable finalMinBottom  equal c_zBottom
+
+# Particle table: solid nodes and geometry used to reconstruct the pore space.
+# Wall-contact columns are: contact flag, wall-force xyz, wall-contact-point xyz
+# and particle radius, following fix wall/gran/region with the contacts keyword.
+write_dump all custom ${outdir}/particles_final.dump &
+     id type x y z radius mass vx vy vz omegax omegay omegaz fx fy fz &
+     f_tubeWall[1] f_tubeWall[2] f_tubeWall[3] f_tubeWall[4] &
+     f_tubeWall[5] f_tubeWall[6] f_tubeWall[7] f_tubeWall[8] &
+     modify sort id
+
+# Interacting bead pairs.  The later Python workflow computes overlap and
+# normalized gap directly from this distance and the saved radii.
+compute pairIDs all property/local patom1 patom2 ptype1 ptype2 cutoff radius
+compute pairState all pair/local dist dx dy dz force fx fy fz &
+                  p1 p2 p3 p4 cutoff radius
+
+dump contacts all local 1 ${outdir}/contacts_final.dump &
+     index c_pairIDs[1] c_pairIDs[2] c_pairIDs[3] c_pairIDs[4] &
+     c_pairState[1] c_pairState[2] c_pairState[3] c_pairState[4] &
+     c_pairState[5] c_pairState[6] c_pairState[7] c_pairState[8] &
+     c_pairState[9] c_pairState[10] c_pairState[11] c_pairState[12]
+dump_modify contacts format line &
+     "%d %.0f %.0f %.0f %.0f %.12e %.12e %.12e %.12e %.12e %.12e %.12e %.12e %.12e %.12e %.12e %.12e"
+dump_modify contacts first yes
+run 1
+undump contacts
+
+write_data    ${outdir}/packing_final.data
+write_restart ${outdir}/packing_final.restart
+
+print "seed Ntarget Nfinal dp_m density_kgm3 Dtube_m D_over_dp solidVolume_m3 bedHeight_m bedVolume_m3 packingFraction porosity minParticleBottom_m kineticEnergy_J maxSpeed_ms" file ${outdir}/packing_summary.dat
+print "${seed_realization} ${Ntarget} ${finalAtoms} ${dp} ${density} ${Dtube} $(v_Dtube/v_dp) ${finalSolidVol} ${finalBedHeight} ${finalBedVolume} ${finalPacking} ${finalPorosity} ${finalMinBottom} ${finalKE} ${finalMaxSpeed}" append ${outdir}/packing_summary.dat
+
+print "Packing generation completed: ${outdir}"
+print "ACCEPT only if Nfinal=Ntarget, the bed is settled, and overlap/geometry checks pass."
+print "For the 20-packing pilot, change only seed_realization."
+print "CO2 diffusion and particle LDF adsorption are added later in the pore-network solver, not here."

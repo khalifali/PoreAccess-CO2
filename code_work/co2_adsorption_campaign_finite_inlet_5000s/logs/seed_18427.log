@@ -1,0 +1,6 @@
+mode=adsorption, pores=9397, particles=1850, t=5000 s
+final gas=1.847560654e-06 mol, adsorbed=1.804905916e-03 mol
+final mass-balance error=7.561e-15; max=9.458e-15
+final concentration range=[3.117319e-08, 6.039777e+00] mol/m3; physical_bounds_ok=True
+finite inlet: labelled pores=20, area=2.010619298e-04 m2, conductance=2.420464125e-06 m3/s
+wrote co2_adsorption_campaign_finite_inlet_5000s/seed_18427

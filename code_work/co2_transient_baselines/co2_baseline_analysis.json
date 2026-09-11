@@ -1,0 +1,90 @@
+{
+  "results_root": "co2_adsorption_campaign_finite_inlet_5000s",
+  "campaign_dataset": "co2_adsorption_finite_inlet_analysis/co2_adsorption_campaign_dataset.csv",
+  "case_count": 20,
+  "fixed_times_s": [
+    100.0,
+    500.0,
+    1000.0,
+    2500.0,
+    5000.0
+  ],
+  "cross_validation": "leave one complete packing out",
+  "ridge_selection": "RidgeCV inside each outer training fold",
+  "predeclared_ridge_features": [
+    "network_inlet_pores",
+    "network_analytic_porosity",
+    "network_geometric_tortuosity",
+    "network_pore_volume_cv",
+    "network_mean_throat_radius_m",
+    "network_throat_radius_p10_m",
+    "network_mean_degree",
+    "network_pore_count",
+    "network_throat_count"
+  ],
+  "targets": [
+    "uptake_100s_mol_kg",
+    "uptake_500s_mol_kg",
+    "uptake_1000s_mol_kg",
+    "uptake_2500s_mol_kg",
+    "uptake_5000s_mol_kg",
+    "t50_final_uptake_s",
+    "normalized_uptake_auc",
+    "particle_loading_cv",
+    "axial_loading_bottom_minus_top_over_mean",
+    "underutilized_particle_fraction"
+  ],
+  "best_nontrivial_baseline_by_target": {
+    "axial_loading_bottom_minus_top_over_mean": {
+      "model": "inlet_plus_tortuosity_linear",
+      "loo_r2": 0.4661588101031747,
+      "loo_nrmse_by_target_std": 0.7121440376791649
+    },
+    "normalized_uptake_auc": {
+      "model": "inlet_plus_tortuosity_linear",
+      "loo_r2": 0.7087232827220131,
+      "loo_nrmse_by_target_std": 0.5260350572101516
+    },
+    "particle_loading_cv": {
+      "model": "inlet_plus_tortuosity_linear",
+      "loo_r2": 0.6137064091739672,
+      "loo_nrmse_by_target_std": 0.6057878434606715
+    },
+    "t50_final_uptake_s": {
+      "model": "inlet_plus_tortuosity_linear",
+      "loo_r2": 0.685183731968706,
+      "loo_nrmse_by_target_std": 0.5468779156536945
+    },
+    "underutilized_particle_fraction": {
+      "model": "inlet_plus_tortuosity_linear",
+      "loo_r2": 0.42302497246745185,
+      "loo_nrmse_by_target_std": 0.7403555066020113
+    },
+    "uptake_1000s_mol_kg": {
+      "model": "inlet_count_linear",
+      "loo_r2": 0.6396598574252581,
+      "loo_nrmse_by_target_std": 0.5850838704373971
+    },
+    "uptake_100s_mol_kg": {
+      "model": "structural_ridge",
+      "loo_r2": 0.9029270782335175,
+      "loo_nrmse_by_target_std": 0.30367626788762797
+    },
+    "uptake_2500s_mol_kg": {
+      "model": "structural_ridge",
+      "loo_r2": 0.6285237976329323,
+      "loo_nrmse_by_target_std": 0.5940558831025193
+    },
+    "uptake_5000s_mol_kg": {
+      "model": "structural_ridge",
+      "loo_r2": 0.5950824301417825,
+      "loo_nrmse_by_target_std": 0.6202190672377839
+    },
+    "uptake_500s_mol_kg": {
+      "model": "structural_ridge",
+      "loo_r2": 0.7762183878737362,
+      "loo_nrmse_by_target_std": 0.4610775764662066
+    }
+  },
+  "interpretation": "These 20-case results define what a future graph model must beat. They are not a final estimate of GNN generalization."
+}

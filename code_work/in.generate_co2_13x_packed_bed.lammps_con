@@ -1,0 +1,45 @@
+clear
+units si
+dimension 3
+boundary f f f
+atom_style sphere
+atom_modify map array sort 0 0.0
+newton off
+comm_modify vel yes
+
+read_restart co2_13x_seed_18427/packing_final.restart
+
+variable Rtube      equal 8.0e-3
+variable Hbox       equal 70.0e-3
+variable young      equal 1.0e8
+variable poisson    equal 0.25
+variable restitution equal 0.30
+variable friction   equal 0.40
+
+region tube cylinder z 0.0 0.0 ${Rtube} 0.0 ${Hbox} side in units box
+
+pair_style granular
+pair_coeff * * hertz/material ${young} ${poisson} ${restitution} &
+    tangential mindlin_rescale NULL 1.0 ${friction} damping tsuji
+
+fix tubeWall all wall/gran/region granular &
+    hertz/material ${young} ${poisson} ${restitution} &
+    tangential mindlin_rescale NULL 1.0 ${friction} damping tsuji &
+    region tube contacts
+
+neighbor 2.5e-4 bin
+neigh_modify delay 0 every 1 check yes
+timestep 2.0e-7
+
+fix integrate all nve/sphere
+fix gravityFix all gravity 9.81 vector 0.0 0.0 -1.0
+fix finalDamping all viscous 5.0e-4
+
+variable speed atom sqrt(vx*vx+vy*vy+vz*vz)
+compute maxSpeed all reduce max v_speed
+
+thermo 10000
+thermo_style custom step time atoms ke c_maxSpeed
+thermo_modify lost error flush yes
+
+run 2000000

@@ -1,0 +1,53 @@
+{
+  "network": "co2_inlet_sensitivity_pilot/networks/seed_18427/layer_1dp",
+  "mode": "adsorption",
+  "parameters": {
+    "network": "co2_inlet_sensitivity_pilot/networks/seed_18427/layer_1dp",
+    "output": "co2_inlet_sensitivity_pilot/results/seed_18427/layer_1dp",
+    "mode": "adsorption",
+    "diffusivity": 1.5e-05,
+    "inlet_concentration": 6.05,
+    "initial_concentration": 0.0,
+    "temperature": 298.15,
+    "particle_density": 1600.0,
+    "qsat": 5.332,
+    "b_pa": 5.093e-05,
+    "toth_exponent": 1.0,
+    "k_ldf": 0.00855,
+    "initial_loading": 0.0,
+    "t_end": 1000.0,
+    "outputs": 201,
+    "linear_output_times": false,
+    "rtol": 1e-06,
+    "atol": 1e-10,
+    "max_step": Infinity
+  },
+  "parameters_units": {
+    "diffusivity": "m2/s",
+    "concentration": "mol/m3",
+    "qsat": "mol/kg",
+    "b_pa": "1/Pa",
+    "k_ldf": "1/s"
+  },
+  "pore_count": 9397,
+  "free_pores": 9198,
+  "fixed_inlet_pores": 199,
+  "particle_count": 1850,
+  "throat_count": 18104,
+  "initial_inventory_mol": 8.442042499037814e-07,
+  "solver_success": true,
+  "solver_message": "The solver successfully reached the end of the integration interval.",
+  "rhs_evaluations": 690,
+  "final_relative_mass_balance_error": 2.977702929564788e-15,
+  "maximum_relative_mass_balance_error": 1.0574324816024194e-12,
+  "final_minimum_concentration_mol_m3": 1.651276531416111e-14,
+  "final_maximum_concentration_mol_m3": 6.05,
+  "final_minimum_loading_mol_kg": 8.634108633337557e-15,
+  "physical_bounds_ok": true,
+  "boundary_conditions": {
+    "bottom_inlet": "fixed concentration",
+    "top": "no external flux",
+    "wall": "no external flux"
+  },
+  "incidence_weighting": "adjacent pore-volume normalized per particle"
+}

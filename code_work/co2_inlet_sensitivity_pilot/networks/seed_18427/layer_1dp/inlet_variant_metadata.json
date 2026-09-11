@@ -1,0 +1,13 @@
+{
+  "seed": 18427,
+  "source_network": "/home/khalifa/Projects/CO2bed/co2_pore_networks_power22/seed_18427",
+  "labelling_rule": "pore_z <= bottom + inlet_layer_dp * particle_diameter",
+  "bottom_m": 0.0,
+  "particle_diameter_m": 0.0016,
+  "inlet_layer_dp": 1.0,
+  "inlet_cutoff_z_m": 0.0016,
+  "original_inlet_pores": 20,
+  "sensitivity_inlet_pores": 199,
+  "pore_count": 9397,
+  "topology_and_geometry_reused": true
+}

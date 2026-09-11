@@ -1,0 +1,245 @@
+{
+  "input": "co2_adsorption_finite_inlet_analysis/co2_adsorption_campaign_dataset.csv",
+  "qa_cases_analyzed": 20,
+  "seeds": [
+    105019,
+    113117,
+    121021,
+    129121,
+    137077,
+    145093,
+    153133,
+    161123,
+    18427,
+    27183,
+    31991,
+    40213,
+    47837,
+    52691,
+    61417,
+    69371,
+    74167,
+    81929,
+    90709,
+    98251
+  ],
+  "targets": [
+    "final_uptake_mol_kg",
+    "t50_final_uptake_s",
+    "underutilized_particle_fraction"
+  ],
+  "candidate_features_used": [
+    "network_analytic_porosity",
+    "network_geometric_tortuosity",
+    "network_inlet_pores",
+    "network_outlet_pores",
+    "network_pore_count",
+    "network_throat_count",
+    "network_mean_degree",
+    "network_degree_cv",
+    "network_mean_pore_volume_m3",
+    "network_median_pore_volume_m3",
+    "network_pore_volume_cv",
+    "network_mean_throat_radius_m",
+    "network_median_throat_radius_m",
+    "network_throat_radius_p10_m",
+    "network_minimum_throat_radius_m",
+    "network_mean_throat_length_m",
+    "network_shortest_inlet_outlet_path_m",
+    "network_total_pore_volume_m3"
+  ],
+  "compact_model_features": [
+    "network_analytic_porosity",
+    "network_geometric_tortuosity",
+    "network_inlet_pores",
+    "network_throat_radius_p10_m",
+    "network_pore_volume_cv",
+    "network_mean_degree"
+  ],
+  "validation": "leave-one-bed-out cross-validation",
+  "interpretation_warning": "With about 20 independent beds, correlations and models are exploratory. Use effect sizes, bootstrap intervals, permutation tests, and physical reasoning together; do not select conclusions from unadjusted p-values.",
+  "top_spearman_correlations": {
+    "final_uptake_mol_kg": [
+      {
+        "feature": "network_inlet_pores",
+        "spearman_rho": 0.7470215268897568,
+        "spearman_p_fdr": 0.002771848722004628
+      },
+      {
+        "feature": "network_geometric_tortuosity",
+        "spearman_rho": -0.4586466165413533,
+        "spearman_p_fdr": 0.2752995528000385
+      },
+      {
+        "feature": "network_shortest_inlet_outlet_path_m",
+        "spearman_rho": -0.45112781954887216,
+        "spearman_p_fdr": 0.2752995528000385
+      },
+      {
+        "feature": "network_throat_count",
+        "spearman_rho": 0.24812030075187969,
+        "spearman_p_fdr": 0.8225160477290997
+      },
+      {
+        "feature": "network_pore_count",
+        "spearman_rho": 0.22874348085666485,
+        "spearman_p_fdr": 0.8225160477290997
+      }
+    ],
+    "t50_final_uptake_s": [
+      {
+        "feature": "network_inlet_pores",
+        "spearman_rho": -0.7706517996791267,
+        "spearman_p_fdr": 0.0012603656135359758
+      },
+      {
+        "feature": "network_mean_throat_radius_m",
+        "spearman_rho": 0.5112781954887218,
+        "spearman_p_fdr": 0.13835537684504515
+      },
+      {
+        "feature": "network_median_throat_radius_m",
+        "spearman_rho": 0.5052631578947367,
+        "spearman_p_fdr": 0.13835537684504515
+      },
+      {
+        "feature": "network_mean_pore_volume_m3",
+        "spearman_rho": 0.3924812030075188,
+        "spearman_p_fdr": 0.270504686267033
+      },
+      {
+        "feature": "network_pore_count",
+        "spearman_rho": 0.3799850586599202,
+        "spearman_p_fdr": 0.270504686267033
+      }
+    ],
+    "underutilized_particle_fraction": [
+      {
+        "feature": "network_inlet_pores",
+        "spearman_rho": -0.7419646453686882,
+        "spearman_p_fdr": 0.003245600213893424
+      },
+      {
+        "feature": "network_geometric_tortuosity",
+        "spearman_rho": 0.4279804740420139,
+        "spearman_p_fdr": 0.3894309610612974
+      },
+      {
+        "feature": "network_shortest_inlet_outlet_path_m",
+        "spearman_rho": 0.42045884883916657,
+        "spearman_p_fdr": 0.3894309610612974
+      },
+      {
+        "feature": "network_throat_count",
+        "spearman_rho": -0.28281310762706013,
+        "spearman_p_fdr": 0.8097064325146833
+      },
+      {
+        "feature": "network_pore_count",
+        "spearman_rho": -0.2547986631345745,
+        "spearman_p_fdr": 0.8097064325146833
+      }
+    ]
+  },
+  "model_metrics": [
+    {
+      "target": "final_uptake_mol_kg",
+      "model": "porosity_only_ridge",
+      "n": 20,
+      "n_features": 1,
+      "loo_r2": -0.22104831992341722,
+      "loo_rmse": 0.03145979525895488,
+      "loo_mae": 0.025484094093351208,
+      "normalized_rmse_by_std": 1.0770310598711843,
+      "mae_improvement_over_global_mean_pct": -11.14051728915476
+    },
+    {
+      "target": "final_uptake_mol_kg",
+      "model": "compact_ridge",
+      "n": 20,
+      "n_features": 6,
+      "loo_r2": 0.41920455938030476,
+      "loo_rmse": 0.02169706878934478,
+      "loo_mae": 0.0176225295944763,
+      "normalized_rmse_by_std": 0.7428025771284794,
+      "mae_improvement_over_global_mean_pct": 23.145117582008666
+    },
+    {
+      "target": "final_uptake_mol_kg",
+      "model": "compact_random_forest",
+      "n": 20,
+      "n_features": 6,
+      "loo_r2": 0.3799233010719969,
+      "loo_rmse": 0.022418790192518613,
+      "loo_mae": 0.017669011098455804,
+      "normalized_rmse_by_std": 0.7675108233644676,
+      "mae_improvement_over_global_mean_pct": 22.942403748911968
+    },
+    {
+      "target": "t50_final_uptake_s",
+      "model": "porosity_only_ridge",
+      "n": 20,
+      "n_features": 1,
+      "loo_r2": -0.08077904031948946,
+      "loo_rmse": 65.19456556628397,
+      "loo_mae": 52.5098227810318,
+      "normalized_rmse_by_std": 1.013281840508116,
+      "mae_improvement_over_global_mean_pct": 0.36788215037616456
+    },
+    {
+      "target": "t50_final_uptake_s",
+      "model": "compact_ridge",
+      "n": 20,
+      "n_features": 6,
+      "loo_r2": 0.6044695292710323,
+      "loo_rmse": 39.439637254616954,
+      "loo_mae": 32.966848890853534,
+      "normalized_rmse_by_std": 0.6129877218937746,
+      "mae_improvement_over_global_mean_pct": 37.44871340508989
+    },
+    {
+      "target": "t50_final_uptake_s",
+      "model": "compact_random_forest",
+      "n": 20,
+      "n_features": 6,
+      "loo_r2": 0.3047884306313686,
+      "loo_rmse": 52.287928206211525,
+      "loo_mae": 41.66102340897741,
+      "normalized_rmse_by_std": 0.812681358774889,
+      "mae_improvement_over_global_mean_pct": 20.952389968481
+    },
+    {
+      "target": "underutilized_particle_fraction",
+      "model": "porosity_only_ridge",
+      "n": 20,
+      "n_features": 1,
+      "loo_r2": -0.22665112582278524,
+      "loo_rmse": 0.02084160467892703,
+      "loo_mae": 0.016958063458806204,
+      "normalized_rmse_by_std": 1.0794992216447616,
+      "mae_improvement_over_global_mean_pct": -11.44730869908175
+    },
+    {
+      "target": "underutilized_particle_fraction",
+      "model": "compact_ridge",
+      "n": 20,
+      "n_features": 6,
+      "loo_r2": 0.26102319412809427,
+      "loo_rmse": 0.01617655455966754,
+      "loo_mae": 0.012457917783766098,
+      "normalized_rmse_by_std": 0.8378710912654228,
+      "mae_improvement_over_global_mean_pct": 18.127360923739584
+    },
+    {
+      "target": "underutilized_particle_fraction",
+      "model": "compact_random_forest",
+      "n": 20,
+      "n_features": 6,
+      "loo_r2": 0.4265217962801635,
+      "loo_rmse": 0.01425046648985404,
+      "loo_mae": 0.011086598337473375,
+      "normalized_rmse_by_std": 0.7381085919658739,
+      "mae_improvement_over_global_mean_pct": 27.13958463827436
+    }
+  ]
+}

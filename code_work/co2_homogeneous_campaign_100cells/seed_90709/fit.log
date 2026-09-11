@@ -1,0 +1,14 @@
+fit D_eff=1.63364960e-07 m2/s, normalized RMSE=3.787888e-01
+fit D_eff=9.18189558e-07 m2/s, normalized RMSE=3.163348e-02
+fit D_eff=2.66881100e-06 m2/s, normalized RMSE=5.036904e-01
+fit D_eff=5.99226591e-07 m2/s, normalized RMSE=1.111211e-01
+fit D_eff=1.38016131e-06 m2/s, normalized RMSE=1.797009e-01
+fit D_eff=8.54403168e-07 m2/s, normalized RMSE=2.118764e-02
+fit D_eff=8.19533048e-07 m2/s, normalized RMSE=2.568103e-02
+fit D_eff=8.57311795e-07 m2/s, normalized RMSE=2.117327e-02
+fit D_eff=8.58629006e-07 m2/s, normalized RMSE=2.118657e-02
+fit D_eff=8.55996605e-07 m2/s, normalized RMSE=2.117229e-02
+mode=fit, cells=100, D_eff=8.55996605e-07 m2/s, t=5000 s
+final loading=2.735504640e-01 mol/kg; max mass-balance error=1.299e-07
+fit normalized RMSE=2.117229e-02
+wrote co2_homogeneous_campaign_100cells/seed_90709

@@ -1,0 +1,53 @@
+{
+  "network": "co2_pore_networks_power22/seed_137077",
+  "mode": "adsorption",
+  "parameters": {
+    "network": "co2_pore_networks_power22/seed_137077",
+    "output": "co2_adsorption_campaign_5000s/seed_137077",
+    "mode": "adsorption",
+    "diffusivity": 1.5e-05,
+    "inlet_concentration": 6.05,
+    "initial_concentration": 0.0,
+    "temperature": 298.15,
+    "particle_density": 1600.0,
+    "qsat": 5.332,
+    "b_pa": 5.093e-05,
+    "toth_exponent": 1.0,
+    "k_ldf": 0.00855,
+    "initial_loading": 0.0,
+    "t_end": 5000.0,
+    "outputs": 301,
+    "linear_output_times": false,
+    "rtol": 1e-06,
+    "atol": 1e-10,
+    "max_step": Infinity
+  },
+  "parameters_units": {
+    "diffusivity": "m2/s",
+    "concentration": "mol/m3",
+    "qsat": "mol/kg",
+    "b_pa": "1/Pa",
+    "k_ldf": "1/s"
+  },
+  "pore_count": 9333,
+  "free_pores": 9311,
+  "fixed_inlet_pores": 22,
+  "particle_count": 1850,
+  "throat_count": 17981,
+  "initial_inventory_mol": 2.3301344822930633e-07,
+  "solver_success": true,
+  "solver_message": "The solver successfully reached the end of the integration interval.",
+  "rhs_evaluations": 687,
+  "final_relative_mass_balance_error": 2.83672601120247e-14,
+  "maximum_relative_mass_balance_error": 1.2740962029863048e-13,
+  "final_minimum_concentration_mol_m3": 9.271343314068388e-09,
+  "final_maximum_concentration_mol_m3": 6.05,
+  "final_minimum_loading_mol_kg": 1.3440584943129104e-08,
+  "physical_bounds_ok": true,
+  "boundary_conditions": {
+    "bottom_inlet": "fixed concentration",
+    "top": "no external flux",
+    "wall": "no external flux"
+  },
+  "incidence_weighting": "adjacent pore-volume normalized per particle"
+}

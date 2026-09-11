@@ -1,0 +1,2 @@
+seed Ntarget Nfinal dp_m density_kgm3 Dtube_m D_over_dp solidVolume_m3 bedHeight_m bedVolume_m3 packingFraction porosity minParticleBottom_m kineticEnergy_J maxSpeed_ms
+52691 1850 1850 0.0016 1600 0.016 10 3.96762208197362e-06 0.0367044110712843 7.37985972325674e-06 0.537628387362179 0.462371612637821 -1.07557696288547e-06 7.26541652242614e-21 6.50736345303069e-08
