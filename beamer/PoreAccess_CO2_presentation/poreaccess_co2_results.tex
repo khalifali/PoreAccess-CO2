@@ -403,72 +403,192 @@
 \end{frame}
 
 % -----------------------------------------------------------------------------
-\begin{frame}{Nearly equal porosity produced clearly different uptake curves}
-  \centering
-  \includegraphics[width=0.93\textwidth,height=0.68\textheight,keepaspectratio]{figures/fig_campaign_variability.pdf}
-  \vspace{-0.15cm}
-  \result{Porosity CV: $0.55\%$. Final-uptake CV: $11.0\%$ \enspace (range: $0.206$--$0.315$ mol kg$^{-1}$).}
-\end{frame}
-
-% -----------------------------------------------------------------------------
-\begin{frame}{Accessibility explains the response that porosity misses}
-  \centering
-  \includegraphics[width=0.94\textwidth,height=0.60\textheight,keepaspectratio]{figures/fig_accessibility_responses.pdf}
-  \vspace{-0.05cm}
-  \[
-    \scriptstyle
-    f_{\rm under}=\frac{1}{N_p}\sum_{k=1}^{N_p}
-    \mathbb{I}\!\left[q_k(5000\,{\rm s})<0.5\,q^*(p_{\rm inlet})\right].
-  \]
-  \vspace{-0.20cm}
-  \result{Higher $G_{\rm access}$ gives greater uptake and fewer particles below 50\% of the inlet-equilibrium loading.}
-\end{frame}
-
-% -----------------------------------------------------------------------------
-\begin{frame}{For each bed, $D_{\rm eff}$ is fitted to the complete uptake curve}
-  \centering
-  
-  \vspace*{0.2cm}
-  %\vspace{0.1cm}
-  \centering
-  \includegraphics[width=0.86\textwidth,height=0.54\textheight,keepaspectratio]{figures/fig_homogeneous_fits.pdf}
-  
- % \vspace{-0.06cm}
-    \scriptsize
- (a) Solid lines: pore-network reference $\overline q_{\rm PNM}(t)$\quad
-  Dashed lines: 1D model $\overline q_{\rm 1D}(t;D_{\rm eff})$\\
-  \vspace*{0.2cm}
-  
-  \scriptsize  (b) Residual $\overline q_{\rm 1D}-\overline q_{\rm PNM}$:
-  positive values are overpredictions and negative values are underpredictions.
-  
+\begin{frame}{The twenty beds have nearly equal bulk porosity}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.65\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_porosity_variability.pdf}
+    \column{0.32\textwidth}
+    \small
+    \hi{Controlled ensemble}
+\begin{itemize}
+\item same bead count and diameter
+\item same tube geometry
+\item only the insertion seed changes
+\end{itemize}
+\medskip
+$\mathrm{CV}_{\varepsilon}=s_{\varepsilon}/\overline{\varepsilon}$
+  \end{columns}
   \vspace{0.12cm}
-  \small
-  \result{Across all 20 beds, the time-weighted NRMSE is 0.84--2.46\%, with a mean of 1.58\%.}
+  {\small\result{Bulk-porosity CV: $0.55\%$.}}
 \end{frame}
 
 % -----------------------------------------------------------------------------
-\begin{frame}{The closure maps a cheap descriptor to the fitted coefficient}
-  \begin{FlexRow}{0.59\textheight}
-    \Col{0.34}{
-      \hi{Closures compared}
-      \[
-      \begin{aligned}
-        D_{\rm eff}&=a_0+a_1\varepsilon_b,\\
-        D_{\rm eff}&=\alpha D_{\rm access},\\
-        \frac{D_{\rm eff}}{D_m}&=C
-        \left(\frac{D_{\rm access}}{D_m}\right)^n.
-      \end{aligned}
-      \]
-      \small Complete beds are left out during fitting and then predicted.}
-    \Col{0.63}{\centering
-      \includegraphics[width=\linewidth,height=0.48\textheight,keepaspectratio]{figures/fig_diffusivity_closure.pdf}
-      \par\scriptsize\textbf{(a)} Selected power-law fit. $\rho_s$ is the Spearman rank correlation; $p$ tests the absence of a monotonic association.\\[0.15cm]
-      \textbf{(b)} Held-out predictions from all three models; the proportional model is the orange series.}
-  \end{FlexRow}
-  
-  \vspace*{0.9cm}
-  \result{The positive power law gives LOOCV $R^2=0.890$; porosity gives $R^2=-0.234$.}
+\begin{frame}{Similar porosity still produces different uptake curves}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.65\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_uptake_curves.pdf}
+    \column{0.32\textwidth}
+    \small
+    \hi{Network reference}
+\begin{itemize}
+\item all twenty uptake curves
+\item highlighted beds span low, median and high final uptake
+\item identical adsorption parameters
+\end{itemize}
+  \end{columns}
+  \vspace{0.12cm}
+  {\small\result{At 5000 s: $0.206$--$0.315$ mol kg$^{-1}$, with an uptake CV of $11.0\%$.}}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{Bulk porosity alone does not explain final uptake}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.65\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_porosity_uptake.pdf}
+    \column{0.32\textwidth}
+    \small
+    \hi{Porosity baseline}
+\begin{itemize}
+\item each point represents one bed
+\item weak rank association
+\item wide uncertainty around the fitted relationship
+\end{itemize}
+  \end{columns}
+  \vspace{0.12cm}
+  {\small\result{Void volume alone does not describe access to the adsorbent.}}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{Accessibility explains differences in final uptake}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.65\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_accessibility_uptake.pdf}
+    \column{0.32\textwidth}
+    \small
+    \hi{Steady network descriptor}
+\begin{itemize}
+\item $G_{\rm access}$ measures inlet-to-interior conductance
+\item greater conductance accompanies greater uptake
+\end{itemize}
+\medskip
+Spearman $\rho_s=0.968$.
+  \end{columns}
+  \vspace{0.12cm}
+  {\small\result{Inlet-connected pathways explain variability that porosity misses.}}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{Greater accessibility reduces particle underutilization}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.65\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_accessibility_utilization.pdf}
+    \column{0.32\textwidth}
+    \small
+    \hi{Underutilized fraction}
+\[
+ f_{\rm under}=\frac{1}{N_p}\sum_{k=1}^{N_p} I_k.
+\]
+$I_k=1$ when
+\[
+ q_k(t_f)<0.5q^*(p_{\rm inlet}).
+\]
+$t_f=5000$ s.
+\medskip
+\par The indicator equals one for a particle below half the inlet-equilibrium loading.
+  \end{columns}
+  \vspace{0.12cm}
+  {\small\result{Higher $G_{\rm access}$ accompanies fewer underutilized particles.}}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{One fitted $D_{\rm eff}$ reproduces each uptake curve}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.65\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_homogeneous_uptake.pdf}
+    \column{0.32\textwidth}
+    \small
+    \hi{Per-bed optimization}
+\begin{enumerate}
+\item solve the 1D model for a trial $D$
+\item compare the full uptake curve with the network
+\item minimize time-weighted NRMSE
+\end{enumerate}
+\medskip
+Solid: network.\\Dashed: fitted 1D model.
+  \end{columns}
+  \vspace{0.12cm}
+  {\small\result{Across twenty beds, the mean fitted-curve NRMSE is $1.58\%$.}}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{Residuals show the remaining reduction error}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.65\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_homogeneous_residuals.pdf}
+    \column{0.32\textwidth}
+    \small
+    \hi{Curve residual}
+\[
+ e(t)=\overline q_{\rm 1D}(t)-\overline q_{\rm PNM}(t).
+\]
+\begin{itemize}
+\item positive: excess predicted uptake
+\item negative: insufficient predicted uptake
+\end{itemize}
+  \end{columns}
+  \vspace{0.12cm}
+  {\small\result{Time-weighted NRMSE across all beds: $0.84$--$2.46\%$.}}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{A positive power law relates accessibility to diffusivity}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.65\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_closure_power_law.pdf}
+    \column{0.32\textwidth}
+    \small
+    \hi{Selected closure}
+\[
+ \frac{D_{\rm eff}}{D_m}=C\left(\frac{D_{\rm access}}{D_m}\right)^n.
+\]
+\[
+ D_{\rm access}=\frac{G_{\rm access}H}{A_{\rm tube}}.
+\]
+\medskip
+The shaded band shows bootstrap uncertainty in the fitted relationship.
+  \end{columns}
+  \vspace{0.12cm}
+  {\small\result{The fitted exponent is $n\approx2.50$ for this ensemble.}}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{The closure predicts diffusivity for a withheld bed}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.65\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_closure_held_out.pdf}
+    \column{0.32\textwidth}
+    \small
+    \hi{Closures compared}
+\[
+\begin{aligned}
+ D_{\rm eff}&=a_0+a_1\varepsilon_b,\\
+ D_{\rm eff}&=\alpha D_{\rm access},\\
+ \frac{D_{\rm eff}}{D_m}&=C\left(\frac{D_{\rm access}}{D_m}\right)^n.
+\end{aligned}
+\]
+Fit on nineteen beds, then predict the remaining bed.
+  \end{columns}
+  \vspace{0.12cm}
+  {\small\result{LOOCV $R^2$: power law $0.890$, proportional $0.555$, porosity $-0.234$.}}
 \end{frame}
 
 % -----------------------------------------------------------------------------
@@ -540,11 +660,44 @@
 \end{frame}
 
 % -----------------------------------------------------------------------------
-\begin{frame}{The conclusion is stable from $3d_p$ to $10d_p$}
-  \centering
-  \includegraphics[width=0.93\textwidth,height=0.66\textheight,keepaspectratio]{figures/fig_accessibility_depth.pdf}
-  \vspace{-0.12cm}
-  \result{$5d_p$ is retained because it lies beyond the immediate inlet layer and gives the strongest prediction.}
+\begin{frame}{Accessibility remains correlated across diagnostic depths}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.65\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_depth_correlations.pdf}
+    \column{0.32\textwidth}
+    \small
+    \hi{Depth sensitivity}
+\begin{itemize}
+\item planes at $3$, $5$, $7$ and $10d_p$
+\item Pearson: linear association
+\item Spearman: rank association
+\end{itemize}
+\medskip
+Depth is measured above each network's lowest pore.
+  \end{columns}
+  \vspace{0.12cm}
+  {\small\result{Both correlations remain high across the tested depths.}}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{Predictive performance is stable across diagnostic depths}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.65\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_depth_prediction.pdf}
+    \column{0.32\textwidth}
+    \small
+    \hi{Models in this comparison}
+\begin{itemize}
+\item affine accessibility model
+\item proportional model
+\end{itemize}
+\medskip
+The $5d_p$ plane gives the highest affine-model score in this ensemble.
+  \end{columns}
+  \vspace{0.12cm}
+  {\small\result{The affine accessibility model remains predictive from $3d_p$ to $10d_p$.}}
 \end{frame}
 
 % -----------------------------------------------------------------------------

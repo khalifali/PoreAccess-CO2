@@ -5,7 +5,7 @@ Each figure is an independent canvas without panel lettering. PDF/SVG are vector
 formats; PNG is exported at 600 dpi. Blue, orange and green use the Okabe–Ito palette.
 Shaded bands show pointwise bootstrap uncertainty of a fitted relationship, not
 individual-bed prediction intervals. The original composite files remain only
-because current document sources reference them.
+because the current paper source references them. Both Beamer decks use the standalone PDFs.
 
 - [porosity variability](fig_porosity_variability.pdf) · [SVG](fig_porosity_variability.svg) · [PNG](fig_porosity_variability.png)
 - [uptake curves](fig_uptake_curves.pdf) · [SVG](fig_uptake_curves.svg) · [PNG](fig_uptake_curves.png)
