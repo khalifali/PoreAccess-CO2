@@ -1,6 +1,6 @@
 # Beamer presentation
 
-Both versions contain 32 slides. The results section uses eleven standalone
+Both versions contain 32 main slides plus 6 backup slides. The results section uses eleven standalone
 figures, each on its own slide, with editable explanatory text. Speaker notes
 follow the same slide order and refer to the individual figures.
 

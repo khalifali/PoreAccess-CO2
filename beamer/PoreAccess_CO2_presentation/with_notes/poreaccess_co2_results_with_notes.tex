@@ -2,6 +2,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern,graphicx,amsmath,booktabs}
+\usepackage{appendixnumberbeamer}
 \usepackage{xcolor,tikz}
 \usepackage{pgfpages}
 \usetikzlibrary{arrows.meta,positioning,calc,fit,shapes.geometric}
@@ -305,7 +306,7 @@
       tube diameter & 16 mm\\
       $D_{\rm tube}/d_p$ & 10\\
       temperature & 298.15 K\\
-      inlet $c_{\rm CO_2}$ & 6.05 mol m$^{-3}$\\
+      inlet $c_{\rm CO_2}$ & 6.05 mol m$^{-3}$\textsuperscript{*}\\
       simulation time & 5000 s\\\bottomrule
       \end{tabular}}
     \Col{0.53}{
@@ -319,7 +320,8 @@
   \end{FlexRow}
 
   \vspace*{0.5cm}
-  \result{The ensemble tests arrangement effects under otherwise identical conditions.}
+  {\scriptsize\textsuperscript{*}Approximately 15 vol.\% CO$_2$ at atmospheric pressure and 298 K.}\par
+\result{The ensemble tests arrangement effects under otherwise identical conditions.}
   \note{
     We generated twenty independent beds. Every listed physical and numerical
     condition remains fixed, including the number and diameter of the beads,
@@ -342,14 +344,16 @@
     \column{0.46\textwidth}
       \hi{Network construction}
       \footnotesize
-      \begin{itemize}
+      \begin{itemize}\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}
         \item four bead centres define a Delaunay tetrahedron; its circumcentre is a pore body
         \item tetrahedra sharing a triangular face are joined by a throat
         \item topology comes from particle coordinates, not voxels
       \end{itemize}
       \vspace{0.12cm}
-      A low-discrepancy Sobol sample of $2^{22}$ points allocates the analytically
-      calculated void volume to pore bodies; it does not define connectivity.
+      \begin{itemize}\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}
+        \item $2^{22}$ Sobol points sample the solid and gas space.
+        \item Gas-point counts allocate the calculated void volume to pores.
+      \end{itemize}
     \column{0.50\textwidth}
       \hi{Diffusion through throat $i$--$j$}
       \[
@@ -396,28 +400,30 @@
       \[
         \frac{dq_k}{dt}=k_{\rm LDF}\,(q_k^*-q_k).
       \]
-      \small
-      $q_s$ is the maximum CO$_2$ loading [mol/kg adsorbent].
-      $b$ is the Langmuir affinity,
-      $p_k$ is the local CO$_2$ partial pressure, and $q_k^*$ is the
-      corresponding equilibrium loading. The product $b\,p_k$ is dimensionless.
+      \footnotesize
+      \begin{itemize}\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}
+        \item $q_s$: maximum CO$_2$ loading [mol/kg adsorbent]
+        \item $b$: Langmuir affinity [Pa$^{-1}$], with $b p_k$ dimensionless
+        \item $p_k$: local CO$_2$ partial pressure [Pa]
+        \item $q_k^*$: equilibrium loading at $p_k$
+      \end{itemize}
     \column{0.44\textwidth}
       \hi{Meaning of the rate equation}
       \small
-      \begin{itemize}
+      \begin{itemize}\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}
         \item $q_k$ is the current loading of bead $k$
         \item $k_{\rm LDF}$ controls how quickly $q_k$ approaches $q_k^*$
         \item gas removed from adjacent pores is added to the bead
       \end{itemize}
       \vspace{0.18cm}
       \hi{Pore-network outputs}
-      \begin{itemize}
+      \begin{itemize}\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}
         \item pore concentrations $c_i(t)$
         \item particle loadings $q_k(t)$
         \item mean uptake $\overline q_{\rm PNM}(t)$
       \end{itemize}
   \end{columns}
-  \result{The coupled diffusion--adsorption calculation conserves the total amount of CO$_2$.}
+  \result{Coupled diffusion and adsorption conserve the CO$_2$ inventory.}
   \note{
     Diffusion supplies a local gas concentration $c_k$ around bead $k$. We
     convert it to partial pressure through $p_k=c_kRT$. The Langmuir equation
@@ -495,8 +501,10 @@
         \frac{\partial q}{\partial t}
         =k_{\rm LDF}\,[q^*(c)-q].
       \]
-      For each trial $D$, solve both equations together for $c(z,t)$ and
-      $q(z,t)$ in 100 cells, with prescribed initial and boundary conditions.
+      \begin{itemize}
+        \item Solve both equations together for $c(z,t)$ and $q(z,t)$.
+        \item Use 100 cells and prescribed initial and boundary conditions.
+      \end{itemize}
     \column{0.41\textwidth}
       \hi{Quantity compared with the network}
       \[
@@ -504,9 +512,11 @@
         =\frac{1}{H}\int_0^H q(z,t;D)\,dz.
       \]
       \small
-      The 1D model uses the same bed height, porosity, inlet condition,
-      Langmuir parameters, LDF coefficient and initial state as the pore network.
-      Only $D$ changes during fitting.
+      \begin{itemize}
+        \item Match the network's bed height, porosity and inlet condition.
+        \item Use the same Langmuir parameters, LDF coefficient and initial state.
+        \item Only $D$ changes during fitting.
+      \end{itemize}
   \end{columns}
   \vspace{0.18cm}
   \result{For every trial $D$, the 1D solver produces a complete mean uptake curve.}
@@ -1045,4 +1055,379 @@ The $5d_p$ plane gives the highest linear-model score in this ensemble.
     link to the underlying packing structure.
   }
 \end{frame}
+\appendix
+\section[Backup]{Backup: pore-network construction}
+\begin{frame}{}
+\vfill
+{\large\color{tumgray}Backup slides}\par\vspace{0.4cm}
+{\LARGE\color{tumblue}\textbf{How the pore network is constructed}}\par\vspace{0.5cm}
+{\large Particle geometry, Sobol volume allocation and transport}
+\vfill
+\note{These supplementary slides explain the construction in the code. The sketches illustrate the method and are not extracted simulation geometries.}
+\end{frame}
+
+\begin{frame}{1. Particle positions define candidate pore nodes}
+\begin{columns}[c,onlytextwidth]
+\column{0.47\textwidth}\centering
+\begin{tikzpicture}[scale=1.0]
+\coordinate (a) at (0,0);\coordinate (b) at (3.4,0.3);\coordinate (c) at (1.0,1.4);\coordinate (d) at (1.8,3.3);
+\draw[tumblue,thick] (a)--(b)--(d)--cycle;
+\draw[tumblue,dashed] (a)--(c)--(b) (c)--(d);
+\foreach \p/\n in {a/1,b/2,c/3,d/4}{\filldraw[fill=tumlight,draw=tumblue] (\p) circle (0.36);\node at (\p) {$\n$};}
+\node[circle,fill=tumorange,inner sep=3pt] (p) at (1.55,1.25) {};
+\node[anchor=west,text=tumdark] at (2.1,1.75) {pore node};\draw[tumdark] (2.1,1.65)--(p);
+\node[align=center,font=\footnotesize,text=tumgray] at (1.7,-0.8) {Schematic 3D projection\\Bead centres form a tetrahedron};
+\end{tikzpicture}
+\column{0.49\textwidth}\small
+\begin{itemize}
+\item Start with known bead centres, radii and bed boundaries.
+\item Delaunay tetrahedralization groups neighbouring centres into sets of four.
+\item Locate the circumcentre: the point equidistant from those four centres.
+\item Retain valid points inside the bed and outside the solid as pore nodes.
+\end{itemize}
+\medskip
+A node represents a gas region. Its volume is assigned later.
+\end{columns}
+\result{The particle geometry determines where the pore nodes are placed.}
+\note{Our beads have equal radii, so ordinary Delaunay geometry is used. The sketch is a projected tetrahedron. Its drawn pore marker is illustrative. The actual code computes each circumcentre in three dimensions, rejects singular tetrahedra and checks the point against the bed domain and bead surfaces. A pore node is a representative location rather than a reconstructed cavity surface.}
+\end{frame}
+
+\begin{frame}{2. Shared particle faces define pore connections}
+\begin{columns}[c,onlytextwidth]
+\column{0.47\textwidth}\centering
+\begin{tikzpicture}[scale=1.05]
+\coordinate (a) at (1.7,0);\coordinate (b) at (1.1,2.5);\coordinate (c) at (2.4,2.1);
+\fill[tumblue!12] (a)--(b)--(c)--cycle;
+\draw[tumblue,thick] (a)--(b)--(c)--cycle;
+\coordinate (l) at (-0.1,1.3);\coordinate (r) at (3.8,1.3);
+\foreach \v in {a,b,c}{\draw[tumgray,dashed] (l)--(\v)--(r);}
+\draw[tumorange,line width=2pt] (0.9,1.3)--(2.8,1.3);
+\foreach \x/\lab in {0.9/i,2.8/j}{\node[circle,fill=tumorange,inner sep=3pt,label=below:{$\lab$}] at (\x,1.3) {};}
+\foreach \v in {a,b,c,l,r}{\filldraw[fill=tumlight,draw=tumblue] (\v) circle (0.18);}
+\node[font=\footnotesize,align=center,text=tumgray] at (1.8,-0.7) {Two tetrahedra share three beads\\Schematic 3D projection};
+\end{tikzpicture}
+\column{0.49\textwidth}\small
+\begin{itemize}
+\item Two neighbouring tetrahedra share a triangular face.
+\item The three beads around that face define an opening.
+\item A valid opening connects pore nodes $i$ and $j$ through a throat.
+\item Estimate throat length $L_{ij}$ and circular area $A_{ij}$ from geometry.
+\end{itemize}
+\[
+G_{ij}=D_m\frac{A_{ij}}{L_{ij}}.
+\]
+\end{columns}
+\result{At this stage we know the nodes and connections. Sobol sampling has not been used.}
+\note{The code uses shared Delaunay faces to identify candidate throats. Length is the distance between pore nodes. The throat radius is approximated by the shared-face circumradius minus the bead radius, and the area by pi times radius squared. Closed or degenerate connections are rejected. This circular opening is a modelling approximation, not the exact three-sphere aperture.}
+\end{frame}
+
+\begin{frame}{3. Sobol points measure the gas space}
+\begin{columns}[c,onlytextwidth]
+\column{0.47\textwidth}\centering
+\begin{tikzpicture}[scale=1.0]
+\draw[tumgray] (0,0) rectangle (4.2,3.4);
+\foreach \x/\y in {0.8/0.9,2.0/2.5,3.3/1.1}{\filldraw[fill=tumlight,draw=tumblue] (\x,\y) circle (0.58);}
+% Sobol sample coordinates inserted by the build helper.
+\draw[tumgray!55] (1.775,2.734)--(1.845,2.804);
+\fill[tumblue] (4.039,1.059) circle (0.025);
+\fill[tumblue] (2.371,2.033) circle (0.025);
+\fill[tumblue] (0.147,0.090) circle (0.025);
+\fill[tumblue] (1.000,2.175) circle (0.025);
+\fill[tumblue] (2.700,0.797) circle (0.025);
+\fill[tumblue] (3.185,3.117) circle (0.025);
+\fill[tumblue] (1.483,1.560) circle (0.025);
+\fill[tumblue] (1.077,1.752) circle (0.025);
+\fill[tumblue] (3.574,0.374) circle (0.025);
+\fill[tumblue] (3.141,2.691) circle (0.025);
+\draw[tumgray!55] (0.606,1.098)--(0.676,1.168);
+\fill[tumblue] (0.312,3.192) circle (0.025);
+\fill[tumblue] (2.289,1.482) circle (0.025);
+\fill[tumblue] (3.902,2.459) circle (0.025);
+\fill[tumblue] (1.931,0.517) circle (0.025);
+\draw[tumgray!55] (1.987,2.329)--(2.057,2.399);
+\fill[tumblue] (3.729,0.614) circle (0.025);
+\fill[tumblue] (2.197,3.301) circle (0.025);
+\draw[tumgray!55] (0.450,1.337)--(0.520,1.407);
+\fill[tumblue] (0.683,2.581) circle (0.025);
+\draw[tumgray!55] (2.883,1.208)--(2.953,1.278);
+\fill[tumblue] (3.532,1.849) circle (0.025);
+\fill[tumblue] (1.299,0.279) circle (0.025);
+\fill[tumblue] (1.391,3.007) circle (0.025);
+\draw[tumgray!55] (3.324,1.634)--(3.394,1.704);
+\fill[tumblue] (2.791,2.272) circle (0.025);
+\draw[tumgray!55] (0.792,0.667)--(0.862,0.737);
+\fill[tumblue] (0.105,1.937) circle (0.025);
+\fill[tumblue] (2.593,0.187) circle (0.025);
+\fill[tumblue] (4.081,2.877) circle (0.025);
+\fill[tumblue] (1.587,0.948) circle (0.025);
+\draw[tumgray!55] (1.617,2.058)--(1.687,2.128);
+\fill[tumblue] (4.147,0.031) circle (0.025);
+\fill[tumblue] (2.533,2.828) circle (0.025);
+\fill[tumblue] (0.034,0.998) circle (0.025);
+\fill[tumblue] (0.887,3.163) circle (0.025);
+\fill[tumblue] (2.862,1.512) circle (0.025);
+\fill[tumblue] (3.294,2.222) circle (0.025);
+\draw[tumgray!55] (1.290,0.716)--(1.360,0.786);
+\fill[tumblue] (1.235,2.736) circle (0.025);
+\draw[tumgray!55] (3.430,1.051)--(3.500,1.121);
+\fill[tumblue] (2.979,1.799) circle (0.025);
+\draw[tumgray!55] (0.718,0.293)--(0.788,0.363);
+\fill[tumblue] (0.425,2.520) circle (0.025);
+\fill[tumblue] (2.127,0.458) circle (0.025);
+\fill[tumblue] (3.793,3.251) circle (0.025);
+\fill[tumblue] (2.089,1.422) circle (0.025);
+\fill[tumblue] (1.868,3.348) circle (0.025);
+\draw[tumgray!55] (3.798,1.291)--(3.868,1.361);
+\draw[tumgray!55] (2.312,2.374)--(2.382,2.444);
+\draw[tumgray!55] (0.350,0.531)--(0.420,0.601);
+\fill[tumblue] (0.582,1.908) circle (0.025);
+\fill[tumblue] (3.068,0.218) circle (0.025);
+\fill[tumblue] (3.637,2.641) circle (0.025);
+\draw[tumgray!55] (1.110,1.149)--(1.180,1.219);
+\draw[tumgray!55] (1.510,2.296)--(1.580,2.366);
+\draw[tumgray!55] (3.219,0.606)--(3.289,0.676);
+\fill[tumblue] (2.641,3.068) circle (0.025);
+\fill[tumblue] (0.927,1.610) circle (0.025);
+\fill[tumblue] (0.206,2.924) circle (0.025);
+\fill[tumblue] (2.444,0.902) circle (0.025);
+\fill[tumblue] (3.976,1.982) circle (0.025);
+\fill[tumblue] (1.741,0.140) circle (0.025);
+\draw[tumgray!55] (1.678,2.168)--(1.748,2.238);
+\fill[tumblue] (3.939,0.772) circle (0.025);
+\fill[tumblue] (2.473,3.143) circle (0.025);
+\fill[tumblue] (0.242,1.533) circle (0.025);
+\fill[tumblue] (0.965,2.847) circle (0.025);
+\fill[tumblue] (2.669,0.978) circle (0.025);
+\fill[tumblue] (3.218,2.113) circle (0.025);
+\fill[tumblue] (1.516,0.011) circle (0.025);
+\fill[tumblue] (1.175,3.271) circle (0.025);
+\draw[tumgray!55] (3.638,1.366)--(3.708,1.436);
+\fill[tumblue] (3.040,2.540) circle (0.025);
+\draw[tumgray!55] (0.510,0.403)--(0.580,0.473);
+\fill[tumblue] (0.349,1.780) circle (0.025);
+\fill[tumblue] (2.318,0.348) circle (0.025);
+\fill[tumblue] (3.871,2.717) circle (0.025);
+\fill[tumblue] (1.896,1.106) circle (0.025);
+\draw[tumgray!55] (2.016,2.573)--(2.086,2.643);
+\draw[tumgray!55] (3.730,1.181)--(3.800,1.251);
+\fill[tumblue] (2.163,1.875) circle (0.025);
+\fill[tumblue] (0.454,0.251) circle (0.025);
+\fill[tumblue] (0.781,2.443) circle (0.025);
+\fill[tumblue] (3.017,0.534) circle (0.025);
+\fill[tumblue] (3.436,3.382) circle (0.025);
+\draw[tumgray!55] (1.163,1.258)--(1.233,1.328);
+\fill[tumblue] (1.361,2.016) circle (0.025);
+\fill[tumblue] (3.323,0.107) circle (0.025);
+\fill[tumblue] (2.824,2.958) circle (0.025);
+\draw[tumgray!55] (0.824,0.835)--(0.894,0.905);
+\fill[tumblue] (0.005,3.034) circle (0.025);
+\fill[tumblue] (2.497,1.643) circle (0.025);
+\fill[tumblue] (4.176,2.298) circle (0.025);
+\fill[tumblue] (1.690,0.674) circle (0.025);
+\fill[tumblue] (1.617,3.084) circle (0.025);
+\fill[tumblue] (4.117,1.594) circle (0.025);
+\fill[tumblue] (2.565,2.142) circle (0.025);
+\fill[tumblue] (0.068,0.831) circle (0.025);
+\fill[tumblue] (0.790,2.065) circle (0.025);
+\fill[tumblue] (2.761,0.057) circle (0.025);
+\fill[tumblue] (3.396,2.802) circle (0.025);
+\fill[tumblue] (1.419,1.025) circle (0.025);
+\fill[tumblue] (1.271,2.492) circle (0.025);
+\fill[tumblue] (3.495,0.483) circle (0.025);
+\fill[tumblue] (2.948,3.225) circle (0.025);
+\draw[tumgray!55] (0.684,1.414)--(0.754,1.484);
+\fill[tumblue] (0.523,2.658) circle (0.025);
+\fill[tumblue] (2.225,1.167) circle (0.025);
+\fill[tumblue] (3.692,1.719) circle (0.025);
+\fill[tumblue] (1.992,0.407) circle (0.025);
+\fill[tumblue] (1.967,1.829) circle (0.025);
+\fill[tumblue] (3.931,0.298) circle (0.025);
+\draw[tumgray!55] (2.216,2.525)--(2.286,2.595);
+\fill[tumblue] (0.284,1.262) circle (0.025);
+\fill[tumblue] (0.611,3.321) circle (0.025);
+\draw[tumgray!55] (3.070,1.317)--(3.140,1.387);
+\fill[tumblue] (3.602,2.384) circle (0.025);
+\draw[tumgray!55] (1.079,0.559)--(1.149,0.629);
+\fill[tumblue] (1.445,2.897) circle (0.025);
+\draw[tumgray!55] (3.122,0.894)--(3.192,0.964);
+\fill[tumblue] (2.736,1.957) circle (0.025);
+\fill[tumblue] (1.029,0.167) circle (0.025);
+\fill[tumblue] (0.175,2.252) circle (0.025);
+\fill[tumblue] (2.408,0.721) circle (0.025);
+\fill[tumblue] (4.009,2.987) circle (0.025);
+\fill[tumblue] (1.774,1.689) circle (0.025);
+\node[font=\footnotesize,align=center,text=tumgray] at (2.1,-0.65) {Illustrative 2D Sobol sample\\Blue: gas points; grey crosses: solid points};
+\end{tikzpicture}
+\column{0.49\textwidth}\small
+\begin{itemize}
+\item Distribute $2^{22}\approx4.2$ million sample points through the cylindrical bed.
+\item Sobol sampling covers the domain with few gaps and clusters.
+\item Check each point against the bead surfaces.
+\item Discard points inside solid particles and retain gas-space points.
+\end{itemize}
+\medskip
+These are measuring points, not extra pores or mesh cells.
+\end{columns}
+\result{Sobol sampling estimates volume. It does not generate network connections.}
+\note{The actual code generates a scrambled three-dimensional Sobol sequence and maps it uniformly into the cylinder. The sketch uses a two-dimensional Sobol sequence only to explain solid versus void classification. The points do not carry concentration or take part in the time integration. Increasing the sample count improves the volume estimates while leaving the geometry-derived graph unchanged.}
+\end{frame}
+
+\begin{frame}{4. Assign gas-space samples to the nearest pore}
+\begin{columns}[c,onlytextwidth]
+\column{0.47\textwidth}\centering
+\begin{tikzpicture}[scale=1.0]
+\fill[tumblue!5] (0,0) rectangle (2.1,3.4);
+\fill[tumorange!8] (2.1,0) rectangle (4.2,3.4);
+\draw[tumgray] (0,0) rectangle (4.2,3.4);
+\draw[tumgray,dashed] (2.1,0)--(2.1,3.4);
+\foreach \x/\y in {0.8/0.9,2.0/2.5,3.3/1.1}{\filldraw[fill=tumlight,draw=tumblue] (\x,\y) circle (0.58);}
+\fill[tumorange] (4.039,1.059) circle (0.025);
+\fill[tumorange] (2.371,2.033) circle (0.025);
+\fill[tumblue] (0.147,0.090) circle (0.025);
+\fill[tumblue] (1.000,2.175) circle (0.025);
+\fill[tumorange] (2.700,0.797) circle (0.025);
+\fill[tumorange] (3.185,3.117) circle (0.025);
+\fill[tumblue] (1.483,1.560) circle (0.025);
+\fill[tumblue] (1.077,1.752) circle (0.025);
+\fill[tumorange] (3.574,0.374) circle (0.025);
+\fill[tumorange] (3.141,2.691) circle (0.025);
+\fill[tumblue] (0.312,3.192) circle (0.025);
+\fill[tumorange] (2.289,1.482) circle (0.025);
+\fill[tumorange] (3.902,2.459) circle (0.025);
+\fill[tumblue] (1.931,0.517) circle (0.025);
+\fill[tumorange] (3.729,0.614) circle (0.025);
+\fill[tumorange] (2.197,3.301) circle (0.025);
+\fill[tumblue] (0.683,2.581) circle (0.025);
+\fill[tumorange] (3.532,1.849) circle (0.025);
+\fill[tumblue] (1.299,0.279) circle (0.025);
+\fill[tumblue] (1.391,3.007) circle (0.025);
+\fill[tumorange] (2.791,2.272) circle (0.025);
+\fill[tumblue] (0.105,1.937) circle (0.025);
+\fill[tumorange] (2.593,0.187) circle (0.025);
+\fill[tumorange] (4.081,2.877) circle (0.025);
+\fill[tumblue] (1.587,0.948) circle (0.025);
+\fill[tumorange] (4.147,0.031) circle (0.025);
+\fill[tumorange] (2.533,2.828) circle (0.025);
+\fill[tumblue] (0.034,0.998) circle (0.025);
+\fill[tumblue] (0.887,3.163) circle (0.025);
+\fill[tumorange] (2.862,1.512) circle (0.025);
+\fill[tumorange] (3.294,2.222) circle (0.025);
+\fill[tumblue] (1.235,2.736) circle (0.025);
+\fill[tumorange] (2.979,1.799) circle (0.025);
+\fill[tumblue] (0.425,2.520) circle (0.025);
+\fill[tumorange] (2.127,0.458) circle (0.025);
+\fill[tumorange] (3.793,3.251) circle (0.025);
+\fill[tumblue] (2.089,1.422) circle (0.025);
+\fill[tumblue] (1.868,3.348) circle (0.025);
+\fill[tumblue] (0.582,1.908) circle (0.025);
+\fill[tumorange] (3.068,0.218) circle (0.025);
+\fill[tumorange] (3.637,2.641) circle (0.025);
+\fill[tumorange] (2.641,3.068) circle (0.025);
+\fill[tumblue] (0.927,1.610) circle (0.025);
+\fill[tumblue] (0.206,2.924) circle (0.025);
+\fill[tumorange] (2.444,0.902) circle (0.025);
+\fill[tumorange] (3.976,1.982) circle (0.025);
+\fill[tumblue] (1.741,0.140) circle (0.025);
+\fill[tumorange] (3.939,0.772) circle (0.025);
+\fill[tumorange] (2.473,3.143) circle (0.025);
+\fill[tumblue] (0.242,1.533) circle (0.025);
+\fill[tumblue] (0.965,2.847) circle (0.025);
+\fill[tumorange] (2.669,0.978) circle (0.025);
+\fill[tumorange] (3.218,2.113) circle (0.025);
+\fill[tumblue] (1.516,0.011) circle (0.025);
+\fill[tumblue] (1.175,3.271) circle (0.025);
+\fill[tumorange] (3.040,2.540) circle (0.025);
+\fill[tumblue] (0.349,1.780) circle (0.025);
+\fill[tumorange] (2.318,0.348) circle (0.025);
+\fill[tumorange] (3.871,2.717) circle (0.025);
+\fill[tumblue] (1.896,1.106) circle (0.025);
+\fill[tumorange] (2.163,1.875) circle (0.025);
+\fill[tumblue] (0.454,0.251) circle (0.025);
+\fill[tumblue] (0.781,2.443) circle (0.025);
+\fill[tumorange] (3.017,0.534) circle (0.025);
+\fill[tumorange] (3.436,3.382) circle (0.025);
+\fill[tumblue] (1.361,2.016) circle (0.025);
+\fill[tumorange] (3.323,0.107) circle (0.025);
+\fill[tumorange] (2.824,2.958) circle (0.025);
+\fill[tumblue] (0.005,3.034) circle (0.025);
+\fill[tumorange] (2.497,1.643) circle (0.025);
+\fill[tumorange] (4.176,2.298) circle (0.025);
+\fill[tumblue] (1.690,0.674) circle (0.025);
+\fill[tumblue] (1.617,3.084) circle (0.025);
+\fill[tumorange] (4.117,1.594) circle (0.025);
+\fill[tumorange] (2.565,2.142) circle (0.025);
+\fill[tumblue] (0.068,0.831) circle (0.025);
+\fill[tumblue] (0.790,2.065) circle (0.025);
+\fill[tumorange] (2.761,0.057) circle (0.025);
+\fill[tumorange] (3.396,2.802) circle (0.025);
+\fill[tumblue] (1.419,1.025) circle (0.025);
+\fill[tumblue] (1.271,2.492) circle (0.025);
+\fill[tumorange] (3.495,0.483) circle (0.025);
+\fill[tumorange] (2.948,3.225) circle (0.025);
+\fill[tumblue] (0.523,2.658) circle (0.025);
+\fill[tumorange] (2.225,1.167) circle (0.025);
+\fill[tumorange] (3.692,1.719) circle (0.025);
+\fill[tumblue] (1.992,0.407) circle (0.025);
+\fill[tumblue] (1.967,1.829) circle (0.025);
+\fill[tumorange] (3.931,0.298) circle (0.025);
+\fill[tumblue] (0.284,1.262) circle (0.025);
+\fill[tumblue] (0.611,3.321) circle (0.025);
+\fill[tumorange] (3.602,2.384) circle (0.025);
+\fill[tumblue] (1.445,2.897) circle (0.025);
+\fill[tumorange] (2.736,1.957) circle (0.025);
+\fill[tumblue] (1.029,0.167) circle (0.025);
+\fill[tumblue] (0.175,2.252) circle (0.025);
+\fill[tumorange] (2.408,0.721) circle (0.025);
+\fill[tumorange] (4.009,2.987) circle (0.025);
+\fill[tumblue] (1.774,1.689) circle (0.025);
+\node[star,star points=5,fill=tumblue,inner sep=3pt,label=above:{$i$}] at (1.1,1.7) {};
+\node[star,star points=5,fill=tumorange,inner sep=3pt,label=above:{$j$}] at (3.1,1.7) {};
+\node[font=\footnotesize,align=center,text=tumgray] at (2.1,-0.65) {Two illustrative pore nodes\\Each gas point takes its nearest node's colour};
+\end{tikzpicture}
+\column{0.49\textwidth}\small
+\begin{itemize}
+\item Assign every retained gas point to its nearest pore node.
+\item Count the assigned points: $N_i$ for pore $i$.
+\item A larger count gives a larger share of the calculated void volume.
+\end{itemize}
+\[
+V_i=V_{\rm void}\frac{N_i+0.5}{\sum_j(N_j+0.5)}.
+\]
+\begin{itemize}
+\item The small $0.5$ correction prevents zero volumes.
+\item Normalization ensures $\sum_i V_i=V_{\rm void}$.
+\end{itemize}
+\end{columns}
+\result{The total volume is conserved, while each individual pore volume is an estimate.}
+\note{The dashed line illustrates a nearest-node partition for two nodes in two dimensions. The actual allocation uses all retained nodes in three dimensions and Euclidean nearest-neighbour distances. Total void volume is calculated independently from cylinder volume minus the calculated solid volume within the bed bounds. It is not taken directly from the fraction of Sobol points in gas. Normalization fixes the total but does not prove the local volumes are exact or boundary-conforming.}
+\end{frame}
+
+\begin{frame}{5. The network carries coupled diffusion and adsorption}
+\begin{columns}[c,onlytextwidth]
+\column{0.47\textwidth}\centering
+\begin{tikzpicture}[scale=1.05]
+\node[circle,draw=tumblue,fill=tumlight,minimum size=1.3cm,align=center] (i) at (0.8,2.3) {$V_i$\\$c_i(t)$};
+\node[circle,draw=tumblue,fill=tumlight,minimum size=1.3cm,align=center] (j) at (3.4,2.3) {$V_j$\\$c_j(t)$};
+\draw[<->,>=Latex,thick,tumblue] (i)--node[above] {$G_{ij}$} (j);
+\node[circle,draw=tumdark,fill=tumlight,minimum size=1.3cm,align=center] (q) at (2.1,0.3) {bead $k$\\$q_k(t)$};
+\draw[->,>=Latex,thick,tumorange] (i)--(q);
+\draw[->,>=Latex,thick,tumorange] (j)--(q);
+\node[font=\footnotesize,text=tumgray] at (2.1,-0.8) {Schematic during net adsorption};
+\end{tikzpicture}
+\column{0.49\textwidth}\small
+\begin{itemize}
+\item Pore volumes store gas: $n_i=V_i c_i$.
+\item Throats transfer gas according to concentration differences.
+\item Associated beads adsorb gas from adjacent pores.
+\item Boundary connections supply gas from the inlet reservoir.
+\end{itemize}
+\[
+\dot n_{j\to i}=G_{ij}(c_j-c_i),\qquad
+\frac{dq_k}{dt}=k_{\rm LDF}(q_k^*-q_k).
+\]
+\end{columns}
+\result{Throats control gas movement. Pore volumes control local gas storage.}
+\note{The particle-pore association comes from the tetrahedral geometry. Once geometry, volumes and boundary conditions are known, the solver advances pore concentrations and bead loadings together. Gas removed by adsorption is added to the solid inventory. During desorption the exchange reverses. This construction describes the gas space between beads; bead uptake kinetics represent the internal adsorption process.}
+\end{frame}
+
 \end{document}
