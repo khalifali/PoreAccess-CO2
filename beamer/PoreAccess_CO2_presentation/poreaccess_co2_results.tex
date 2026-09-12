@@ -61,7 +61,6 @@
 
 \begin{document}
 
-% -----------------------------------------------------------------------------
 \begin{frame}{}
   \vspace*{0.2cm}
   \begin{FlexRow}{0.16\textheight}
@@ -86,39 +85,36 @@
 \end{frame}
 
 \section[Motivation]{Motivation and research question}
+
 \begin{frame}{}
 \vfill
 {\large\color{tumgray}Section 1 of 5}\par\vspace{0.4cm}
 {\LARGE\color{tumblue}\textbf{Motivation and research question}}\par\vspace{0.5cm}
-{\large Why can similar beds adsorb differently?}
+{\large Why should inlet-connected pathways matter?}
 \vfill
 \end{frame}
 
-\begin{frame}{CO$_2$ adsorption matters and packing structure is a missing scale}
-  \small
-  \begin{columns}[T,onlytextwidth]
-    \column{0.47\textwidth}
-      \hi{Why CO$_2$ capturing matters?}
-      \begin{itemize}
-        \item Food systems contribute about \textbf{one-third} of global
-              anthropogenic greenhouse-gas emissions.
-        \item Food and bioprocessing include recoverable biogenic CO$_2$
-              streams, for example from fermentation.
-        \item Regenerable sorbents offer a compact capture and purification route.
-      \end{itemize}
-    \column{0.49\textwidth}
-      \hi{What is already established?}
-      \begin{itemize}
-        \item CO$_2$ equilibrium and uptake kinetics on zeolite 13X are widely studied.
-        \item Fixed-bed models normally use bulk porosity and a fitted
-              effective transport coefficient.
-        \item Random inlet-connected paths remain hidden inside that coefficient.
-      \end{itemize}
-  \end{columns}
-  \vspace{0.18cm}
-  \result{Novelty: connect random particle geometry to a fast bed-scale uptake model through a physically calculated pore-accessibility descriptor.}
-  \vspace{0.16cm}
- % {\tiny\color{tumgray}Sources: Crippa et al. (2021); Raganati et al. (2021); Won et al. (2012); Wray et al. (2024).}
+\begin{frame}{Why examine access from the inlet?}
+
+\begin{columns}[T,onlytextwidth]
+\column{0.47\textwidth}\hi{What porosity misses}\small
+\begin{itemize}
+\item Porosity measures how much void space exists.
+\item It does not describe bottlenecks, path lengths or parallel connections.
+\item Similar void fractions can therefore hide different gas-supply pathways.
+\end{itemize}
+\column{0.49\textwidth}\hi{Why the inlet is the reference}\small
+\begin{itemize}
+\item Gas enters from a reservoir below the bed.
+\item Adsorption removes gas as it diffuses into the packing.
+\item Access from the inlet may therefore help explain transient uptake differences.
+\end{itemize}
+\end{columns}
+\vspace{0.25cm}
+\small Application: CO$_2$ adsorption in zeolite 13X, used here as a controlled model problem.
+\vspace{0.2cm}
+\result{Hypothesis: inlet-connected diffusive pathways contain information that porosity misses.}
+
 \end{frame}
 
 \begin{frame}{Same porosity can hide different inlet-connected pathways}
@@ -185,44 +181,13 @@
   \vfill\small Same beads and similar porosity; different numbers and conductances of inlet-connected paths.
 \end{frame}
 
-\begin{frame}{Why zeolite 13X and what does the study isolate?}
-  \vspace*{-0.45cm}
-  \begin{FlexRow}{0.59\textheight}
-    \Col{0.48}{
-      \footnotesize
-      \hi{Why zeolite 13X?}
-      \begin{itemize}
-        \item established benchmark sorbent for CO$_2$
-        \item strong equilibrium uptake at low partial pressure
-        \item commercial millimetre-scale beads form random beds
-      \end{itemize}
-      \vspace{0.25cm}
-      \hi{Controlled model problem}
-      \begin{itemize}
-        \item dry, isothermal, stagnant gas
-        \item CO$_2$ enters from a reservoir below the bed
-        \item pore-network model resolves throat diffusion and bead adsorption
-        \item no imposed flow; no CFD
-      \end{itemize}}
-    \Col{0.48}{
-      \question{How strongly does random void connectivity change access to the adsorbent?}
-      \vspace{0.30cm}
-      \centering
-      \begin{tikzpicture}[node distance=3mm,scale=.88,transform shape]
-        \node[box] (dem) {DEM packing\\particle positions};
-        \node[box,below=of dem] (pnm) {pore-network model\\throat diffusion +\\Langmuir--LDF uptake};
-        \node[box,below=of pnm,fill=tumgreen!13] (resp) {reference uptake\\$\overline q_{\rm PNM}(t)$};
-        \draw[arr] (dem)--(pnm);\draw[arr] (pnm)--(resp);
-      \end{tikzpicture}}
-  \end{FlexRow}
-\end{frame}
+\section[Pore-network model]{Pore-network reference model}
 
-\section[Model scope]{Model scope and physical mechanisms}
 \begin{frame}{}
 \vfill
 {\large\color{tumgray}Section 2 of 5}\par\vspace{0.4cm}
-{\LARGE\color{tumblue}\textbf{Model scope and physical mechanisms}}\par\vspace{0.5cm}
-{\large From particle arrangement to diffusion and adsorption}
+{\LARGE\color{tumblue}\textbf{Pore-network reference model}}\par\vspace{0.5cm}
+{\large From particle geometry to the mean uptake curve}
 \vfill
 \end{frame}
 
@@ -240,18 +205,18 @@
       simulation time & 5000 s\\\bottomrule
       \end{tabular}}
     \Col{0.53}{
-      \hi{Only the DEM insertion seed changed}
+      \hi{Controlled diffusion--adsorption problem}
       \begin{itemize}
-        \item Delaunay--Voronoi networks were built directly from particle coordinates
-        \item all networks were connected and spanning
-        \item quasi-uniform Sobol sampling allocated pore volumes without a voxel grid
-        \item transient and 1D models passed mass-balance checks
+        \item same zeolite beads and tube, only the insertion seed changes
+        \item dry, isothermal gas supplied from a reservoir below the bed
+        \item interparticle diffusion and bead adsorption, with no imposed flow
+        \item heat effects and competitive water adsorption are outside this model
       \end{itemize}}
   \end{FlexRow}
 
   \vspace*{0.5cm}
   {\scriptsize\textsuperscript{*}Approximately 15 vol.\% CO$_2$ at atmospheric pressure and 298 K.}\par
-  
+
   \vspace*{0.3cm}
 \result{The ensemble tests arrangement effects under otherwise identical conditions.}
 \end{frame}
@@ -262,7 +227,7 @@
       \hi{Network construction}
       \footnotesize
       \begin{itemize}\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}
-        \item four bead centres define a Delaunay tetrahedron; its circumcentre is a pore body
+        \item four bead centres define a Delaunay tetrahedron; its valid circumcentre represents a pore node
         \item tetrahedra sharing a triangular face are joined by a throat
         \item topology comes from particle coordinates, not voxels
       \end{itemize}
@@ -290,75 +255,121 @@
   \result{The circular throat area is a geometric modelling assumption; $G_{ij}$ has units of m$^3$ s$^{-1}$.}
 \end{frame}
 
-\begin{frame}{Langmuir equilibrium and bead uptake}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.52\textwidth}
-      \hi{Local equilibrium loading}
-      \[
-        p_k=c_kRT,\qquad
-        q_k^*=\frac{q_s\,b\,p_k}{1+b\,p_k}.
-      \]
-      \hi{Finite-rate uptake}
-      \[
-        \frac{dq_k}{dt}=k_{\rm LDF}\,(q_k^*-q_k).
-      \]
-      \footnotesize
-      
-      \vspace*{-0.3cm}
-      \begin{itemize}\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}
-        \item $q_s$: maximum CO$_2$ loading [mol/kg adsorbent]
-        \item $b$: Langmuir affinity [Pa$^{-1}$], with $b p_k$ dimensionless
-        \item $p_k$: local CO$_2$ partial pressure [Pa]
-        \item $q_k^*$: equilibrium loading at $p_k$
-      \end{itemize}
-    \column{0.44\textwidth}
-      \hi{Meaning of the rate equation}
-      \small
-      \begin{itemize}\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}
-        \item $q_k$ is the current loading of bead $k$
-        \item $k_{\rm LDF}$ controls how quickly $q_k$ approaches $q_k^*$
-        \item gas removed from adjacent pores is added to the bead
-      \end{itemize}
-      \vspace{0.18cm}
-      \hi{Pore-network outputs}
-      \begin{itemize}\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}
-        \item pore concentrations $c_i(t)$
-        \item particle loadings $q_k(t)$
-        \item mean uptake $\overline q_{\rm PNM}(t)$
-      \end{itemize}
-  \end{columns}
-  \vspace*{0.3cm}
-  \result{Coupled diffusion and adsorption conserve the CO$_2$ inventory.}
+\begin{frame}{The pore network solves diffusion and adsorption together}
+
+\begin{columns}[T,onlytextwidth]
+\column{0.56\textwidth}\small
+\hi{Gas balance for each pore $i$}
+\[
+V_i\frac{dc_i}{dt}=\sum_{j\in\mathcal N(i)}G_{ij}(c_j-c_i)
++G_{iR}(c_R-c_i)-S_i.
+\]
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item $V_i$: gas volume, $c_i$: gas concentration
+\item $G_{ij}$: throat conductance [m$^3$ s$^{-1}$]
+\item $G_{iR}$: connection to reservoir at $c_R$, zero away from the inlet
+\item $S_i$: net gas transfer to adjacent beads [mol s$^{-1}$]
+\end{itemize}
+\column{0.40\textwidth}\small
+\hi{Uptake for each bead $k$}
+\[
+\frac{dq_k}{dt}=k_{\rm LDF}(q_k^*-q_k).
+\]
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item $q_k$: current loading [mol kg$^{-1}$]
+\item $k_{\rm LDF}$ [s$^{-1}$]: linear-driving-force rate coefficient
+\item $1/k_{\rm LDF}$: relaxation time at fixed gas concentration
+\end{itemize}
+\end{columns}
+\vspace{0.15cm}
+\result{One coupled system: one concentration per pore and one loading per bead.}
+
 \end{frame}
 
-\section[Methods]{Numerical methods and diffusivity prediction}
+\begin{frame}{Local equilibrium sets the adsorption target}
+\begin{columns}[T,onlytextwidth]
+\column{0.48\textwidth}\hi{Local equilibrium loading}\small
+\[
+p_k=c_kRT,\qquad q_k^*=\frac{q_s b p_k}{1+b p_k}.
+\]
+\begin{itemize}\setlength{\itemsep}{3pt}
+\item $c_k$: average gas concentration around bead $k$
+\item $p_k$: local CO$_2$ partial pressure [Pa]
+\item $q_k^*$: equilibrium target [mol kg$^{-1}$]
+\end{itemize}
+\column{0.48\textwidth}\hi{Fixed material parameters}\small
+\begin{itemize}\setlength{\itemsep}{3pt}
+\item $q_s$: maximum CO$_2$ loading [mol kg$^{-1}$]
+\item $b$: Langmuir affinity [Pa$^{-1}$], so $b p_k$ is dimensionless
+\item $k_{\rm LDF}$: kinetic coefficient [s$^{-1}$]
+\end{itemize}
+\medskip
+\hi{Actual loading evolves in time}
+\[
+\frac{dq_k}{dt}=k_{\rm LDF}(q_k^*-q_k).
+\]
+\end{columns}
+\vspace{0.25cm}
+\result{Local gas concentrations set the target. Kinetics determine how quickly beads approach it.}
+\end{frame}
+
+\begin{frame}{The pore network delivers the reference uptake curve}
+
+\begin{columns}[T,onlytextwidth]
+\column{0.47\textwidth}\hi{Resolved transient outputs}\small
+\begin{itemize}
+\item Gas concentration $c_i(t)$ in every pore
+\item Adsorbed loading $q_k(t)$ of every bead
+\item Different bead loadings reveal incomplete utilization
+\end{itemize}
+\medskip
+The detailed model retains the actual pore connections and bead associations.
+\column{0.49\textwidth}\hi{Bed-average uptake}\small
+\[
+\overline q_{\rm PNM}(t)=\frac{\sum_k m_k q_k(t)}{\sum_k m_k}.
+\]
+For identical beads:
+\[
+\overline q_{\rm PNM}(t)=\frac{1}{N_b}\sum_{k=1}^{N_b}q_k(t).
+\]
+This curve is the reference for fitting the reduced 1D model.
+\end{columns}
+\vspace{0.25cm}
+\result{Next: can a homogeneous 1D bed reproduce this complete uptake curve?}
+
+\end{frame}
+
+\section[1D reduction]{Reduction and diffusivity prediction}
+
 \begin{frame}{}
 \vfill
 {\large\color{tumgray}Section 3 of 5}\par\vspace{0.4cm}
-{\LARGE\color{tumblue}\textbf{Numerical methods and diffusivity prediction}}\par\vspace{0.5cm}
-{\large How we calculate accessibility and calibrate the reduced model}
+{\LARGE\color{tumblue}\textbf{Reduction and diffusivity prediction}}\par\vspace{0.5cm}
+{\large Fit a reduced model, then predict its coefficient}
 \vfill
 \end{frame}
 
-\begin{frame}{Development and later use are two different workflows}
-  \centering
-  \begin{tikzpicture}[node distance=5mm and 5mm,
-    flowbox/.style={box,text width=2.45cm,minimum height=10mm}]
-    \node[font=\bfseries,text=tumblue,anchor=west] at (-1.22,1.05) {Develop closure};
-    \node[flowbox] (beds) {DEM beds +\\pore networks};
-    \node[flowbox,right=of beds] (pair) {calculate paired\\$D_{\rm access},D_{\rm eff}$};
-    \node[flowbox,right=of pair,fill=tumgreen!13] (close) {fit once\\$D_{\rm eff}=f(D_{\rm access})$};
-    \draw[arr] (beds)--(pair);\draw[arr] (pair)--(close);
-    \node[font=\bfseries,text=tumblue,anchor=west] at (-1.22,-1.) {Predict for a new bed};
-    \node[flowbox] (new) at (0,-2) {new bed\\pore network};
-    \node[flowbox,right=of new] (steady) {one steady solve\\$D_{\rm access}$};
-    \node[flowbox,right=of steady,fill=tumgreen!13] (pred) {apply closure\\$D_{\rm eff}$};
-    \node[flowbox,right=of pred,fill=tumgreen!13] (uptake) {1D model\\$\overline q(t)$};
-    \draw[arr] (new)--(steady);\draw[arr] (steady)--(pred);\draw[arr] (pred)--(uptake);
-  \end{tikzpicture}
+\begin{frame}{Reduce the detailed network to a homogeneous 1D bed}
 
-  \vspace{0.45cm}
-  \result{For a new bed, the transient pore-network adsorption model is no longer required.}
+\begin{columns}[T,onlytextwidth]
+\column{0.47\textwidth}\hi{Detailed pore-network model}\small
+\begin{itemize}
+\item Actual pores and throats from each packing
+\item One gas concentration per pore
+\item One loading per bead
+\item Reference mean uptake $\overline q_{\rm PNM}(t)$
+\end{itemize}
+\column{0.49\textwidth}\hi{Homogeneous 1D model}\small
+\begin{itemize}
+\item Replace the network by 100 equal axial slices
+\item Each slice spans the full tube cross-section
+\item One gas concentration and one mean solid loading per slice
+\item Represent unresolved pathways with a single diffusivity $D$
+\end{itemize}
+\end{columns}
+\vspace{0.25cm}
+\result{Fit $D$ so the reduced model reproduces the network's mean uptake history.}
+
 \end{frame}
 
 \begin{frame}{The homogeneous 1D uptake model}
@@ -405,48 +416,59 @@ For 100 equal axial cells:
 
 \end{frame}
 
-\begin{frame}{$D_{\rm access}$ and $D_{\rm eff}$ answer different questions}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.47\textwidth}
-      \hi{$D_{\rm access}$: geometric accessibility}
-      \footnotesize
-      \begin{itemize}
-        \item fix concentration at inlet and interior plane
-        \item solve one steady, linear diffusion problem
-        \item no adsorption and no time integration
-      \end{itemize}
-      \[
-        D_{\rm access}=\frac{G_{\rm access}H}{A_{\rm tube}}.
-      \]
-      $G_{\rm access}$ is total steady flux per concentration difference.
-      $H$ is bed height; $A_{\rm tube}$ is tube area.
-    \column{0.47\textwidth}
-      \hi{$D_{\rm eff}$: transient reduced-model coefficient}
-      \footnotesize
-      \begin{itemize}
-        \item full transient network gives $\overline q_{\rm PNM}(t)$
-        \item repeated 1D solves give $\overline q_{\rm 1D}(t;D)$
-      \end{itemize}
-      Define the curve residual
-      \[
-        e_m(D)=\overline q_{\rm 1D}(t_m;D)-\overline q_{\rm PNM}(t_m).
-      \]
-      \vspace{-0.20cm}
-      \[
-        \begin{aligned}
-        \mathrm{NRMSE}(D)&=
-          \frac{\sqrt{\sum_m w_m e_m(D)^2}}{\overline q_{\rm PNM}(t_f)},\\[-1mm]
-        D_{\rm eff}&=\arg\min_D\mathrm{NRMSE}(D).
-        \end{aligned}
-      \]
-%      The trapezoidal weights $w_m$ account for unequal time spacing and satisfy
-%      $\sum_m w_m=1$.
-  \end{columns}
-  \vspace{0.4cm}
-  \begin{beamercolorbox}[rounded=true,sep=0.35em]{block body}
-    \centering\small\bfseries\color{tumdark}
-    $D_{\rm access}$ is cheap because it avoids adsorption dynamics and optimization.
-  \end{beamercolorbox}
+\begin{frame}{Fit the effective diffusivity to the complete uptake curve}
+
+\begin{columns}[T,onlytextwidth]
+\column{0.47\textwidth}\hi{Per-bed optimization}\small
+\begin{enumerate}\setlength{\itemsep}{3pt}
+\item Select a trial $D$ within prescribed bounds.
+\item Solve the coupled 1D equations from the same initial state.
+\item Compare the full uptake curve with the PNM reference.
+\item Use previous errors to select the next $D$ and repeat (optimization).
+\end{enumerate}
+\column{0.49\textwidth}\hi{Curve error and fitted coefficient}\small
+\[
+e_m(D)=\overline q_{\rm 1D}(t_m;D)-\overline q_{\rm PNM}(t_m).
+\]
+\[
+\mathrm{NRMSE}(D)=\frac{\sqrt{\sum_m w_m e_m(D)^2}}{\overline q_{\rm PNM}(t_f)},
+\] \[ \sum_m w_m=1.
+\]
+\[
+D_{\rm eff}=\arg\min_D\mathrm{NRMSE}(D).
+\]
+The time weights account for unequal spacing of saved outputs.
+\end{columns}
+\vspace{0.2cm}
+\result{A fitted $D_{\rm eff}$ is a reduction target for each bed, not yet a geometry-based prediction.}
+
+\end{frame}
+
+\begin{frame}{Can inlet accessibility predict the fitted diffusivity?}
+
+\begin{columns}[T,onlytextwidth]
+\column{0.47\textwidth}\hi{A steady geometric descriptor}\small
+\begin{itemize}
+\item Use the same pore network with adsorption disabled.
+\item Fix concentrations at the inlet and an interior plane.
+\item Solve steady diffusion and sum the resulting molar flux $\dot n$.
+\end{itemize}
+\[
+G_{\rm access}=\frac{\dot n}{\Delta c},\qquad
+D_{\rm access}=\frac{G_{\rm access}H}{A_{\rm tube}}.
+\]
+$H$: bed height; $A_{\rm tube}$: tube cross-section.
+\column{0.49\textwidth}\hi{Learn a transport closure}\small
+\begin{itemize}
+\item Pair each $D_{\rm access}$ with its fitted $D_{\rm eff}$.
+\item Fit $D_{\rm eff}=f(D_{\rm access})$ on training beds.
+\item Leave one bed out to test diffusivity prediction.
+\item For a new bed, apply the closure and run the 1D model.
+\end{itemize}
+\end{columns}
+\vspace{0.25cm}
+\result{Accessibility measures steady gas access. The closure links it to transient uptake.}
+
 \end{frame}
 
 \begin{frame}{Why use an interior plane?}
@@ -464,7 +486,7 @@ For 100 equal axial cells:
         \draw[tumred,dashed,line width=1.4pt] (0,5.15)--(4.5,5.15);
         \node[anchor=west,font=\scriptsize,tumred] at (4.62,5.15) {bed top};
         \node[align=center,font=\small,tumdark] at (1.1,1.15) {inlet-access\\region};
-        \node[align=center,font=\small,tumgray] at (2.25,3.65) {upper region sampled\\later in the transient};
+        \node[align=center,font=\small,tumgray] at (2.25,3.65) {upper region may matter\\more at later times};
       \end{tikzpicture}}
     \Col{0.46}{
       \small
@@ -480,74 +502,39 @@ For 100 equal axial cells:
       \vspace*{-0.05cm}
       \begin{itemize}
         \item measure conductance through the entire bed
-        \item include upper bottlenecks not sampled early
+        \item include upper bottlenecks that may matter more at later times
       \end{itemize}}
   \end{FlexRow}
 \end{frame}
 
-\begin{frame}{Why not predict uptake directly from $G_{\rm access}$?}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.46\textwidth}
-      \hi{Direct endpoint relation}
-      \[
-        G_{\rm access}\longrightarrow \overline q(5000\,{\rm s})
-      \]
-      \small
-      \begin{itemize}
-        \item strong correlation: $\rho_s=0.968$
-        \item ranks beds or predicts one endpoint
-        \item valid at the selected time and conditions
-      \end{itemize}
-    \column{0.49\textwidth}
-      \hi{Transport closure}
-      \[
-        G_{\rm access}\longrightarrow D_{\rm access}
-        \longrightarrow D_{\rm eff}\longrightarrow \overline q(t)
-      \]
-      \small
-      \begin{itemize}
-        \item generates the complete uptake curve
-        \item retains conservative 1D transport
-        \item gives axial $c(z,t)$ and $q(z,t)$ profiles
-      \end{itemize}
-  \end{columns}
-  \vspace{0.6cm}
-  \result{If only uptake at 5000 s is needed, $G_{\rm access}$ is sufficient; $D_{\rm eff}$ is needed for a reusable transient model.}
-\end{frame}
+\begin{frame}{Development and later use are two different workflows}
+  \centering
+  \begin{tikzpicture}[node distance=5mm and 5mm,
+    flowbox/.style={box,text width=2.45cm,minimum height=10mm}]
+    \node[font=\bfseries,text=tumblue,anchor=west] at (-1.22,1.05) {Develop closure};
+    \node[flowbox] (beds) {DEM beds +\\pore networks};
+    \node[flowbox,right=of beds] (pair) {calculate paired\\$D_{\rm access},D_{\rm eff}$};
+    \node[flowbox,right=of pair,fill=tumgreen!13] (close) {fit once\\$D_{\rm eff}=f(D_{\rm access})$};
+    \draw[arr] (beds)--(pair);\draw[arr] (pair)--(close);
+    \node[font=\bfseries,text=tumblue,anchor=west] at (-1.22,-1.) {Predict for a new bed};
+    \node[flowbox] (new) at (0,-2) {new bed\\pore network};
+    \node[flowbox,right=of new] (steady) {one steady solve\\$D_{\rm access}$};
+    \node[flowbox,right=of steady,fill=tumgreen!13] (pred) {apply closure\\$D_{\rm eff}$};
+    \node[flowbox,right=of pred,fill=tumgreen!13] (uptake) {1D model\\$\overline q(t)$};
+    \draw[arr] (new)--(steady);\draw[arr] (steady)--(pred);\draw[arr] (pred)--(uptake);
+  \end{tikzpicture}
 
-\begin{frame}{Diffusivity optimization and closure calibration}
-\begin{columns}[T,onlytextwidth]
-\column{0.49\textwidth}
-\hi{Fit one diffusivity per bed}
-\small
-\begin{enumerate}
-\item Choose a trial $D$ within prescribed bounds.
-\item Solve the coupled 1D equations for $c(z,t)$ and $q(z,t)$.
-\item Compare mean uptake with the network using time-weighted NRMSE.
-\item Use previous errors to select the next $D$ and repeat (optimization).
-\end{enumerate}
-\column{0.47\textwidth}
-\hi{Learn the relationship across beds}
-\small
-\begin{itemize}
-\item Pair each fitted $D_{\rm eff}$ with its geometry-based $D_{\rm access}$.
-\item Fit the closure $D_{\rm eff}=f(D_{\rm access})$ on the training beds.
-\item Leave one bed out to assess diffusivity prediction.
-\end{itemize}
-\medskip
-The bounded search operates in $\log_{10}D$ and starts deterministically.
-\end{columns}
-\vspace{0.3cm}
-\result{Per-bed optimization supplies the targets for closure calibration.}
-
+  \vspace{0.45cm}
+  \result{For a new bed, the transient pore-network adsorption model is no longer required.}
 \end{frame}
 
 \section[Results]{Results and robustness}
+
 \begin{frame}{}
 \vfill
 {\large\color{tumgray}Section 4 of 5}\par\vspace{0.4cm}
 {\LARGE\color{tumblue}\textbf{Results and robustness}}\par\vspace{0.5cm}
-{\large Uptake variability, predictive closure and depth sensitivity}
+{\large Test the physical hypothesis and the model reduction}
 \vfill
 \end{frame}
 
@@ -734,6 +721,36 @@ Fit on nineteen beds, then predict the remaining bed.
   {\small\result{LOOCV $R^2$: power law $0.890$, proportional $0.555$, porosity $-0.234$.}}
 \end{frame}
 
+\begin{frame}{Why not predict uptake directly from $G_{\rm access}$?}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.46\textwidth}
+      \hi{Direct endpoint relation}
+      \[
+        G_{\rm access}\longrightarrow \overline q(5000\,{\rm s})
+      \]
+      \small
+      \begin{itemize}
+        \item strong correlation: $\rho_s=0.968$
+        \item ranks beds or predicts one endpoint
+        \item valid at the selected time and conditions
+      \end{itemize}
+    \column{0.49\textwidth}
+      \hi{Transport closure}
+      \[
+        G_{\rm access}\longrightarrow D_{\rm access}
+        \longrightarrow D_{\rm eff}\longrightarrow \overline q(t)
+      \]
+      \small
+      \begin{itemize}
+        \item generates the complete uptake curve
+        \item retains conservative 1D transport
+        \item gives axial $c(z,t)$ and $q(z,t)$ profiles
+      \end{itemize}
+  \end{columns}
+  \vspace{0.6cm}
+  \result{Endpoint correlation summarizes one time. A transport closure supplies a complete uptake history.}
+\end{frame}
+
 \begin{frame}{Accessibility remains correlated across diagnostic depths}
   \begin{columns}[c,onlytextwidth]
     \column{0.65\textwidth}
@@ -776,11 +793,12 @@ The $5d_p$ plane gives the highest linear-model score in this ensemble.
 \end{frame}
 
 \section[Conclusions]{Conclusions and next steps}
+
 \begin{frame}{}
 \vfill
 {\large\color{tumgray}Section 5 of 5}\par\vspace{0.4cm}
 {\LARGE\color{tumblue}\textbf{Conclusions and next steps}}\par\vspace{0.5cm}
-{\large What the evidence supports and what remains to validate}
+{\large What is established and what remains to validate}
 \vfill
 \end{frame}
 
@@ -827,373 +845,7 @@ The $5d_p$ plane gives the highest linear-model score in this ensemble.
     \column{0.31\textwidth}\centering\hi{$R^2=0.890$}\\withheld-bed closure
   \end{columns}
 \end{frame}
-\appendix
-\section[Backup]{Backup: pore-network construction}
-\begin{frame}{}
-\vfill
-{\large\color{tumgray}Backup slides}\par\vspace{0.4cm}
-{\LARGE\color{tumblue}\textbf{How the pore network is constructed}}\par\vspace{0.5cm}
-{\large Particle geometry, Sobol volume allocation and transport}
-\vfill
-\end{frame}
 
-\begin{frame}{1. Particle positions define candidate pore nodes}
-\begin{columns}[c,onlytextwidth]
-\column{0.47\textwidth}\centering
-\begin{tikzpicture}[scale=1.0]
-\coordinate (a) at (0,0);\coordinate (b) at (3.4,0.3);\coordinate (c) at (1.0,1.4);\coordinate (d) at (1.8,3.3);
-\draw[tumblue,thick] (a)--(b)--(d)--cycle;
-\draw[tumblue,dashed] (a)--(c)--(b) (c)--(d);
-\foreach \p/\n in {a/1,b/2,c/3,d/4}{\filldraw[fill=tumlight,draw=tumblue] (\p) circle (0.36);\node at (\p) {$\n$};}
-\node[circle,fill=tumorange,inner sep=3pt] (p) at (1.55,1.25) {};
-\node[anchor=west,text=tumdark] at (2.1,1.75) {pore node};\draw[tumdark] (2.1,1.65)--(p);
-\node[align=center,font=\footnotesize,text=tumgray] at (1.7,-0.8) {Schematic 3D projection\\Bead centres form a tetrahedron};
-\end{tikzpicture}
-\column{0.49\textwidth}\small
-\begin{itemize}
-\item Start with known bead centres, radii and bed boundaries.
-\item Delaunay tetrahedralization groups neighbouring centres into sets of four.
-\item Locate the circumcentre: the point equidistant from those four centres.
-\item Retain valid points inside the bed and outside the solid as pore nodes.
-\end{itemize}
-\medskip
-A node represents a gas region. Its volume is assigned later.
-\end{columns}
-\result{The particle geometry determines where the pore nodes are placed.}
-\end{frame}
-
-\begin{frame}{2. Shared particle faces define pore connections}
-\begin{columns}[c,onlytextwidth]
-\column{0.47\textwidth}\centering
-\begin{tikzpicture}[scale=1.05]
-\coordinate (a) at (1.7,0);\coordinate (b) at (1.1,2.5);\coordinate (c) at (2.4,2.1);
-\fill[tumblue!12] (a)--(b)--(c)--cycle;
-\draw[tumblue,thick] (a)--(b)--(c)--cycle;
-\coordinate (l) at (-0.1,1.3);\coordinate (r) at (3.8,1.3);
-\foreach \v in {a,b,c}{\draw[tumgray,dashed] (l)--(\v)--(r);}
-\draw[tumorange,line width=2pt] (0.9,1.3)--(2.8,1.3);
-\foreach \x/\lab in {0.9/i,2.8/j}{\node[circle,fill=tumorange,inner sep=3pt,label=below:{$\lab$}] at (\x,1.3) {};}
-\foreach \v in {a,b,c,l,r}{\filldraw[fill=tumlight,draw=tumblue] (\v) circle (0.18);}
-\node[font=\footnotesize,align=center,text=tumgray] at (1.8,-0.7) {Two tetrahedra share three beads\\Schematic 3D projection};
-\end{tikzpicture}
-\column{0.49\textwidth}\small
-\begin{itemize}
-\item Two neighbouring tetrahedra share a triangular face.
-\item The three beads around that face define an opening.
-\item A valid opening connects pore nodes $i$ and $j$ through a throat.
-\item Estimate throat length $L_{ij}$ and circular area $A_{ij}$ from geometry.
-\end{itemize}
-\[
-G_{ij}=D_m\frac{A_{ij}}{L_{ij}}.
-\]
-\end{columns}
-\result{At this stage we know the nodes and connections. Sobol sampling has not been used.}
-\end{frame}
-
-\begin{frame}{3. Sobol points measure the gas space}
-\begin{columns}[c,onlytextwidth]
-\column{0.47\textwidth}\centering
-\begin{tikzpicture}[scale=1.0]
-\draw[tumgray] (0,0) rectangle (4.2,3.4);
-\foreach \x/\y in {0.8/0.9,2.0/2.5,3.3/1.1}{\filldraw[fill=tumlight,draw=tumblue] (\x,\y) circle (0.58);}
-% Sobol sample coordinates inserted by the build helper.
-\draw[tumgray!55] (1.775,2.734)--(1.845,2.804);
-\fill[tumblue] (4.039,1.059) circle (0.025);
-\fill[tumblue] (2.371,2.033) circle (0.025);
-\fill[tumblue] (0.147,0.090) circle (0.025);
-\fill[tumblue] (1.000,2.175) circle (0.025);
-\fill[tumblue] (2.700,0.797) circle (0.025);
-\fill[tumblue] (3.185,3.117) circle (0.025);
-\fill[tumblue] (1.483,1.560) circle (0.025);
-\fill[tumblue] (1.077,1.752) circle (0.025);
-\fill[tumblue] (3.574,0.374) circle (0.025);
-\fill[tumblue] (3.141,2.691) circle (0.025);
-\draw[tumgray!55] (0.606,1.098)--(0.676,1.168);
-\fill[tumblue] (0.312,3.192) circle (0.025);
-\fill[tumblue] (2.289,1.482) circle (0.025);
-\fill[tumblue] (3.902,2.459) circle (0.025);
-\fill[tumblue] (1.931,0.517) circle (0.025);
-\draw[tumgray!55] (1.987,2.329)--(2.057,2.399);
-\fill[tumblue] (3.729,0.614) circle (0.025);
-\fill[tumblue] (2.197,3.301) circle (0.025);
-\draw[tumgray!55] (0.450,1.337)--(0.520,1.407);
-\fill[tumblue] (0.683,2.581) circle (0.025);
-\draw[tumgray!55] (2.883,1.208)--(2.953,1.278);
-\fill[tumblue] (3.532,1.849) circle (0.025);
-\fill[tumblue] (1.299,0.279) circle (0.025);
-\fill[tumblue] (1.391,3.007) circle (0.025);
-\draw[tumgray!55] (3.324,1.634)--(3.394,1.704);
-\fill[tumblue] (2.791,2.272) circle (0.025);
-\draw[tumgray!55] (0.792,0.667)--(0.862,0.737);
-\fill[tumblue] (0.105,1.937) circle (0.025);
-\fill[tumblue] (2.593,0.187) circle (0.025);
-\fill[tumblue] (4.081,2.877) circle (0.025);
-\fill[tumblue] (1.587,0.948) circle (0.025);
-\draw[tumgray!55] (1.617,2.058)--(1.687,2.128);
-\fill[tumblue] (4.147,0.031) circle (0.025);
-\fill[tumblue] (2.533,2.828) circle (0.025);
-\fill[tumblue] (0.034,0.998) circle (0.025);
-\fill[tumblue] (0.887,3.163) circle (0.025);
-\fill[tumblue] (2.862,1.512) circle (0.025);
-\fill[tumblue] (3.294,2.222) circle (0.025);
-\draw[tumgray!55] (1.290,0.716)--(1.360,0.786);
-\fill[tumblue] (1.235,2.736) circle (0.025);
-\draw[tumgray!55] (3.430,1.051)--(3.500,1.121);
-\fill[tumblue] (2.979,1.799) circle (0.025);
-\draw[tumgray!55] (0.718,0.293)--(0.788,0.363);
-\fill[tumblue] (0.425,2.520) circle (0.025);
-\fill[tumblue] (2.127,0.458) circle (0.025);
-\fill[tumblue] (3.793,3.251) circle (0.025);
-\fill[tumblue] (2.089,1.422) circle (0.025);
-\fill[tumblue] (1.868,3.348) circle (0.025);
-\draw[tumgray!55] (3.798,1.291)--(3.868,1.361);
-\draw[tumgray!55] (2.312,2.374)--(2.382,2.444);
-\draw[tumgray!55] (0.350,0.531)--(0.420,0.601);
-\fill[tumblue] (0.582,1.908) circle (0.025);
-\fill[tumblue] (3.068,0.218) circle (0.025);
-\fill[tumblue] (3.637,2.641) circle (0.025);
-\draw[tumgray!55] (1.110,1.149)--(1.180,1.219);
-\draw[tumgray!55] (1.510,2.296)--(1.580,2.366);
-\draw[tumgray!55] (3.219,0.606)--(3.289,0.676);
-\fill[tumblue] (2.641,3.068) circle (0.025);
-\fill[tumblue] (0.927,1.610) circle (0.025);
-\fill[tumblue] (0.206,2.924) circle (0.025);
-\fill[tumblue] (2.444,0.902) circle (0.025);
-\fill[tumblue] (3.976,1.982) circle (0.025);
-\fill[tumblue] (1.741,0.140) circle (0.025);
-\draw[tumgray!55] (1.678,2.168)--(1.748,2.238);
-\fill[tumblue] (3.939,0.772) circle (0.025);
-\fill[tumblue] (2.473,3.143) circle (0.025);
-\fill[tumblue] (0.242,1.533) circle (0.025);
-\fill[tumblue] (0.965,2.847) circle (0.025);
-\fill[tumblue] (2.669,0.978) circle (0.025);
-\fill[tumblue] (3.218,2.113) circle (0.025);
-\fill[tumblue] (1.516,0.011) circle (0.025);
-\fill[tumblue] (1.175,3.271) circle (0.025);
-\draw[tumgray!55] (3.638,1.366)--(3.708,1.436);
-\fill[tumblue] (3.040,2.540) circle (0.025);
-\draw[tumgray!55] (0.510,0.403)--(0.580,0.473);
-\fill[tumblue] (0.349,1.780) circle (0.025);
-\fill[tumblue] (2.318,0.348) circle (0.025);
-\fill[tumblue] (3.871,2.717) circle (0.025);
-\fill[tumblue] (1.896,1.106) circle (0.025);
-\draw[tumgray!55] (2.016,2.573)--(2.086,2.643);
-\draw[tumgray!55] (3.730,1.181)--(3.800,1.251);
-\fill[tumblue] (2.163,1.875) circle (0.025);
-\fill[tumblue] (0.454,0.251) circle (0.025);
-\fill[tumblue] (0.781,2.443) circle (0.025);
-\fill[tumblue] (3.017,0.534) circle (0.025);
-\fill[tumblue] (3.436,3.382) circle (0.025);
-\draw[tumgray!55] (1.163,1.258)--(1.233,1.328);
-\fill[tumblue] (1.361,2.016) circle (0.025);
-\fill[tumblue] (3.323,0.107) circle (0.025);
-\fill[tumblue] (2.824,2.958) circle (0.025);
-\draw[tumgray!55] (0.824,0.835)--(0.894,0.905);
-\fill[tumblue] (0.005,3.034) circle (0.025);
-\fill[tumblue] (2.497,1.643) circle (0.025);
-\fill[tumblue] (4.176,2.298) circle (0.025);
-\fill[tumblue] (1.690,0.674) circle (0.025);
-\fill[tumblue] (1.617,3.084) circle (0.025);
-\fill[tumblue] (4.117,1.594) circle (0.025);
-\fill[tumblue] (2.565,2.142) circle (0.025);
-\fill[tumblue] (0.068,0.831) circle (0.025);
-\fill[tumblue] (0.790,2.065) circle (0.025);
-\fill[tumblue] (2.761,0.057) circle (0.025);
-\fill[tumblue] (3.396,2.802) circle (0.025);
-\fill[tumblue] (1.419,1.025) circle (0.025);
-\fill[tumblue] (1.271,2.492) circle (0.025);
-\fill[tumblue] (3.495,0.483) circle (0.025);
-\fill[tumblue] (2.948,3.225) circle (0.025);
-\draw[tumgray!55] (0.684,1.414)--(0.754,1.484);
-\fill[tumblue] (0.523,2.658) circle (0.025);
-\fill[tumblue] (2.225,1.167) circle (0.025);
-\fill[tumblue] (3.692,1.719) circle (0.025);
-\fill[tumblue] (1.992,0.407) circle (0.025);
-\fill[tumblue] (1.967,1.829) circle (0.025);
-\fill[tumblue] (3.931,0.298) circle (0.025);
-\draw[tumgray!55] (2.216,2.525)--(2.286,2.595);
-\fill[tumblue] (0.284,1.262) circle (0.025);
-\fill[tumblue] (0.611,3.321) circle (0.025);
-\draw[tumgray!55] (3.070,1.317)--(3.140,1.387);
-\fill[tumblue] (3.602,2.384) circle (0.025);
-\draw[tumgray!55] (1.079,0.559)--(1.149,0.629);
-\fill[tumblue] (1.445,2.897) circle (0.025);
-\draw[tumgray!55] (3.122,0.894)--(3.192,0.964);
-\fill[tumblue] (2.736,1.957) circle (0.025);
-\fill[tumblue] (1.029,0.167) circle (0.025);
-\fill[tumblue] (0.175,2.252) circle (0.025);
-\fill[tumblue] (2.408,0.721) circle (0.025);
-\fill[tumblue] (4.009,2.987) circle (0.025);
-\fill[tumblue] (1.774,1.689) circle (0.025);
-\node[font=\footnotesize,align=center,text=tumgray] at (2.1,-0.65) {Illustrative 2D Sobol sample\\Blue: gas points; grey crosses: solid points};
-\end{tikzpicture}
-\column{0.49\textwidth}\small
-\begin{itemize}
-\item Distribute $2^{22}\approx4.2$ million sample points through the cylindrical bed.
-\item Sobol sampling covers the domain with few gaps and clusters.
-\item Check each point against the bead surfaces.
-\item Discard points inside solid particles and retain gas-space points.
-\end{itemize}
-\medskip
-These are measuring points, not extra pores or mesh cells.
-\end{columns}
-\result{Sobol sampling estimates volume. It does not generate network connections.}
-\end{frame}
-
-\begin{frame}{4. Assign gas-space samples to the nearest pore}
-\begin{columns}[c,onlytextwidth]
-\column{0.47\textwidth}\centering
-\begin{tikzpicture}[scale=1.0]
-\fill[tumblue!5] (0,0) rectangle (2.1,3.4);
-\fill[tumorange!8] (2.1,0) rectangle (4.2,3.4);
-\draw[tumgray] (0,0) rectangle (4.2,3.4);
-\draw[tumgray,dashed] (2.1,0)--(2.1,3.4);
-\foreach \x/\y in {0.8/0.9,2.0/2.5,3.3/1.1}{\filldraw[fill=tumlight,draw=tumblue] (\x,\y) circle (0.58);}
-\fill[tumorange] (4.039,1.059) circle (0.025);
-\fill[tumorange] (2.371,2.033) circle (0.025);
-\fill[tumblue] (0.147,0.090) circle (0.025);
-\fill[tumblue] (1.000,2.175) circle (0.025);
-\fill[tumorange] (2.700,0.797) circle (0.025);
-\fill[tumorange] (3.185,3.117) circle (0.025);
-\fill[tumblue] (1.483,1.560) circle (0.025);
-\fill[tumblue] (1.077,1.752) circle (0.025);
-\fill[tumorange] (3.574,0.374) circle (0.025);
-\fill[tumorange] (3.141,2.691) circle (0.025);
-\fill[tumblue] (0.312,3.192) circle (0.025);
-\fill[tumorange] (2.289,1.482) circle (0.025);
-\fill[tumorange] (3.902,2.459) circle (0.025);
-\fill[tumblue] (1.931,0.517) circle (0.025);
-\fill[tumorange] (3.729,0.614) circle (0.025);
-\fill[tumorange] (2.197,3.301) circle (0.025);
-\fill[tumblue] (0.683,2.581) circle (0.025);
-\fill[tumorange] (3.532,1.849) circle (0.025);
-\fill[tumblue] (1.299,0.279) circle (0.025);
-\fill[tumblue] (1.391,3.007) circle (0.025);
-\fill[tumorange] (2.791,2.272) circle (0.025);
-\fill[tumblue] (0.105,1.937) circle (0.025);
-\fill[tumorange] (2.593,0.187) circle (0.025);
-\fill[tumorange] (4.081,2.877) circle (0.025);
-\fill[tumblue] (1.587,0.948) circle (0.025);
-\fill[tumorange] (4.147,0.031) circle (0.025);
-\fill[tumorange] (2.533,2.828) circle (0.025);
-\fill[tumblue] (0.034,0.998) circle (0.025);
-\fill[tumblue] (0.887,3.163) circle (0.025);
-\fill[tumorange] (2.862,1.512) circle (0.025);
-\fill[tumorange] (3.294,2.222) circle (0.025);
-\fill[tumblue] (1.235,2.736) circle (0.025);
-\fill[tumorange] (2.979,1.799) circle (0.025);
-\fill[tumblue] (0.425,2.520) circle (0.025);
-\fill[tumorange] (2.127,0.458) circle (0.025);
-\fill[tumorange] (3.793,3.251) circle (0.025);
-\fill[tumblue] (2.089,1.422) circle (0.025);
-\fill[tumblue] (1.868,3.348) circle (0.025);
-\fill[tumblue] (0.582,1.908) circle (0.025);
-\fill[tumorange] (3.068,0.218) circle (0.025);
-\fill[tumorange] (3.637,2.641) circle (0.025);
-\fill[tumorange] (2.641,3.068) circle (0.025);
-\fill[tumblue] (0.927,1.610) circle (0.025);
-\fill[tumblue] (0.206,2.924) circle (0.025);
-\fill[tumorange] (2.444,0.902) circle (0.025);
-\fill[tumorange] (3.976,1.982) circle (0.025);
-\fill[tumblue] (1.741,0.140) circle (0.025);
-\fill[tumorange] (3.939,0.772) circle (0.025);
-\fill[tumorange] (2.473,3.143) circle (0.025);
-\fill[tumblue] (0.242,1.533) circle (0.025);
-\fill[tumblue] (0.965,2.847) circle (0.025);
-\fill[tumorange] (2.669,0.978) circle (0.025);
-\fill[tumorange] (3.218,2.113) circle (0.025);
-\fill[tumblue] (1.516,0.011) circle (0.025);
-\fill[tumblue] (1.175,3.271) circle (0.025);
-\fill[tumorange] (3.040,2.540) circle (0.025);
-\fill[tumblue] (0.349,1.780) circle (0.025);
-\fill[tumorange] (2.318,0.348) circle (0.025);
-\fill[tumorange] (3.871,2.717) circle (0.025);
-\fill[tumblue] (1.896,1.106) circle (0.025);
-\fill[tumorange] (2.163,1.875) circle (0.025);
-\fill[tumblue] (0.454,0.251) circle (0.025);
-\fill[tumblue] (0.781,2.443) circle (0.025);
-\fill[tumorange] (3.017,0.534) circle (0.025);
-\fill[tumorange] (3.436,3.382) circle (0.025);
-\fill[tumblue] (1.361,2.016) circle (0.025);
-\fill[tumorange] (3.323,0.107) circle (0.025);
-\fill[tumorange] (2.824,2.958) circle (0.025);
-\fill[tumblue] (0.005,3.034) circle (0.025);
-\fill[tumorange] (2.497,1.643) circle (0.025);
-\fill[tumorange] (4.176,2.298) circle (0.025);
-\fill[tumblue] (1.690,0.674) circle (0.025);
-\fill[tumblue] (1.617,3.084) circle (0.025);
-\fill[tumorange] (4.117,1.594) circle (0.025);
-\fill[tumorange] (2.565,2.142) circle (0.025);
-\fill[tumblue] (0.068,0.831) circle (0.025);
-\fill[tumblue] (0.790,2.065) circle (0.025);
-\fill[tumorange] (2.761,0.057) circle (0.025);
-\fill[tumorange] (3.396,2.802) circle (0.025);
-\fill[tumblue] (1.419,1.025) circle (0.025);
-\fill[tumblue] (1.271,2.492) circle (0.025);
-\fill[tumorange] (3.495,0.483) circle (0.025);
-\fill[tumorange] (2.948,3.225) circle (0.025);
-\fill[tumblue] (0.523,2.658) circle (0.025);
-\fill[tumorange] (2.225,1.167) circle (0.025);
-\fill[tumorange] (3.692,1.719) circle (0.025);
-\fill[tumblue] (1.992,0.407) circle (0.025);
-\fill[tumblue] (1.967,1.829) circle (0.025);
-\fill[tumorange] (3.931,0.298) circle (0.025);
-\fill[tumblue] (0.284,1.262) circle (0.025);
-\fill[tumblue] (0.611,3.321) circle (0.025);
-\fill[tumorange] (3.602,2.384) circle (0.025);
-\fill[tumblue] (1.445,2.897) circle (0.025);
-\fill[tumorange] (2.736,1.957) circle (0.025);
-\fill[tumblue] (1.029,0.167) circle (0.025);
-\fill[tumblue] (0.175,2.252) circle (0.025);
-\fill[tumorange] (2.408,0.721) circle (0.025);
-\fill[tumorange] (4.009,2.987) circle (0.025);
-\fill[tumblue] (1.774,1.689) circle (0.025);
-\node[star,star points=5,fill=tumblue,inner sep=3pt,label=above:{$i$}] at (1.1,1.7) {};
-\node[star,star points=5,fill=tumorange,inner sep=3pt,label=above:{$j$}] at (3.1,1.7) {};
-\node[font=\footnotesize,align=center,text=tumgray] at (2.1,-0.65) {Two illustrative pore nodes\\Each gas point takes its nearest node's colour};
-\end{tikzpicture}
-\column{0.49\textwidth}\small
-\begin{itemize}
-\item Assign every retained gas point to its nearest pore node.
-\item Count the assigned points: $N_i$ for pore $i$.
-\item A larger count gives a larger share of the calculated void volume.
-\end{itemize}
-\[
-V_i=V_{\rm void}\frac{N_i+0.5}{\sum_j(N_j+0.5)}.
-\]
-\begin{itemize}
-\item The small $0.5$ correction prevents zero volumes.
-\item Normalization ensures $\sum_i V_i=V_{\rm void}$.
-\end{itemize}
-\end{columns}
-\result{The total volume is conserved, while each individual pore volume is an estimate.}
-\end{frame}
-
-\begin{frame}{5. The network carries coupled diffusion and adsorption}
-\begin{columns}[c,onlytextwidth]
-\column{0.47\textwidth}\centering
-\begin{tikzpicture}[scale=1.05]
-\node[circle,draw=tumblue,fill=tumlight,minimum size=1.3cm,align=center] (i) at (0.8,2.3) {$V_i$\\$c_i(t)$};
-\node[circle,draw=tumblue,fill=tumlight,minimum size=1.3cm,align=center] (j) at (3.4,2.3) {$V_j$\\$c_j(t)$};
-\draw[<->,>=Latex,thick,tumblue] (i)--node[above] {$G_{ij}$} (j);
-\node[circle,draw=tumdark,fill=tumlight,minimum size=1.3cm,align=center] (q) at (2.1,0.3) {bead $k$\\$q_k(t)$};
-\draw[->,>=Latex,thick,tumorange] (i)--(q);
-\draw[->,>=Latex,thick,tumorange] (j)--(q);
-\node[font=\footnotesize,text=tumgray] at (2.1,-0.8) {Schematic during net adsorption};
-\end{tikzpicture}
-\column{0.49\textwidth}\small
-\begin{itemize}
-\item Pore volumes store gas: $n_i=V_i c_i$.
-\item Throats transfer gas according to concentration differences.
-\item Associated beads adsorb gas from adjacent pores.
-\item Boundary connections supply gas from the inlet reservoir.
-\end{itemize}
-\[
-\dot n_{j\to i}=G_{ij}(c_j-c_i),\qquad
-\frac{dq_k}{dt}=k_{\rm LDF}(q_k^*-q_k).
-\]
-\end{columns}
-\result{Throats control gas movement. Pore volumes control local gas storage.}
-\end{frame}
-
+% Optional detailed backup slides: uncomment the following line and compile twice.
+% \input{pnm_backup_slides.tex}
 \end{document}

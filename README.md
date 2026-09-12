@@ -54,5 +54,5 @@ Historical fixed-inlet outputs, power-20 campaign networks, preliminary
 homogeneous fits, an older nested analysis script, and LaTeX build products were
 removed on the cleanup branch. Their originals remain in Git history. The
 Sobol, diffusion and corrected grid-convergence validation cases are retained.
-The audience and presenter-note Beamer decks now contain 32 main slides plus 6 backup slides and use all
+The audience and presenter-note Beamer decks now contain 34 main slides with 6 optional backup slides disabled by default and use all
 11 standalone figures. Existing paper-linked composites remain for compatibility.
