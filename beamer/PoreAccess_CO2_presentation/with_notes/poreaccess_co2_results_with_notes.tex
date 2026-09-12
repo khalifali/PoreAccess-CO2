@@ -488,52 +488,43 @@
 \end{frame}
 
 \begin{frame}{The homogeneous 1D uptake model}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.55\textwidth}
-      \hi{Axial diffusion and adsorption}
-      \small
-      \[
-        \varepsilon_b\frac{\partial c}{\partial t}
-        =D\frac{\partial^2c}{\partial z^2}
-        -(1-\varepsilon_b)\rho_p\frac{\partial q}{\partial t},
-      \]
-      \[
-        \frac{\partial q}{\partial t}
-        =k_{\rm LDF}\,[q^*(c)-q].
-      \]
-      \begin{itemize}
-        \item Solve both equations together for $c(z,t)$ and $q(z,t)$.
-        \item Use 100 cells and prescribed initial and boundary conditions.
-      \end{itemize}
-    \column{0.41\textwidth}
-      \hi{Quantity compared with the network}
-      \[
-        \overline q_{\rm 1D}(t;D)
-        =\frac{1}{H}\int_0^H q(z,t;D)\,dz.
-      \]
-      \small
-      \begin{itemize}
-        \item Match the network's bed height, porosity and inlet condition.
-        \item Use the same Langmuir parameters, LDF coefficient and initial state.
-        \item Only $D$ changes during fitting.
-      \end{itemize}
-  \end{columns}
-  \vspace{0.18cm}
-  \result{For every trial $D$, the 1D solver produces a complete mean uptake curve.}
-  \note{
-    The reduced model replaces the irregular pore network by one axial
-    coordinate. It solves coupled diffusion and adsorption in one hundred
-    cells. The local outputs are the gas concentration $c(z,t)$ and loading
-    $q(z,t)$. Their spatial average gives
-    $\overline q_{\rm 1D}(t;D)$, the mean uptake predicted by the 1D model.
-
-    The bed height, porosity, inlet condition, Langmuir parameters, LDF
-    coefficient and initial state remain identical to those in the pore-network
-    calculation. Only the diffusivity $D$ changes. For any selected value of
-    $D$, the solver must integrate the complete transient problem and return a
-    complete uptake curve. This is why we call it a trial diffusivity at this
-    stage. We do not yet know which value best represents the network.
-  }
+\begin{columns}[T,onlytextwidth]
+\column{0.54\textwidth}
+\small
+\hi{Gas balance in each axial cell}
+\[
+\varepsilon_b\frac{\partial c}{\partial t}
+=D\frac{\partial^2c}{\partial z^2}
+-(1-\varepsilon_b)\rho_p\frac{\partial q}{\partial t}.
+\]
+\hi{Adsorbent loading in each axial cell}
+\[
+\frac{\partial q}{\partial t}
+=k_{\rm LDF}\left[\frac{q_s bRTc}{1+bRTc}-q\right].
+\]
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item Divide the bed height into 100 equal slices, each spanning the tube cross-section.
+\item Solve gas concentration and mean solid loading together in each slice.
+\item Trial $D$ changes $c$, which changes adsorption.
+\end{itemize}
+\column{0.43\textwidth}
+\small
+\hi{Average the calculated loading}
+\[
+\overline q_{\rm 1D}(t;D)=\frac{1}{H}\int_0^H q(z,t;D)\,dz.
+\]
+For 100 equal axial cells:
+\[
+\overline q_{\rm 1D}(t;D)=\frac{1}{100}\sum_{\ell=1}^{100}q_\ell(t;D).
+\]
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item Match bed height, porosity and inlet condition to the network.
+\item Keep isotherm, kinetics and initial state fixed. Only $D$ changes.
+\end{itemize}
+\end{columns}
+\vspace{0.1cm}
+\result{The 1D grid is separate from the pore network.}
+\note{This slide describes the homogeneous one-dimensional model, not the individual pore network. Each axial cell contains gas and a homogenized amount of adsorbent. We solve one gas concentration and one solid loading per cell, giving 200 coupled state equations for 100 cells. The loading equation explicitly substitutes the Langmuir equilibrium relation and p equals cRT. The diffusivity appears in the gas balance. Changing it changes the gas concentration history and therefore the adsorption history. The right-hand side is a spatial average of the calculated loadings, not an additional independent evolution equation. For equal cells and uniform adsorbent density, the arithmetic average is the bed mean loading.}
 \end{frame}
 
 \begin{frame}{$D_{\rm access}$ and $D_{\rm eff}$ answer different questions}

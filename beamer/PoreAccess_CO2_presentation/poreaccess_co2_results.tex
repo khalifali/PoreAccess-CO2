@@ -357,38 +357,43 @@
 \end{frame}
 
 \begin{frame}{The homogeneous 1D uptake model}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.55\textwidth}
-      \hi{Axial diffusion and adsorption}
-      \small
-      \[
-        \varepsilon_b\frac{\partial c}{\partial t}
-        =D\frac{\partial^2c}{\partial z^2}
-        -(1-\varepsilon_b)\rho_p\frac{\partial q}{\partial t},
-      \]
-      \[
-        \frac{\partial q}{\partial t}
-        =k_{\rm LDF}\,[q^*(c)-q].
-      \]
-      \begin{itemize}
-        \item Solve both equations together for $c(z,t)$ and $q(z,t)$.
-        \item Use 100 cells and prescribed initial and boundary conditions.
-      \end{itemize}
-    \column{0.41\textwidth}
-      \hi{Quantity compared with the network}
-      \[
-        \overline q_{\rm 1D}(t;D)
-        =\frac{1}{H}\int_0^H q(z,t;D)\,dz.
-      \]
-      \small
-      \begin{itemize}
-        \item Match the network's bed height, porosity and inlet condition.
-        \item Use the same Langmuir parameters, LDF coefficient and initial state.
-        \item Only $D$ changes during fitting.
-      \end{itemize}
-  \end{columns}
-  \vspace{0.18cm}
-  \result{For every trial $D$, the 1D solver produces a complete mean uptake curve.}
+\begin{columns}[T,onlytextwidth]
+\column{0.54\textwidth}
+\small
+\hi{Gas balance in each axial cell}
+\[
+\varepsilon_b\frac{\partial c}{\partial t}
+=D\frac{\partial^2c}{\partial z^2}
+-(1-\varepsilon_b)\rho_p\frac{\partial q}{\partial t}.
+\]
+\hi{Adsorbent loading in each axial cell}
+\[
+\frac{\partial q}{\partial t}
+=k_{\rm LDF}\left[\frac{q_s bRTc}{1+bRTc}-q\right].
+\]
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item Divide the bed height into 100 equal slices, each spanning the tube cross-section.
+\item Solve gas concentration and mean solid loading together in each slice.
+\item Trial $D$ changes $c$, which changes adsorption.
+\end{itemize}
+\column{0.43\textwidth}
+\small
+\hi{Average the calculated loading}
+\[
+\overline q_{\rm 1D}(t;D)=\frac{1}{H}\int_0^H q(z,t;D)\,dz.
+\]
+For 100 equal axial cells:
+\[
+\overline q_{\rm 1D}(t;D)=\frac{1}{100}\sum_{\ell=1}^{100}q_\ell(t;D).
+\]
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item Match bed height, porosity and inlet condition to the network.
+\item Keep isotherm, kinetics and initial state fixed. Only $D$ changes.
+\end{itemize}
+\end{columns}
+\vspace{0.1cm}
+\result{The 1D grid is separate from the pore network.}
+
 \end{frame}
 
 \begin{frame}{$D_{\rm access}$ and $D_{\rm eff}$ answer different questions}
