@@ -456,7 +456,7 @@ def figure_depth(args, depth, manifest):
     ax.legend(frameon=False); clean_axes(ax); panel_label(ax, "a")
     ax = axes[1]
     ax.plot(d.depth_dp, d.linear_loo_r2, "o-", color=COLORS["orange"],
-            label="affine accessibility model")
+            label="linear model with intercept")
     if "origin_loo_r2" in d:
         ax.plot(d.depth_dp, d.origin_loo_r2, "s--", color=COLORS["purple"],
                 label="proportional model")
