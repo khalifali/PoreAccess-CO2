@@ -31,7 +31,7 @@
 \setbeamertemplate{footline}{%
   \leavevmode\begin{beamercolorbox}[wd=\paperwidth,ht=3.2ex,dp=1.3ex]{author in head/foot}
   \hspace*{1em}\color{tumgray} Khalifa and Briesen \enspace|\enspace PoreAccess--CO$_2$
-  \hfill\insertframenumber/\inserttotalframenumber\hspace*{1em}
+  \hfill\insertsectionhead\hfill\insertframenumber/\inserttotalframenumber\hspace*{1em}
   \end{beamercolorbox}}
 
 \newcommand{\hi}[1]{\textcolor{tumblue}{\textbf{#1}}}
@@ -80,7 +80,19 @@
   \end{FlexRow}
 \end{frame}
 
-% -----------------------------------------------------------------------------
+\begin{frame}{Presentation outline}
+\tableofcontents
+\end{frame}
+
+\section[Motivation]{Motivation and research question}
+\begin{frame}{}
+\vfill
+{\large\color{tumgray}Section 1 of 5}\par\vspace{0.4cm}
+{\LARGE\color{tumblue}\textbf{Motivation and research question}}\par\vspace{0.5cm}
+{\large Why can similar beds adsorb differently?}
+\vfill
+\end{frame}
+
 \begin{frame}{CO$_2$ adsorption matters and packing structure is a missing scale}
   \small
   \begin{columns}[T,onlytextwidth]
@@ -108,7 +120,6 @@
  % {\tiny\color{tumgray}Sources: Crippa et al. (2021); Raganati et al. (2021); Won et al. (2012); Wray et al. (2024).}
 \end{frame}
 
-% -----------------------------------------------------------------------------
 \begin{frame}{Same porosity can hide different inlet-connected pathways}
   \question{Can a pore-accessibility measure predict bed-scale transient transport better than porosity alone?}
   \vspace{0.18cm}\centering
@@ -122,7 +133,7 @@
   	bottleneck/.style={draw=orange!90!black,line width=2.2pt},
   	paneltitle/.style={font=\small\bfseries,align=center},
   	note/.style={font=\small,align=left}]
-  	
+
   	% Packing A: one restricted inlet-connected route.
   	\begin{scope}[shift={(0,0)}]
   		\fill[gray!3] (0,0) rectangle (4.65,3.75); \draw[thick] (0,0) rectangle (4.65,3.75);
@@ -147,7 +158,7 @@
   		\node[beadM] at (0.32,1.95) {}; \node[beadM] at (1.15,1.88) {}; \node[beadM] at (1.92,2.02) {}; \node[beadM] at (2.72,1.86) {}; \node[beadM] at (3.52,1.95) {}; \node[beadM] at (4.30,2.02) {};
   		\node[beadM] at (0.35,2.85) {}; \node[beadM] at (1.22,3.25) {}; \node[beadM] at (2.15,2.82) {}; \node[beadM] at (3.08,3.25) {}; \node[beadM] at (4.15,2.92) {};
   	\end{scope}
-  	
+
   	% Packing B: several parallel inlet-connected routes.
   	\begin{scope}[shift={(5.35,0)}]
   		\fill[gray!3] (0,0) rectangle (4.65,3.75); \draw[thick] (0,0) rectangle (4.65,3.75);
@@ -164,7 +175,7 @@
   		\node[beadS] at (0.30,1.92) {}; \node[beadM] at (1.08,1.92) {}; \node[beadL] at (1.92,2.02) {}; \node[beadS] at (2.75,1.82) {}; \node[beadM] at (3.55,1.82) {}; \node[beadL] at (4.38,1.92) {};
   		\node[beadM] at (0.35,2.82) {}; \node[beadL] at (1.02,3.32) {}; \node[beadS] at (2.02,2.85) {}; \node[beadM] at (2.68,3.42) {}; \node[beadL] at (3.55,3.42) {}; \node[beadS] at (4.30,2.82) {};
   	\end{scope}
-  	
+
   	\node[pore] at (10.75,3.45) {}; \node[note,anchor=west] at (11.02,3.45) {pore body};
   	\draw[throat] (10.48,2.75)--(10.98,2.75); \node[note,anchor=west] at (11.02,2.75) {diffusive throat};
   	\node[beadM] at (10.72,2.0) {}; \node[note,anchor=west] at (11.02,2.0) {zeolite bead};
@@ -173,7 +184,6 @@
   \vfill\small Same beads and similar porosity; different numbers and conductances of inlet-connected paths.
 \end{frame}
 
-% -----------------------------------------------------------------------------
 \begin{frame}{Why zeolite 13X and what does the study isolate?}
   \vspace*{-0.45cm}
   \begin{FlexRow}{0.59\textheight}
@@ -206,7 +216,15 @@
   \end{FlexRow}
 \end{frame}
 
-% -----------------------------------------------------------------------------
+\section[Model scope]{Model scope and physical mechanisms}
+\begin{frame}{}
+\vfill
+{\large\color{tumgray}Section 2 of 5}\par\vspace{0.4cm}
+{\LARGE\color{tumblue}\textbf{Model scope and physical mechanisms}}\par\vspace{0.5cm}
+{\large From particle arrangement to diffusion and adsorption}
+\vfill
+\end{frame}
+
 \begin{frame}{Twenty beds isolate variability caused by random arrangement}
   \begin{FlexRow}{0.57\textheight}
     \Col{0.43}{
@@ -229,34 +247,11 @@
         \item transient and 1D models passed mass-balance checks
       \end{itemize}}
   \end{FlexRow}
-  
+
   \vspace*{0.5cm}
   \result{The ensemble tests arrangement effects under otherwise identical conditions.}
 \end{frame}
 
-% -----------------------------------------------------------------------------
-\begin{frame}{Development and later use are two different workflows}
-  \centering
-  \begin{tikzpicture}[node distance=5mm and 5mm,
-    flowbox/.style={box,text width=2.45cm,minimum height=10mm}]
-    \node[font=\bfseries,text=tumblue,anchor=west] at (-1.22,1.05) {Develop closure};
-    \node[flowbox] (beds) {DEM beds +\\pore networks};
-    \node[flowbox,right=of beds] (pair) {calculate paired\\$D_{\rm access},D_{\rm eff}$};
-    \node[flowbox,right=of pair,fill=tumgreen!13] (close) {fit once\\$D_{\rm eff}=f(D_{\rm access})$};
-    \draw[arr] (beds)--(pair);\draw[arr] (pair)--(close);
-    \node[font=\bfseries,text=tumblue,anchor=west] at (-1.22,-0.75) {Predict for a new bed};
-    \node[flowbox] (new) at (0,-1.5) {new bed\\pore network};
-    \node[flowbox,right=of new] (steady) {one steady solve\\$D_{\rm access}$};
-    \node[flowbox,right=of steady,fill=tumgreen!13] (pred) {apply closure\\$D_{\rm eff}$};
-    \node[flowbox,right=of pred,fill=tumgreen!13] (uptake) {1D model\\$\overline q(t)$};
-    \draw[arr] (new)--(steady);\draw[arr] (steady)--(pred);\draw[arr] (pred)--(uptake);
-  \end{tikzpicture}
-  
-  \vspace{0.45cm}
-  \result{For a new bed, the transient pore-network adsorption model is no longer required.}
-\end{frame}
-
-% -----------------------------------------------------------------------------
 \begin{frame}{Pore-network geometry and throat diffusion}
   \begin{columns}[T,onlytextwidth]
     \column{0.46\textwidth}
@@ -289,7 +284,6 @@
   \result{The circular throat area is a geometric modelling assumption; $G_{ij}$ has units of m$^3$ s$^{-1}$.}
 \end{frame}
 
-% -----------------------------------------------------------------------------
 \begin{frame}{Langmuir equilibrium and bead uptake}
   \begin{columns}[T,onlytextwidth]
     \column{0.52\textwidth}
@@ -326,7 +320,36 @@
   \result{The coupled diffusion--adsorption calculation conserves the total amount of CO$_2$.}
 \end{frame}
 
-% -----------------------------------------------------------------------------
+\section[Methods]{Numerical methods and diffusivity prediction}
+\begin{frame}{}
+\vfill
+{\large\color{tumgray}Section 3 of 5}\par\vspace{0.4cm}
+{\LARGE\color{tumblue}\textbf{Numerical methods and diffusivity prediction}}\par\vspace{0.5cm}
+{\large How we calculate accessibility and calibrate the reduced model}
+\vfill
+\end{frame}
+
+\begin{frame}{Development and later use are two different workflows}
+  \centering
+  \begin{tikzpicture}[node distance=5mm and 5mm,
+    flowbox/.style={box,text width=2.45cm,minimum height=10mm}]
+    \node[font=\bfseries,text=tumblue,anchor=west] at (-1.22,1.05) {Develop closure};
+    \node[flowbox] (beds) {DEM beds +\\pore networks};
+    \node[flowbox,right=of beds] (pair) {calculate paired\\$D_{\rm access},D_{\rm eff}$};
+    \node[flowbox,right=of pair,fill=tumgreen!13] (close) {fit once\\$D_{\rm eff}=f(D_{\rm access})$};
+    \draw[arr] (beds)--(pair);\draw[arr] (pair)--(close);
+    \node[font=\bfseries,text=tumblue,anchor=west] at (-1.22,-0.75) {Predict for a new bed};
+    \node[flowbox] (new) at (0,-1.5) {new bed\\pore network};
+    \node[flowbox,right=of new] (steady) {one steady solve\\$D_{\rm access}$};
+    \node[flowbox,right=of steady,fill=tumgreen!13] (pred) {apply closure\\$D_{\rm eff}$};
+    \node[flowbox,right=of pred,fill=tumgreen!13] (uptake) {1D model\\$\overline q(t)$};
+    \draw[arr] (new)--(steady);\draw[arr] (steady)--(pred);\draw[arr] (pred)--(uptake);
+  \end{tikzpicture}
+
+  \vspace{0.45cm}
+  \result{For a new bed, the transient pore-network adsorption model is no longer required.}
+\end{frame}
+
 \begin{frame}{The homogeneous 1D uptake model}
   \begin{columns}[T,onlytextwidth]
     \column{0.55\textwidth}
@@ -358,7 +381,6 @@
   \result{For every trial $D$, the 1D solver produces a complete mean uptake curve.}
 \end{frame}
 
-% -----------------------------------------------------------------------------
 \begin{frame}{$D_{\rm access}$ and $D_{\rm eff}$ answer different questions}
   \begin{columns}[T,onlytextwidth]
     \column{0.47\textwidth}
@@ -403,199 +425,42 @@
   \end{beamercolorbox}
 \end{frame}
 
-% -----------------------------------------------------------------------------
-\begin{frame}{The twenty beds have nearly equal bulk porosity}
-  \begin{columns}[c,onlytextwidth]
-    \column{0.65\textwidth}
-    \centering
-    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_porosity_variability.pdf}
-    \column{0.32\textwidth}
-    \small
-    \hi{Controlled ensemble}
-\begin{itemize}
-\item same bead count and diameter
-\item same tube geometry
-\item only the insertion seed changes
-\end{itemize}
-\medskip
-CV: coefficient of variation\\[0.15cm]
-$\mathrm{CV}_{\varepsilon}=s_{\varepsilon}/\overline{\varepsilon}$\\[0.15cm]
-$s_{\varepsilon}$: standard deviation\\
-$\overline{\varepsilon}$: mean porosity
-  \end{columns}
-  \vspace{0.12cm}
-  {\small\result{Bulk-porosity CV: $0.55\%$.}}
+\begin{frame}{Why use an interior plane?}
+  \begin{FlexRow}{0.61\textheight}
+    \Col{0.50}{\centering
+      \begin{tikzpicture}[x=0.82cm,y=0.78cm]
+        \fill[tumblue!12] (0,0) rectangle (4.5,2.0);
+        \fill[gray!5] (0,2.0) rectangle (4.5,5.6);
+        \draw[thick] (0,0) rectangle (4.5,5.6);
+        \fill[tumblue!25] (-.08,-.35) rectangle (4.58,0);
+        \node[font=\scriptsize,tumblue] at (2.25,-.62) {CO$_2$ reservoir};
+        \draw[-{Latex},very thick,tumblue] (2.28,.05)--(2.28,1.70);
+        \draw[tumorange,line width=2pt] (0,2.0)--(4.5,2.0);
+        \node[anchor=west,font=\scriptsize,tumorange!80!black] at (4.62,2.0) {$5d_p$ plane};
+        \draw[tumred,dashed,line width=1.4pt] (0,5.15)--(4.5,5.15);
+        \node[anchor=west,font=\scriptsize,tumred] at (4.62,5.15) {bed top};
+        \node[align=center,font=\small,tumdark] at (1.1,1.15) {inlet-access\\region};
+        \node[align=center,font=\small,tumgray] at (2.25,3.65) {upper region sampled\\later in the transient};
+      \end{tikzpicture}}
+    \Col{0.46}{
+      \small
+      \hi{A plane at $5d_p$ includes}
+      \begin{itemize}
+        \item the inlet openings
+        \item second-layer and deeper bottlenecks
+        \item parallel paths connecting inlet to the plane
+      \end{itemize}
+      \vspace{0.25cm}
+      \hi{The bed top answers a different question}
+
+      \vspace*{-0.05cm}
+      \begin{itemize}
+        \item measure conductance through the entire bed
+        \item include upper bottlenecks not sampled early
+      \end{itemize}}
+  \end{FlexRow}
 \end{frame}
 
-% -----------------------------------------------------------------------------
-\begin{frame}{Similar porosity still produces different uptake curves}
-  \begin{columns}[c,onlytextwidth]
-    \column{0.65\textwidth}
-    \centering
-    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_uptake_curves.pdf}
-    \column{0.32\textwidth}
-    \small
-    \hi{Network reference}
-\begin{itemize}
-\item all twenty uptake curves
-\item highlighted beds span low, median and high final uptake
-\item identical adsorption parameters
-\end{itemize}
-  \end{columns}
-  \vspace{0.12cm}
-  {\small\result{At 5000 s: $0.206$--$0.315$ mol kg$^{-1}$, with an uptake CV of $11.0\%$.}}
-\end{frame}
-
-% -----------------------------------------------------------------------------
-\begin{frame}{Bulk porosity alone does not explain final uptake}
-  \begin{columns}[c,onlytextwidth]
-    \column{0.65\textwidth}
-    \centering
-    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_porosity_uptake.pdf}
-    \column{0.32\textwidth}
-    \small
-    \hi{Porosity baseline}
-\begin{itemize}
-\item each point represents one bed
-\item weak rank association
-\item wide uncertainty around the fitted relationship
-\end{itemize}
-  \end{columns}
-  \vspace{0.12cm}
-  {\small\result{Void volume alone does not describe access to the adsorbent.}}
-\end{frame}
-
-% -----------------------------------------------------------------------------
-\begin{frame}{Accessibility explains differences in final uptake}
-  \begin{columns}[c,onlytextwidth]
-    \column{0.65\textwidth}
-    \centering
-    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_accessibility_uptake.pdf}
-    \column{0.32\textwidth}
-    \small
-    \hi{Steady network descriptor}
-\begin{itemize}
-\item $G_{\rm access}$ measures inlet-to-interior conductance
-\item greater conductance accompanies greater uptake
-\end{itemize}
-\medskip
-Spearman $\rho_s=0.968$.
-  \end{columns}
-  \vspace{0.12cm}
-  {\small\result{Inlet-connected pathways explain variability that porosity misses.}}
-\end{frame}
-
-% -----------------------------------------------------------------------------
-\begin{frame}{Greater accessibility reduces particle underutilization}
-  \begin{columns}[c,onlytextwidth]
-    \column{0.65\textwidth}
-    \centering
-    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_accessibility_utilization.pdf}
-    \column{0.32\textwidth}
-    \small
-    \hi{Underutilized fraction}
-\[
- f_{\rm under}=\frac{1}{N_p}\sum_{k=1}^{N_p} I_k.
-\]
-$I_k=1$ when
-\[
- q_k(t_f)<0.5q^*(p_{\rm inlet}).
-\]
-$t_f=5000$ s.
-\medskip
-\par The indicator equals one for a particle below half the inlet-equilibrium loading.
-  \end{columns}
-  \vspace{0.12cm}
-  {\small\result{Higher $G_{\rm access}$ accompanies fewer underutilized particles.}}
-\end{frame}
-
-% -----------------------------------------------------------------------------
-\begin{frame}{One fitted $D_{\rm eff}$ reproduces each uptake curve}
-  \begin{columns}[c,onlytextwidth]
-    \column{0.65\textwidth}
-    \centering
-    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_homogeneous_uptake.pdf}
-    \column{0.32\textwidth}
-    \small
-    \hi{Per-bed optimization}
-\begin{enumerate}
-\item solve the 1D model for a trial $D$
-\item evaluate time-weighted NRMSE against the network curve
-\item use previous errors to select the next $D$ and repeat (optimization)
-\end{enumerate}
-\medskip
-Solid: network.\\Dashed: fitted 1D model.
-  \end{columns}
-  \vspace{0.12cm}
-  {\small\result{Across twenty beds, the mean fitted-curve NRMSE is $1.58\%$.}}
-\end{frame}
-
-% -----------------------------------------------------------------------------
-\begin{frame}{Residuals show the remaining reduction error}
-  \begin{columns}[c,onlytextwidth]
-    \column{0.65\textwidth}
-    \centering
-    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_homogeneous_residuals.pdf}
-    \column{0.32\textwidth}
-    \small
-    \hi{Curve residual}
-\[
- e(t)=\overline q_{\rm 1D}(t)-\overline q_{\rm PNM}(t).
-\]
-\begin{itemize}
-\item positive: excess predicted uptake
-\item negative: insufficient predicted uptake
-\end{itemize}
-  \end{columns}
-  \vspace{0.12cm}
-  {\small\result{Time-weighted NRMSE across all beds: $0.84$--$2.46\%$.}}
-\end{frame}
-
-% -----------------------------------------------------------------------------
-\begin{frame}{A positive power law relates accessibility to diffusivity}
-  \begin{columns}[c,onlytextwidth]
-    \column{0.65\textwidth}
-    \centering
-    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_closure_power_law.pdf}
-    \column{0.32\textwidth}
-    \small
-    \hi{Selected closure}
-\[
- \frac{D_{\rm eff}}{D_m}=C\left(\frac{D_{\rm access}}{D_m}\right)^n.
-\]
-\[
- D_{\rm access}=\frac{G_{\rm access}H}{A_{\rm tube}}.
-\]
-\medskip
-The shaded band shows bootstrap uncertainty in the fitted relationship.
-  \end{columns}
-  \vspace{0.12cm}
-  {\small\result{The fitted exponent is $n\approx2.50$ for this ensemble.}}
-\end{frame}
-
-% -----------------------------------------------------------------------------
-\begin{frame}{The closure predicts diffusivity for a withheld bed}
-  \begin{columns}[c,onlytextwidth]
-    \column{0.65\textwidth}
-    \centering
-    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_closure_held_out.pdf}
-    \column{0.32\textwidth}
-    \small
-    \hi{Closures compared}
-\[
-\begin{aligned}
- D_{\rm eff}&=a_0+a_1\varepsilon_b,\\
- D_{\rm eff}&=\alpha D_{\rm access},\\
- \frac{D_{\rm eff}}{D_m}&=C\left(\frac{D_{\rm access}}{D_m}\right)^n.
-\end{aligned}
-\]
-Fit on nineteen beds, then predict the remaining bed.
-  \end{columns}
-  \vspace{0.12cm}
-  {\small\result{LOOCV $R^2$: power law $0.890$, proportional $0.555$, porosity $-0.234$.}}
-\end{frame}
-
-% -----------------------------------------------------------------------------
 \begin{frame}{Why not predict uptake directly from $G_{\rm access}$?}
   \begin{columns}[T,onlytextwidth]
     \column{0.46\textwidth}
@@ -626,44 +491,225 @@ Fit on nineteen beds, then predict the remaining bed.
   \result{If only uptake at 5000 s is needed, $G_{\rm access}$ is sufficient; $D_{\rm eff}$ is needed for a reusable transient model.}
 \end{frame}
 
-% -----------------------------------------------------------------------------
-\begin{frame}{Why use an interior plane?}
-  \begin{FlexRow}{0.61\textheight}
-    \Col{0.50}{\centering
-      \begin{tikzpicture}[x=0.82cm,y=0.78cm]
-        \fill[tumblue!12] (0,0) rectangle (4.5,2.0);
-        \fill[gray!5] (0,2.0) rectangle (4.5,5.6);
-        \draw[thick] (0,0) rectangle (4.5,5.6);
-        \fill[tumblue!25] (-.08,-.35) rectangle (4.58,0);
-        \node[font=\scriptsize,tumblue] at (2.25,-.62) {CO$_2$ reservoir};
-        \draw[-{Latex},very thick,tumblue] (2.28,.05)--(2.28,1.70);
-        \draw[tumorange,line width=2pt] (0,2.0)--(4.5,2.0);
-        \node[anchor=west,font=\scriptsize,tumorange!80!black] at (4.62,2.0) {$5d_p$ plane};
-        \draw[tumred,dashed,line width=1.4pt] (0,5.15)--(4.5,5.15);
-        \node[anchor=west,font=\scriptsize,tumred] at (4.62,5.15) {bed top};
-        \node[align=center,font=\small,tumdark] at (1.1,1.15) {inlet-access\\region};
-        \node[align=center,font=\small,tumgray] at (2.25,3.65) {upper region sampled\\later in the transient};
-      \end{tikzpicture}}
-    \Col{0.46}{
-      \small
-      \hi{A plane at $5d_p$ includes}
-      \begin{itemize}
-        \item the inlet openings
-        \item second-layer and deeper bottlenecks
-        \item parallel paths connecting inlet to the plane
-      \end{itemize}
-      \vspace{0.25cm}
-      \hi{The bed top answers a different question}
-      
-      \vspace*{-0.05cm}
-      \begin{itemize}
-        \item measure conductance through the entire bed
-        \item include upper bottlenecks not sampled early
-      \end{itemize}}
-  \end{FlexRow}
+\begin{frame}{Diffusivity optimization and closure calibration}
+\begin{columns}[T,onlytextwidth]
+\column{0.49\textwidth}
+\hi{Fit one diffusivity per bed}
+\small
+\begin{enumerate}
+\item Choose a trial $D$ within prescribed bounds.
+\item Solve the coupled 1D equations for $c(z,t)$ and $q(z,t)$.
+\item Compare mean uptake with the network using time-weighted NRMSE.
+\item Use previous errors to select the next $D$ and repeat (optimization).
+\end{enumerate}
+\column{0.47\textwidth}
+\hi{Learn the relationship across beds}
+\small
+\begin{itemize}
+\item Pair each fitted $D_{\rm eff}$ with its geometry-based $D_{\rm access}$.
+\item Fit the closure $D_{\rm eff}=f(D_{\rm access})$ on the training beds.
+\item Leave one bed out to assess diffusivity prediction.
+\end{itemize}
+\medskip
+The bounded search operates in $\log_{10}D$ and starts deterministically.
+\end{columns}
+\vspace{0.2cm}
+\result{Per-bed optimization supplies the targets for closure calibration.}
+
 \end{frame}
 
-% -----------------------------------------------------------------------------
+\section[Results]{Results and robustness}
+\begin{frame}{}
+\vfill
+{\large\color{tumgray}Section 4 of 5}\par\vspace{0.4cm}
+{\LARGE\color{tumblue}\textbf{Results and robustness}}\par\vspace{0.5cm}
+{\large Uptake variability, predictive closure and depth sensitivity}
+\vfill
+\end{frame}
+
+\begin{frame}{The twenty beds have nearly equal bulk porosity}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.65\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_porosity_variability.pdf}
+    \column{0.32\textwidth}
+    \small
+    \hi{Controlled ensemble}
+\begin{itemize}
+\item same bead count and diameter
+\item same tube geometry
+\item only the insertion seed changes
+\end{itemize}
+\medskip
+CV: coefficient of variation\\[0.15cm]
+$\mathrm{CV}_{\varepsilon}=s_{\varepsilon}/\overline{\varepsilon}$\\[0.15cm]
+$s_{\varepsilon}$: standard deviation\\
+$\overline{\varepsilon}$: mean porosity
+  \end{columns}
+  \vspace{0.12cm}
+  {\small\result{Bulk-porosity CV: $0.55\%$.}}
+\end{frame}
+
+\begin{frame}{Similar porosity still produces different uptake curves}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.65\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_uptake_curves.pdf}
+    \column{0.32\textwidth}
+    \small
+    \hi{Network reference}
+\begin{itemize}
+\item all twenty uptake curves
+\item highlighted beds span low, median and high final uptake
+\item identical adsorption parameters
+\end{itemize}
+  \end{columns}
+  \vspace{0.12cm}
+  {\small\result{At 5000 s: $0.206$--$0.315$ mol kg$^{-1}$, with an uptake CV of $11.0\%$.}}
+\end{frame}
+
+\begin{frame}{Bulk porosity alone does not explain final uptake}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.65\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_porosity_uptake.pdf}
+    \column{0.32\textwidth}
+    \small
+    \hi{Porosity baseline}
+\begin{itemize}
+\item each point represents one bed
+\item weak rank association
+\item wide uncertainty around the fitted relationship
+\end{itemize}
+  \end{columns}
+  \vspace{0.12cm}
+  {\small\result{Void volume alone does not describe access to the adsorbent.}}
+\end{frame}
+
+\begin{frame}{Accessibility explains differences in final uptake}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.65\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_accessibility_uptake.pdf}
+    \column{0.32\textwidth}
+    \small
+    \hi{Steady network descriptor}
+\begin{itemize}
+\item $G_{\rm access}$ measures inlet-to-interior conductance
+\item greater conductance accompanies greater uptake
+\end{itemize}
+\medskip
+Spearman $\rho_s=0.968$.
+  \end{columns}
+  \vspace{0.12cm}
+  {\small\result{Inlet-connected pathways explain variability that porosity misses.}}
+\end{frame}
+
+\begin{frame}{Greater accessibility reduces particle underutilization}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.65\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_accessibility_utilization.pdf}
+    \column{0.32\textwidth}
+    \small
+    \hi{Underutilized fraction}
+\[
+ f_{\rm under}=\frac{1}{N_p}\sum_{k=1}^{N_p} I_k.
+\]
+$I_k=1$ when
+\[
+ q_k(t_f)<0.5q^*(p_{\rm inlet}).
+\]
+$t_f=5000$ s.
+\medskip
+\par The indicator equals one for a particle below half the inlet-equilibrium loading.
+  \end{columns}
+  \vspace{0.12cm}
+  {\small\result{Higher $G_{\rm access}$ accompanies fewer underutilized particles.}}
+\end{frame}
+
+\begin{frame}{One fitted $D_{\rm eff}$ reproduces each uptake curve}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.65\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_homogeneous_uptake.pdf}
+    \column{0.32\textwidth}
+    \small
+    \hi{Per-bed optimization}
+\begin{enumerate}
+\item solve the 1D model for a trial $D$
+\item evaluate time-weighted NRMSE against the network curve
+\item use previous errors to select the next $D$ and repeat (optimization)
+\end{enumerate}
+\medskip
+Solid: network.\\Dashed: fitted 1D model.
+  \end{columns}
+  \vspace{0.12cm}
+  {\small\result{Across twenty beds, the mean fitted-curve NRMSE is $1.58\%$.}}
+\end{frame}
+
+\begin{frame}{Residuals show the remaining reduction error}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.65\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_homogeneous_residuals.pdf}
+    \column{0.32\textwidth}
+    \small
+    \hi{Curve residual}
+\[
+ e(t)=\overline q_{\rm 1D}(t)-\overline q_{\rm PNM}(t).
+\]
+\begin{itemize}
+\item positive: excess predicted uptake
+\item negative: insufficient predicted uptake
+\end{itemize}
+  \end{columns}
+  \vspace{0.12cm}
+  {\small\result{Time-weighted NRMSE across all beds: $0.84$--$2.46\%$.}}
+\end{frame}
+
+\begin{frame}{A positive power law relates accessibility to diffusivity}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.65\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_closure_power_law.pdf}
+    \column{0.32\textwidth}
+    \small
+    \hi{Selected closure}
+\[
+ \frac{D_{\rm eff}}{D_m}=C\left(\frac{D_{\rm access}}{D_m}\right)^n.
+\]
+\[
+ D_{\rm access}=\frac{G_{\rm access}H}{A_{\rm tube}}.
+\]
+\medskip
+The shaded band shows bootstrap uncertainty in the fitted relationship.
+  \end{columns}
+  \vspace{0.12cm}
+  {\small\result{The fitted exponent is $n\approx2.50$ for this ensemble.}}
+\end{frame}
+
+\begin{frame}{The closure predicts diffusivity for a withheld bed}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.65\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_closure_held_out.pdf}
+    \column{0.32\textwidth}
+    \small
+    \hi{Closures compared}
+\[
+\begin{aligned}
+ D_{\rm eff}&=a_0+a_1\varepsilon_b,\\
+ D_{\rm eff}&=\alpha D_{\rm access},\\
+ \frac{D_{\rm eff}}{D_m}&=C\left(\frac{D_{\rm access}}{D_m}\right)^n.
+\end{aligned}
+\]
+Fit on nineteen beds, then predict the remaining bed.
+  \end{columns}
+  \vspace{0.12cm}
+  {\small\result{LOOCV $R^2$: power law $0.890$, proportional $0.555$, porosity $-0.234$.}}
+\end{frame}
+
 \begin{frame}{Accessibility remains correlated across diagnostic depths}
   \begin{columns}[c,onlytextwidth]
     \column{0.65\textwidth}
@@ -684,7 +730,6 @@ Depth is measured above each network's lowest pore.
   {\small\result{Both correlations remain high across the tested depths.}}
 \end{frame}
 
-% -----------------------------------------------------------------------------
 \begin{frame}{Predictive performance is stable across diagnostic depths}
   \begin{columns}[c,onlytextwidth]
     \column{0.65\textwidth}
@@ -706,7 +751,15 @@ The $5d_p$ plane gives the highest linear-model score in this ensemble.
   {\small\result{The linear model with intercept remains predictive from $3d_p$ to $10d_p$.}}
 \end{frame}
 
-% -----------------------------------------------------------------------------
+\section[Conclusions]{Conclusions and next steps}
+\begin{frame}{}
+\vfill
+{\large\color{tumgray}Section 5 of 5}\par\vspace{0.4cm}
+{\LARGE\color{tumblue}\textbf{Conclusions and next steps}}\par\vspace{0.5cm}
+{\large What the evidence supports and what remains to validate}
+\vfill
+\end{frame}
+
 \begin{frame}{What the present evidence establishes}
   \begin{FlexRow}{0.58\textheight}
     \Col{0.47}{
@@ -726,12 +779,11 @@ The $5d_p$ plane gives the highest linear-model score in this ensemble.
         \item a universal power-law exponent
       \end{itemize}}
   \end{FlexRow}
-  
+
   \vspace*{0.5cm}
   \result{The contribution is a structure-to-model closure for a controlled diffusion-driven adsorption problem.}
 \end{frame}
 
-% -----------------------------------------------------------------------------
 \begin{frame}{Pore accessibility retains what bulk porosity loses}
   \question{Equal void volume does not imply equal transport. How that void space connects to the inlet matters.}
   \vspace{0.55cm}
@@ -751,20 +803,4 @@ The $5d_p$ plane gives the highest linear-model score in this ensemble.
     \column{0.31\textwidth}\centering\hi{$R^2=0.890$}\\withheld-bed closure
   \end{columns}
 \end{frame}
-
-% -----------------------------------------------------------------------------
-%\begin{frame}{Selected references}
-%  \scriptsize
-%  \begin{thebibliography}{9}
-%    \bibitem{Crippa2021} M. Crippa et al., ``Food systems are responsible for a third of global anthropogenic GHG emissions,'' \emph{Nature Food}, 2, 198--209, 2021.
-%    \bibitem{Dantas2011} T. L. P. Dantas et al., ``Modeling of the fixed-bed adsorption of carbon dioxide and a carbon dioxide--nitrogen mixture on zeolite 13X,'' \emph{Brazilian Journal of Chemical Engineering}, 28, 533--544, 2011.
-%    \bibitem{Hu2014} X. Hu et al., ``Diffusion mechanism of CO$_2$ in 13X zeolite beads,'' \emph{Adsorption}, 20, 121--135, 2014.
-%    \bibitem{Meyers1999} J. J. Meyers and A. I. Liapis, ``Network modeling of the convective flow and diffusion of molecules adsorbing in monoliths and in porous particles packed in a chromatographic column,'' \emph{Journal of Chromatography A}, 852, 3--23, 1999.
-%    \bibitem{Raganati2021} F. Raganati, F. Miccio and P. Ammendola, ``Adsorption of carbon dioxide for post-combustion capture: A review,'' \emph{Energy \& Fuels}, 35, 12845--12868, 2021.
-%    \bibitem{Seckendorff2021} J. von Seckendorff and O. Hinrichsen, ``Review on the structure of random packed-beds,'' \emph{Canadian Journal of Chemical Engineering}, 99, S703--S733, 2021.
-%    \bibitem{Won2012} W. Won, S. Lee and K. S. Lee, ``Modeling and parameter estimation for a fixed-bed adsorption process for CO$_2$ capture using zeolite 13X,'' \emph{Separation and Purification Technology}, 85, 120--129, 2012.
-%    \bibitem{Wray2024} M. Wray, F. Amrouche and F. Aiouache, ``Modeling CO$_2$ adsorption in a thin discrete packing,'' \emph{Industrial \& Engineering Chemistry Research}, 63, 7321--7334, 2024.
-%  \end{thebibliography}
-%\end{frame}
-
 \end{document}
