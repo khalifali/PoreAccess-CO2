@@ -1,0 +1,17 @@
+{
+  "conductance_proportional": {
+    "alpha": 26.974135880965594
+  },
+  "conductance_linear": {
+    "intercept": -1.0860595068567846e-06,
+    "slope": 64.8752065267558
+  },
+  "conductance_power": {
+    "coefficient": 8243812436001.459,
+    "exponent": 2.523588843176733
+  },
+  "porosity_linear": {
+    "intercept": 1.6068292602179262e-06,
+    "slope": -1.8995048258921677e-06
+  }
+}

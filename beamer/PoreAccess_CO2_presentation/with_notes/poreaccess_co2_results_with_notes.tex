@@ -488,32 +488,27 @@ The time weights account for unequal spacing of saved outputs.
 \note{For each bed, we repeatedly solve the homogeneous model with different diffusivities. NRMSE means normalized root-mean-square error. Here we weight squared errors by elapsed time using trapezoidal weights, take the square root and divide by the final reference loading. This prevents densely saved times from dominating the fit. The bounded scalar optimizer operates in log10 D; it starts deterministically and previous errors guide later trials. Only D changes. This produces one reduction target per packing. The next question is whether a cheaper calculation from geometry can predict that target.}
 \end{frame}
 
-\begin{frame}{Can inlet accessibility predict the fitted diffusivity?}
-
+\begin{frame}{Can inlet conductance predict the fitted diffusivity?}
 \begin{columns}[T,onlytextwidth]
-\column{0.47\textwidth}\hi{A steady geometric descriptor}\small
+\column{0.47\textwidth}\hi{Calculate steady inlet access}\small
 \begin{itemize}
-\item Use the same pore network with adsorption disabled.
+\item Use the pore network with adsorption disabled.
 \item Fix concentrations at the inlet and an interior plane.
-\item Solve steady diffusion and sum the resulting molar flux $\dot n$.
+\item Solve steady diffusion and sum the molar flux $\dot n$.
 \end{itemize}
-\[
-G_{\rm access}=\frac{\dot n}{\Delta c},\qquad
-D_{\rm access}=\frac{G_{\rm access}H}{A_{\rm tube}}.
-\]
-$H$: bed height; $A_{\rm tube}$: tube cross-section.
-\column{0.49\textwidth}\hi{Learn a transport closure}\small
+\[G_{\rm access}=\frac{\dot n}{\Delta c}\qquad[\mathrm{m^3/s}].\]
+Conductance measures how much gas the inlet-connected pathways can supply per concentration difference.
+\column{0.49\textwidth}\hi{Calibrate the transport coefficient}\small
 \begin{itemize}
-\item Pair each $D_{\rm access}$ with its fitted $D_{\rm eff}$.
-\item Fit $D_{\rm eff}=f(D_{\rm access})$ on training beds.
-\item Leave one bed out to test diffusivity prediction.
-\item For a new bed, apply the closure and run the 1D model.
+\item Pair each calculated $G_{\rm access}$ with its fitted $D_{\rm eff}$.
+\item Fit $D_{\rm eff}=f(G_{\rm access})$ on training beds.
+\item Predict the omitted bed's diffusivity.
+\item Run its 1D model and compare the complete uptake curve.
 \end{itemize}
 \end{columns}
-\vspace{0.25cm}
-\result{Accessibility measures steady gas access. The closure links it to transient uptake.}
-
-\note{We return to the inlet-accessibility hypothesis. On each network we perform a separate steady diffusion calculation without adsorption, imposing a concentration difference from the inlet to a selected interior plane. Total molar flux divided by that difference defines the conductance. We multiply by full bed height divided by tube cross-section to form the diffusivity-scaled descriptor used in the code. This convention is distinct from measuring a local diffusivity over only the plane distance. It is not automatically equal to the fitted effective diffusivity: one describes steady access, the other reduces a transient adsorption problem. Their relationship is learned across beds. Leave-one-bed-out fitting uses nineteen beds to predict the remaining bed. This is internal validation in the current ensemble, not proof of universal transferability.}
+\vspace{0.2cm}
+\result{One steady conductance calculation supplies the input for transient prediction.}
+\note{G access is calculated from a steady diffusion solve on the network, not predicted. Total molar flux divided by the imposed concentration difference has units of cubic metres per second. We use this conductance directly as the descriptor. A relationship learned from other beds maps it to the effective diffusivity in the transient 1D model. Conductance can also correlate with final uptake, but here its target is the coefficient fitted to the complete uptake history. For validation we first predict the omitted bed diffusivity and then run its 1D model without fitting to that bed history. The optional normalization appendix presents the alternative descriptor.}
 \end{frame}
 
 \begin{frame}{Why use an interior plane?}
@@ -559,12 +554,12 @@ $H$: bed height; $A_{\rm tube}$: tube cross-section.
     flowbox/.style={box,text width=2.45cm,minimum height=10mm}]
     \node[font=\bfseries,text=tumblue,anchor=west] at (-1.22,1.05) {Develop closure};
     \node[flowbox] (beds) {DEM beds +\\pore networks};
-    \node[flowbox,right=of beds] (pair) {calculate paired\\$D_{\rm access},D_{\rm eff}$};
-    \node[flowbox,right=of pair,fill=tumgreen!13] (close) {fit once\\$D_{\rm eff}=f(D_{\rm access})$};
+    \node[flowbox,right=of beds] (pair) {calculate paired\\$G_{\rm access},D_{\rm eff}$};
+    \node[flowbox,right=of pair,fill=tumgreen!13] (close) {fit once\\$D_{\rm eff}=f(G_{\rm access})$};
     \draw[arr] (beds)--(pair);\draw[arr] (pair)--(close);
     \node[font=\bfseries,text=tumblue,anchor=west] at (-1.22,-1.) {Predict for a new bed};
     \node[flowbox] (new) at (0,-2) {new bed\\pore network};
-    \node[flowbox,right=of new] (steady) {one steady solve\\$D_{\rm access}$};
+    \node[flowbox,right=of new] (steady) {one steady solve\\$G_{\rm access}$};
     \node[flowbox,right=of steady,fill=tumgreen!13] (pred) {apply closure\\$D_{\rm eff}$};
     \node[flowbox,right=of pred,fill=tumgreen!13] (uptake) {1D model\\$\overline q(t)$};
     \draw[arr] (new)--(steady);\draw[arr] (steady)--(pred);\draw[arr] (pred)--(uptake);
@@ -572,7 +567,7 @@ $H$: bed height; $A_{\rm tube}$: tube cross-section.
 
   \vspace{0.45cm}
   \result{For a new bed, the transient pore-network adsorption model is no longer required.}
-\note{This summarizes the two stages we have now defined. During development, the transient PNM supplies reference uptake curves. Per-bed optimization supplies fitted diffusivities, and steady access calculations supply the descriptors. We learn a relationship between them. For another packing within the validated scope, we calculate its steady accessibility, apply the closure and solve the reduced one-dimensional system. That avoids repeating transient PNM adsorption and per-bed optimization. We now examine the evidence for each link in this workflow.}
+\note{During development each bed contributes a steady calculated inlet conductance and an effective diffusivity fitted to its complete transient PNM uptake curve. We calibrate the relation between them. For a new bed we calculate its steady conductance, predict its diffusivity, and run the inexpensive 1D transient model. The new bed still requires geometric quantities such as height and porosity for that model, but no transient PNM uptake solve is required for prediction. Held-out evaluation uses the PNM curve only afterwards to assess error.}
 \end{frame}
 
 \section[Results]{Results and robustness}
@@ -734,123 +729,99 @@ Solid: network.\\Dashed: fitted 1D model.
 \note{The same three representative beds appear here. The residual is the 1D mean loading minus the network mean loading. Its sign changes over time, showing that one coefficient cannot reproduce every detail. NRMSE summarizes the full residual curve using trapezoidal time weights and normalizes by final network loading.}
 \end{frame}
 
-\begin{frame}{A positive power law relates accessibility to diffusivity}
-  \begin{columns}[c,onlytextwidth]
-    \column{0.65\textwidth}
-    \centering
-    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_closure_power_law.pdf}
-    \column{0.32\textwidth}
-    \small
-    \hi{Selected closure}
-\[
- \frac{D_{\rm eff}}{D_m}=C\left(\frac{D_{\rm access}}{D_m}\right)^n.
-\]
-\[
- D_{\rm access}=\frac{G_{\rm access}H}{A_{\rm tube}}.
-\]
-\medskip
-The shaded band shows bootstrap uncertainty in the fitted relationship.
-  \end{columns}
-  \vspace{0.12cm}
-  {\small\result{The fitted exponent is $n\approx2.50$ for this ensemble.}}
-\note{Each bed supplies an accessibility diffusivity and a diffusivity fitted to its transient response. D sub m is the fixed molecular diffusivity defined on slide 8. Dividing both diffusivities by D sub m makes C dimensionless. This plot fits all twenty beds; its band is pointwise bootstrap uncertainty in the relationship, not a prediction interval for an individual bed. The power law is positive for positive access and tends to zero with access. We retain it as a physically admissible empirical form, not as an outright predictive winner. The next slide includes both linear-with-intercept alternatives. The exponent is specific to this ensemble.}
+\begin{frame}{Three relationships use the same inlet conductance}
+\begin{columns}[c,onlytextwidth]
+\column{0.63\textwidth}\centering
+\includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/g_closure_fit.pdf}
+\column{0.34\textwidth}\small
+\hi{Predict $D_{\rm eff}$ from $G_{\rm access}$}\par\medskip
+Proportional: $D_{\rm eff}=\alpha_G G_{\rm access}$\par\smallskip
+Linear: $D_{\rm eff}=a_GG_{\rm access}+b_G$\par\smallskip
+Power law: $D_{\rm eff}=C_GG_{\rm access}^{n}$\par\medskip
+All coefficients are calibrated. Their units make $D_{\rm eff}$ a diffusivity.\par\smallskip
+The power-law exponent is $n\approx2.52$ for these twenty beds.
+\end{columns}
+\vspace{0.12cm}
+\result{The predictor stays fixed; the comparison tests the relationship's form.}
+\note{This figure uses raw inlet conductance for all three relationships. The proportional form has one coefficient. The linear and power-law forms have two. The power law is fitted by least squares in logarithmic coordinates, while linear and proportional fits use diffusivity coordinates; all held-out scores are then evaluated in physical diffusivity units. The fitted exponent is about 2.52. Coefficients carry the units required by the equations, so their numerical values depend on the unit convention. This full-ensemble plot illustrates the relationships, not their held-out accuracy. The power law is positive for positive conductance and approaches zero as conductance goes to zero. The linear fit has a negative intercept, so extrapolation outside the observed conductance range can become nonphysical. Neither form is established as universal.}
 \end{frame}
 
-\begin{frame}{The closure predicts diffusivity for a withheld bed}
-  \begin{columns}[c,onlytextwidth]
-    \column{0.62\textwidth}
-    \centering
-    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_closure_held_out.pdf}
-    \column{0.35\textwidth}\small
-    \hi{Forms and held-out $R^2$}
-    \begin{tabular}{lr}\toprule
-    Predictor / form & $R^2$\\\midrule
-    $a_GG_{\rm access}+b_G$ & 0.898\\
-    $CD_m(D_{\rm access}/D_m)^n$ & 0.890\\
-    $a_DD_{\rm access}+b_D$ & 0.881\\
-    $\alpha D_{\rm access}$ & 0.555\\
-    $a_0+a_1\varepsilon_b$ & $-0.234$\\\bottomrule
-    \end{tabular}
-    \medskip\par
-    Each expression predicts $D_{\rm eff}$.
-    Fit on nineteen beds and predict the omitted bed.
-  \end{columns}
-  \vspace{0.12cm}
-  {\small\result{Power-law and linear-with-intercept scores are close; the power law is not the outright winner.}}
-\note{We leave out one entire bed, fit every coefficient on the other nineteen beds, and predict the omitted diffusivity. Repeating this gives twenty predictions per model. The figure now includes the linear model with an intercept using accessibility diffusivity, as in the depth plot, and the separate linear model using raw conductance. Their R squared values are 0.881 and 0.898 respectively, compared with 0.890 for the power law. These are genuinely different predictors because accessibility diffusivity includes the bed height. Small differences in these scores do not establish a clear winner. The power law has positivity and a zero-access limit as modelling advantages. Model and depth selection occurred within this twenty-bed ensemble, so this is internal validation.}
+\begin{frame}{Conductance predicts diffusivity for an omitted bed}
+\begin{columns}[c,onlytextwidth]
+\column{0.62\textwidth}\centering
+\includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/g_held_out_diffusivity.pdf}
+\column{0.35\textwidth}\small
+\hi{Leave-one-bed-out comparison}\par\medskip
+\begin{tabular}{lr}\toprule
+Predictor / form & $R^2$\\\midrule
+$G_{\rm access}$ / power law & 0.906\\
+$G_{\rm access}$ / linear & 0.898\\
+$G_{\rm access}$ / proportional & 0.558\\
+Porosity / linear & $-0.234$\\\bottomrule
+\end{tabular}\par\medskip
+Fit every coefficient on nineteen beds; predict the omitted bed.\par\smallskip
+Repeat for all twenty beds.
+\end{columns}
+\vspace{0.12cm}
+\result{Power-law and linear predictions are close; both outperform porosity in this ensemble.}
+\note{All conductance-based forms now use the same G access predictor. We omit one bed, fit all coefficients to the other nineteen and predict the omitted fitted diffusivity. Power-law R squared is 0.906 and linear R squared is 0.898. This small difference does not establish decisive superiority. Proportionality gives 0.558 and the porosity baseline gives minus 0.234. The diffusivity target itself was obtained from the omitted PNM history; it is withheld from calibration of the relationship. Model form and depth were considered within this ensemble, so these scores are internal leave-one-bed-out validation, not independent validation of model selection. We next test the actual uptake histories generated from those predicted coefficients.}
 \end{frame}
 
-\begin{frame}{Why not predict uptake directly from $G_{\rm access}$?}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.46\textwidth}
-      \hi{Direct endpoint relation}
-      \[
-        G_{\rm access}\longrightarrow \overline q(5000\,{\rm s})
-      \]
-      \small
-      \begin{itemize}
-        \item strong correlation: $\rho_s=0.968$
-        \item ranks beds or predicts one endpoint
-        \item valid at the selected time and conditions
-      \end{itemize}
-    \column{0.49\textwidth}
-      \hi{Transport closure}
-      \[
-        G_{\rm access}\longrightarrow D_{\rm access}
-        \longrightarrow D_{\rm eff}\longrightarrow \overline q(t)
-      \]
-      \small
-      \begin{itemize}
-        \item generates the complete uptake curve
-        \item retains conservative 1D transport
-        \item gives axial $c(z,t)$ and $q(z,t)$ profiles
-      \end{itemize}
-  \end{columns}
-  \vspace{0.6cm}
-  \result{Endpoint correlation summarizes one time. A transport closure supplies a complete uptake history.}
-\note{The results show a strong relationship between accessibility and final loading. If only ranking at the selected final time is needed, that relationship may already be useful. It does not by itself give a full uptake history or validate transfer to other conditions. A closure for the reduced diffusivity instead feeds a dynamic model that produces the whole curve and axial fields. This is why our main objective is a transport closure rather than only an endpoint regression.}
+\begin{frame}{Predicted diffusivity reproduces the uptake history}
+\begin{columns}[c,onlytextwidth]
+\column{0.62\textwidth}\centering
+\includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/g_held_out_uptake.pdf}
+\column{0.35\textwidth}\small
+\hi{Mean curve NRMSE, twenty beds}\par\medskip
+\begin{tabular}{lr}\toprule
+Relationship & Error\\\midrule
+$G_{\rm access}$ / power law & 2.61\%\\
+$G_{\rm access}$ / linear & 2.64\%\\
+$G_{\rm access}$ / proportional & 4.80\%\\
+Porosity / linear & 7.58\%\\\bottomrule
+\end{tabular}\par\medskip
+Use each held-out $D_{\rm eff}$ in the 1D solver, with no refitting.\par\smallskip
+Time-weighted RMSE divided by the bed's final PNM uptake.
+\end{columns}
+\vspace{0.12cm}
+\result{Conductance predicts a transport coefficient and therefore the full history, not only final uptake.}
+\note{We now evaluate the end-to-end prediction. For each omitted bed, its predicted diffusivity is supplied to the same 100-cell 1D solver with the same material properties, inlet boundary, initial state, height and porosity as the original fit. We do not refit that coefficient to its uptake curve. All four relationships are propagated for all twenty beds, giving eighty simulations. The plotted solid curves are PNM references for low, median and high final uptake; dashed curves use held-out power-law predictions. The table reports the mean error across all twenty beds for every model. Curve NRMSE weights time by trapezoidal integration and divides by final reference uptake. Power law and linear give nearly identical mean errors, 2.61 and 2.64 percent. These include both coefficient prediction error and 1D reduction error. The earlier 1.58 percent measures the per-bed fitted reduction error and is a different quantity. G access can also be regressed directly against final uptake, but this route instead predicts D eff to obtain the complete transient response.}
 \end{frame}
 
-\begin{frame}{Accessibility remains correlated across diagnostic depths}
-  \begin{columns}[c,onlytextwidth]
-    \column{0.65\textwidth}
-    \centering
-    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_depth_correlations.pdf}
-    \column{0.32\textwidth}
-    \small
-    \hi{Depth sensitivity}
+\begin{frame}{Conductance correlation across diagnostic depths}
+\begin{columns}[c,onlytextwidth]
+\column{0.65\textwidth}\centering
+\includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/g_depth_correlations.pdf}
+\column{0.32\textwidth}\small
+\hi{Depth sensitivity}
 \begin{itemize}
-\item planes at $3$, $5$, $7$ and $10d_p$
+\item calculate $G_{\rm access}$ to planes at $3$, $5$, $7$, $10d_p$
 \item Pearson: linear association
 \item Spearman: rank association
-\end{itemize}
-\medskip
-Depth is measured above each network's lowest pore.
-  \end{columns}
-  \vspace{0.12cm}
-  {\small\result{Both correlations remain high across the tested depths.}}
-\note{The original descriptor places the diagnostic plane above the lowest pore in each network. We tested three, five, seven and ten particle diameters using that convention. Both linear and rank correlations remain high. These depths are not measured exactly from the physical bed bottom.}
+\end{itemize}\medskip
+Depth is measured above the network's lowest pore.
+\end{columns}
+\vspace{0.12cm}
+\result{The conductance--diffusivity association persists across the tested interior planes.}
+\note{This is the direct conductance descriptor, recalculated from the inlet to each of four interior planes. We compare each set of conductances with the same per-bed fitted effective diffusivities. Pearson measures linear association and Spearman measures monotonic rank association. The correlations remain high across these depths. This is an association check; the next slide refits and validates the predictive relationships at each depth.}
 \end{frame}
 
-\begin{frame}{Predictive performance across diagnostic depths}
-  \begin{columns}[c,onlytextwidth]
-    \column{0.63\textwidth}\centering
-    \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_depth_prediction.pdf}
-    \column{0.34\textwidth}\small
-    \hi{Four transport models}\par\medskip
-    Power law\par
-    $D_{\rm eff}=CD_m(D_{\rm access}/D_m)^n$\par\smallskip
-    Linear in $D_{\rm access}$ + intercept\par
-    $D_{\rm eff}=a_DD_{\rm access}+b_D$\par\smallskip
-    Linear in $G_{\rm access}$ + intercept\par
-    $D_{\rm eff}=a_GG_{\rm access}+b_G$\par\smallskip
-    Proportional\par
-    $D_{\rm eff}=\alpha D_{\rm access}$\par\medskip
-    Refit on nineteen beds at each depth; predict the omitted bed.
-  \end{columns}
-  \vspace{0.12cm}
-  {\small\result{Power-law $R^2=0.819$--$0.890$ across depths; no consistent advantage over the linear models.}}
-\note{All four transport models are now evaluated at every depth with leave-one-bed-out validation, refitting every coefficient using nineteen beds each time. The blue power-law scores at three, five, seven and ten particle diameters are 0.857, 0.890, 0.819 and 0.855. The purple linear-with-intercept model using accessibility diffusivity gives 0.858, 0.881, 0.834 and 0.855. The green linear-with-intercept model using raw conductance gives 0.869, 0.898, 0.869 and 0.891. The orange proportional model gives 0.712, 0.555, 0.409 and 0.324. Both linear forms and the power law remain predictive across these depths, whereas the proportional model deteriorates. The power law is not consistently better than either linear alternative. Five particle diameters gives the highest score for the three flexible forms in this ensemble. The porosity baseline on slide 28 has no inlet-plane depth. Independent beds are needed to assess model and depth selection.}
+\begin{frame}{Conductance-model performance across diagnostic depths}
+\begin{columns}[c,onlytextwidth]
+\column{0.63\textwidth}\centering
+\includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/g_depth_models.pdf}
+\column{0.34\textwidth}\small
+\hi{Four curves at every depth}\par\medskip
+$D_{\rm eff}=C_GG_{\rm access}^{n}$\par\smallskip
+$D_{\rm eff}=a_GG_{\rm access}+b_G$\par\smallskip
+$D_{\rm eff}=\alpha_GG_{\rm access}$\par\smallskip
+$D_{\rm eff}=a_0+a_1\varepsilon_b$\par\medskip
+Refit on nineteen beds at each depth; predict the omitted bed.\par\smallskip
+The porosity baseline is independent of plane depth.
+\end{columns}
+\vspace{0.12cm}
+\result{Power-law and linear conductance models remain predictive across the tested depths.}
+\note{The figure contains four curves: power-law, linear-with-intercept and proportional relations using G access, plus the porosity baseline. Every conductance relation is refitted within every leave-one-bed-out fold at each depth. The porosity curve stays constant because the predictor does not depend on the chosen plane. Five particle diameters gives the best power-law and linear score among these four planes for this ensemble. This establishes sensitivity within our existing data; it does not establish an optimal plane for other geometries or independently validate the model and depth choice. The normalized alternatives are kept in the separate optional appendix.}
 \end{frame}
 
 \section[Conclusions]{Conclusions and next steps}
@@ -872,7 +843,7 @@ Depth is measured above each network's lowest pore.
         \item porosity alone misses important packing variability
         \item inlet-connected topology controls transient utilization
         \item one $D_{\rm eff}$ reproduces each detailed curve accurately
-        \item $D_{\rm access}$ provides an interpretable predictive closure
+        \item $G_{\rm access}$ provides an interpretable predictive closure
       \end{itemize}}
     \Col{0.47}{
       \hi{Not yet claimed}
@@ -880,28 +851,13 @@ Depth is measured above each network's lowest pore.
         \item industrial breakthrough performance
         \item effects of flow, heat or water competition
         \item transfer to other bead sizes or $D_{\rm tube}/d_p$
-        \item a universal power-law exponent
+        \item a universal conductance--diffusivity relation
       \end{itemize}}
   \end{FlexRow}
 
   \vspace*{0.5cm}
   \result{The contribution is a structure-to-model closure for a controlled diffusion-driven adsorption problem.}
-\note{
-    The present evidence supports four conclusions. Bulk porosity misses
-    important differences among random packings. Inlet-connected topology
-    explains a large part of the resulting variation. One optimized
-    $D_{\rm eff}$ allows the 1D model to reproduce each detailed uptake curve
-    accurately. Finally, $D_{\rm access}$ provides a cheap and interpretable
-    input for predicting that coefficient.
-
-    The scope must remain clear. We have not modelled an industrial
-    breakthrough column with imposed flow. We have not included heat effects,
-    water or competitive adsorption. We also have not demonstrated that the
-    fitted power law transfers to other bead sizes or tube-to-particle ratios.
-    The result is a validated structure-to-model closure for this controlled,
-    diffusion-driven adsorption problem, rather than a universal adsorption
-    correlation.
-  }
+\note{The evidence supports a steady inlet-conductance descriptor that captures transport differences missed by bulk porosity. A single fitted effective diffusivity reproduces each transient PNM curve with a mean error of 1.58 percent. Using conductance to predict that diffusivity gives a mean held-out curve error of 2.61 percent with the power law, essentially comparable to 2.64 percent for a linear model. The result is specific to this controlled diffusion-adsorption ensemble. We do not claim industrial breakthrough performance, robustness to heat or water competition, or transfer across bead sizes, tube geometries, sorbents and operating conditions. A more general study would be needed to establish those claims.}
 \end{frame}
 
 \begin{frame}{Pore accessibility retains what bulk porosity loses}
@@ -911,7 +867,7 @@ Depth is measured above each network's lowest pore.
   \begin{tikzpicture}[node distance=6mm,
     finalbox/.style={box,text width=2.5cm,minimum height=10mm}]
     \node[finalbox] (geom) {random packing\\+ pore network};
-    \node[finalbox,right=of geom,fill=tumblue!13] (da) {steady descriptor\\$D_{\rm access}$};
+    \node[finalbox,right=of geom,fill=tumblue!13] (da) {steady descriptor\\$G_{\rm access}$};
     \node[finalbox,right=of da,fill=tumgreen!13] (de) {closure prediction\\$D_{\rm eff}$};
     \node[finalbox,right=of de,fill=tumgreen!13] (q) {fast 1D uptake\\$\overline q(t)$};
     \draw[arr] (geom)--(da);\draw[arr] (da)--(de);\draw[arr] (de)--(q);
@@ -920,25 +876,12 @@ Depth is measured above each network's lowest pore.
   \begin{columns}[T,onlytextwidth]
     \column{0.31\textwidth}\centering\hi{20 beds}\\controlled ensemble
     \column{0.31\textwidth}\centering\hi{1.58\%}\\mean reduction error
-    \column{0.31\textwidth}\centering\hi{$R^2=0.890$}\\withheld-bed closure
+    \column{0.31\textwidth}\centering\hi{2.61\%}\\held-out curve error
   \end{columns}
-\note{
-    The main message is that equal void volume does not imply equal transport.
-    How the void space connects to the inlet matters. Starting from a random
-    packing, we extract the pore network and calculate the steady accessibility
-    descriptor. The fitted closure converts this descriptor into
-    $D_{\rm eff}$, and the conservative 1D model uses that coefficient to
-    predict the transient uptake.
-
-    Across twenty controlled beds, porosity varied by only 0.55 percent while
-    uptake varied much more strongly. The optimized 1D model reproduced the
-    pore-network curves with a mean NRMSE of 1.58 percent. The accessibility
-    power law achieved a leave-one-bed-out $R^2$ of 0.890. The practical outcome
-    is therefore a fast transient model that retains a clear and measurable
-    link to the underlying packing structure.
-  }
+\note{The central result is that inlet-connected gas conductance supplies information that porosity misses. Starting from a packing we calculate the network and its steady conductance, predict the effective diffusivity from a calibrated relationship, and run the homogeneous 1D transient model. The twenty-bed ensemble provides a fitted reduction error of 1.58 percent and a power-law held-out uptake-history error of 2.61 percent. These describe different steps in the workflow. The power-law diffusivity R squared is 0.906 and is close to the linear model score of 0.898. The aim is a simpler interpretable predictor for the controlled problem, not a claim of universal model superiority.}
 \end{frame}
 
-% Optional detailed backup slides: uncomment the following line and compile twice.
+% Optional appendices: independently uncomment either input and compile twice.
 % \input{pnm_backup_slides.tex}
+% \input{normalization_appendix.tex}
 \end{document}

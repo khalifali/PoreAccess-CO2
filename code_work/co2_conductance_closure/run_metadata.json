@@ -1,0 +1,30 @@
+{
+  "primary_depth_dp": 5.0,
+  "n_beds": 20,
+  "models": [
+    [
+      "conductance_proportional",
+      "effective_inlet_to_interior_conductance_m3_s",
+      "origin"
+    ],
+    [
+      "conductance_linear",
+      "effective_inlet_to_interior_conductance_m3_s",
+      "linear"
+    ],
+    [
+      "conductance_power",
+      "effective_inlet_to_interior_conductance_m3_s",
+      "power"
+    ],
+    [
+      "porosity_linear",
+      "porosity",
+      "linear"
+    ]
+  ],
+  "curve_error": "trapezoidal time-weighted RMSE / final PNM uptake",
+  "selection": "model/depth compared within same ensemble; not nested validation",
+  "initial_gas_concentration": 0,
+  "initial_solid_loading": 0
+}

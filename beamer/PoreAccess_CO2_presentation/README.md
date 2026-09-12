@@ -1,79 +1,67 @@
 # Beamer presentation
 
-Both versions contain 34 main slides with 6 optional backup slides disabled by default. The results section uses eleven standalone
-figures, each on its own slide, with editable explanatory text. Speaker notes
-follow the same slide order and refer to the individual figures.
+Both audience and presenter versions contain 34 main slides and use G_access as the
+sole inlet-access descriptor. D_eff remains the fitted/predicted coefficient used
+by the 1D transient model. Speaker notes follow the same slide order and describe
+both coefficient prediction and held-out uptake-history validation.
 
-From this directory, compile the audience deck twice:
+Compile twice from each deck directory:
 
 ```bash
 pdflatex -interaction=nonstopmode -halt-on-error poreaccess_co2_results.tex
 pdflatex -interaction=nonstopmode -halt-on-error poreaccess_co2_results.tex
-```
-
-For the presenter version:
-
-```bash
 cd with_notes
 pdflatex -interaction=nonstopmode -halt-on-error poreaccess_co2_results_with_notes.tex
 pdflatex -interaction=nonstopmode -halt-on-error poreaccess_co2_results_with_notes.tex
 ```
 
-The presenter PDF places each slide on the left and its notes on the right.
+The presenter PDF places the slide on the left and its transcript on the right.
 Set `\presenternotesfalse` instead of `\presenternotestrue` to hide notes.
-Each deck keeps its figure PDFs in its own `figures` folder so it can be copied
-and compiled independently. Regenerate the canonical plots using
-`code_work/generate_co2_publication_figures.py`, then copy the standalone PDFs
-into both figure folders when updating results.
+Each version retains its own figures folder and appendix sources for independent use.
 
-## Presentation story
+## Main story
 
-1. Motivation: why inlet-connected pathways may explain differences that porosity misses.
-2. Pore-network reference: geometry, coupled pore and bead balances, equilibrium, and mean uptake.
-3. Reduction: a separate 100-slice 1D grid, per-bed diffusivity optimization, and accessibility-based prediction.
-4. Results and robustness.
-5. Conclusions and next steps.
+1. Inlet-connected pathways may explain variability missed by porosity.
+2. The PNM supplies reference mean uptake histories.
+3. Per-bed curve fitting gives D_eff; steady diffusion gives G_access.
+4. Compare proportional, linear-with-intercept and power-law G_access relationships.
+5. Validate both held-out diffusivity and the resulting 1D uptake history.
+6. Assess interior-plane sensitivity and state the limits of the current ensemble.
 
-The audience deck is the visual baseline for both versions. The presenter version
-uses matching slide bodies with a transcript explaining equations and transitions.
+Slide 7 motivates 15% inlet CO2 with a cited DOE coal-flue-gas concentration range.
+The dry 298.15 K condition is a simplified cooled reference, not hot industrial flue gas.
+Slide 8 defines molecular gas diffusivity D_m = 1.5e-5 m2/s.
+Slides 27–31 use the new conductance-only analysis and figures. Slide 29 reports
+mean held-out curve errors of 2.61% (power), 2.64% (linear), 4.80% (proportional)
+and 7.58% (porosity). The earlier 1.58% is the per-bed fitted reduction error.
 
-## Optional appendix
+## Two independent optional appendices
 
-The six detailed PNM/Sobol backup slides are preserved in `pnm_backup_slides.tex`
-in each deck directory. They are excluded from the default PDF and outline.
-To include them, uncomment the final `\input{pnm_backup_slides.tex}` line in the
-corresponding main source and compile twice. Keep the backup file with the main
-source when copying either deck to another directory.
+Both are excluded by default. Uncomment either or both inputs at the end of the
+main source and compile twice:
 
-## Inlet condition and complete closure comparison
+```latex
+\input{pnm_backup_slides.tex}       % 6 detailed PNM/Sobol pages
+\input{normalization_appendix.tex} % 5 normalization/comparison pages
+```
 
-Slide 7 motivates 15 vol.% CO2 as a representative coal-combustion flue-gas
-concentration (DOE reports 10–15%). The dry, cooled, 298.15 K reference gas
-is a modelling simplification. At 1 bar, c = y p / (R T) gives approximately
-6.05 mol/m3. Source: [U.S. DOE QTR 2015, Section 4.E](https://www.energy.gov/sites/default/files/2016/01/f28/QTR2015-4E-Carbon-Dioxide-Capture-Technologies.pdf).
-Slide 8 defines the prescribed molecular gas diffusivity D_m = 1.5e-5 m2/s.
+`normalization_appendix.tex` explains D_access = G_access H / A_tube, the full-height
+convention despite a conductance ending at an interior plane, and why dimensional
+analysis alone does not derive D_eff. It preserves the normalized power-law and
+depth comparisons. It is separate from the original PNM construction appendix.
+A shared guard starts the appendix once when both files are enabled.
 
-Slide 28 includes both linear models with an intercept: one using D_access
-and one using raw conductance G_access. Slide 31 uses four curves, with every
-coefficient refitted on nineteen beds at every depth before predicting the
-omitted bed. Porosity is the separate depth-independent baseline on slide 28.
+## Reproducing the new analysis
 
-| Depth / bead diameter | Power law | Linear in D_access | Linear in G_access | Proportional |
-|---|---:|---:|---:|---:|
-| 3 | 0.857 | 0.858 | 0.869 | 0.712 |
-| 5 | 0.890 | 0.881 | 0.898 | 0.555 |
-| 7 | 0.819 | 0.834 | 0.869 | 0.409 |
-| 10 | 0.855 | 0.855 | 0.891 | 0.324 |
-
-Values are leave-one-bed-out R2. No claim of outright power-law superiority
-is supported. Positivity and the zero-access limit motivate its form.
-The depth table is generated by `depth_sensitivity` in
-`code_work/analyze_co2_effective_diffusivity_closure.py`; its 5-diameter results
-match the independently stored primary comparison for all four models.
-
-To regenerate from `code_work`:
+From `code_work`:
 
 ```bash
-python3 analyze_co2_effective_diffusivity_closure.py --homogeneous-summary co2_homogeneous_campaign_100cells/homogeneous_campaign_summary.csv --accessibility co2_inlet_accessibility_3dp.csv co2_inlet_accessibility_5dp.csv co2_inlet_accessibility_7dp.csv co2_inlet_accessibility_10dp.csv --output co2_effective_diffusivity_closure
-python3 generate_co2_publication_figures.py --only closure depth
+python3 analyze_co2_conductance_closure.py
+python3 plot_co2_conductance_closure.py
 ```
+
+The outputs in `code_work/co2_conductance_closure` contain all model scores,
+80 held-out uptake histories, per-bed curve errors and five PDF/SVG figures.
+Copy its figure PDFs into both deck figure directories before rebuilding.
+The older `generate_co2_publication_figures.py` outputs remain valid for the
+unchanged results and optional normalized-descriptor comparisons.

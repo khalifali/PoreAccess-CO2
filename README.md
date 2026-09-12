@@ -54,5 +54,19 @@ Historical fixed-inlet outputs, power-20 campaign networks, preliminary
 homogeneous fits, an older nested analysis script, and LaTeX build products were
 removed on the cleanup branch. Their originals remain in Git history. The
 Sobol, diffusion and corrected grid-convergence validation cases are retained.
-The audience and presenter-note Beamer decks now contain 34 main slides with 6 optional backup slides disabled by default and use all
-11 standalone figures. Existing paper-linked composites remain for compatibility.
+The audience and presenter-note decks contain 34 main slides. The main story uses
+G_access directly to predict D_eff and complete uptake histories. Separate optional
+appendices cover PNM construction (6 pages) and diffusivity normalization (5 pages).
+See `beamer/PoreAccess_CO2_presentation/README.md` for the independent include switches.
+
+The direct-conductance comparison is reproducible with:
+
+```bash
+cd code_work
+python3 analyze_co2_conductance_closure.py
+python3 plot_co2_conductance_closure.py
+```
+
+It compares three G_access relationships and a porosity baseline, using leave-one-bed-out
+diffusivity predictions at four depths and 80 propagated 1D uptake histories at 5 bead
+diameters. Full results are in `code_work/co2_conductance_closure/README.md`.
