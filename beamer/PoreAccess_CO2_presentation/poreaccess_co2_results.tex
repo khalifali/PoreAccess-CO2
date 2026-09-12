@@ -303,7 +303,8 @@
         \frac{dq_k}{dt}=k_{\rm LDF}\,(q_k^*-q_k).
       \]
       \small
-      $q_s$ is the saturation loading, $b$ is the Langmuir affinity,
+      $q_s$ is the maximum CO$_2$ loading [mol/kg adsorbent].
+      $b$ is the Langmuir affinity,
       $p_k$ is the local CO$_2$ partial pressure, and $q_k^*$ is the
       corresponding equilibrium loading. The product $b\,p_k$ is dimensionless.
     \column{0.44\textwidth}
@@ -340,8 +341,8 @@
         \frac{\partial q}{\partial t}
         =k_{\rm LDF}\,[q^*(c)-q].
       \]
-      The bed is divided into 100 axial cells. A trial diffusivity $D$
-      gives concentration $c(z,t)$ and loading $q(z,t)$.
+      For each trial $D$, solve both equations together for $c(z,t)$ and
+      $q(z,t)$ in 100 cells, with prescribed initial and boundary conditions.
     \column{0.41\textwidth}
       \hi{Quantity compared with the network}
       \[
@@ -516,8 +517,8 @@ $t_f=5000$ s.
     \hi{Per-bed optimization}
 \begin{enumerate}
 \item solve the 1D model for a trial $D$
-\item compare the full uptake curve with the network
-\item minimize time-weighted NRMSE
+\item evaluate time-weighted NRMSE against the network curve
+\item use previous errors to select the next $D$ and repeat
 \end{enumerate}
 \medskip
 Solid: network.\\Dashed: fitted 1D model.
