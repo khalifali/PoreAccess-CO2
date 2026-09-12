@@ -224,34 +224,35 @@
 \end{frame}
 
 \begin{frame}{Twenty beds isolate variability caused by random arrangement}
-  \begin{FlexRow}{0.57\textheight}
-    \Col{0.43}{
-      \begin{tabular}{ll}\toprule
-      Quantity & Fixed value\\\midrule
-      beads per bed & 1850\\
-      bead diameter & 1.6 mm\\
-      tube diameter & 16 mm\\
-      $D_{\rm tube}/d_p$ & 10\\
-      temperature & 298.15 K\\
-      inlet $c_{\rm CO_2}$ & 6.05 mol m$^{-3}$\textsuperscript{*}\\
-      simulation time & 5000 s\\\bottomrule
-      \end{tabular}}
-    \Col{0.53}{
-      \hi{Controlled diffusion--adsorption problem}
-      \begin{itemize}
-        \item same zeolite beads and tube, only the insertion seed changes
-        \item dry, isothermal gas supplied from a reservoir below the bed
-        \item interparticle diffusion and bead adsorption, with no imposed flow
-        \item heat effects and competitive water adsorption are outside this model
-      \end{itemize}}
-  \end{FlexRow}
-
-  \vspace*{0.5cm}
-  {\scriptsize\textsuperscript{*}Approximately 15 vol.\% CO$_2$ at atmospheric pressure and 298 K.}\par
-
-  \vspace*{0.3cm}
-\result{The ensemble tests arrangement effects under otherwise identical conditions.}
-\note{We isolate arrangement effects using twenty packings of identical zeolite beads in the same tube. Temperature, inlet concentration and adsorption parameters are fixed. The gas is dry and isothermal, with no imposed through-flow. The concentration is approximately equivalent to fifteen volume percent CO2 at atmospheric pressure and 298 K. This is a controlled diffusion-driven adsorption problem, not an industrial breakthrough simulation. The next step is to turn the particle geometry into a pore network.}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.43\textwidth}\small
+    \begin{tabular}{ll}\toprule
+    Quantity & Fixed value\\\midrule
+    beads per bed & 1850\\
+    bead diameter & 1.6 mm\\
+    tube diameter & 16 mm\\
+    $D_{\rm tube}/d_p$ & 10\\
+    temperature & 298.15 K\\
+    inlet $c_{\rm CO_2}$ & 6.05 mol m$^{-3}$\\
+    simulation time & 5000 s\\\bottomrule
+    \end{tabular}
+    \column{0.53\textwidth}\small
+    \hi{Controlled diffusion--adsorption problem}
+    \begin{itemize}\setlength{\itemsep}{2pt}
+    \item same beads and tube; only the insertion seed changes
+    \item dry, isothermal gas supplied from below
+    \item diffusion and adsorption, with no imposed flow
+    \item heat effects and competitive water adsorption excluded
+    \end{itemize}
+  \end{columns}
+  \vspace{0.20cm}
+  {\footnotesize $c_{\rm in}=y_{\rm CO_2}p/(RT)\approx6.05$ mol m$^{-3}$ at 15 vol.\%, 1 bar and 298 K.\par
+  15\% represents coal-combustion flue gas (typical CO$_2$: 10--15\%).\par
+  A dry, cooled reference gas fixes the driving concentration across all beds.}\par
+  {\scriptsize\href{https://www.energy.gov/sites/default/files/2016/01/f28/QTR2015-4E-Carbon-Dioxide-Capture-Technologies.pdf}{Source: U.S. DOE, Quadrennial Technology Review (2015), Sec. 4.E.}}\par
+  \vspace{0.15cm}
+  \result{The ensemble tests arrangement effects under otherwise identical conditions.}
+\note{The inlet value corresponds to a CO2 mole fraction of approximately 15 percent at one bar: c equals y times p divided by RT. The DOE report gives a typical coal-combustion flue-gas range of 10 to 15 percent CO2, which motivates this representative concentration. Temperature is held at 298.15 K and the gas is dry, so this is a cooled, simplified reference condition. We do not simulate hot, wet industrial flue gas or its other constituents. Keeping the same reservoir concentration for all twenty beds isolates arrangement effects. The cited concentration range motivates the boundary condition, not a claim of industrial process validation.}
 \end{frame}
 
 \begin{frame}{Pore-network geometry and throat diffusion}
@@ -276,6 +277,8 @@
         \dot n_{ij}=G_{ij}(c_j-c_i).
       \]
       \footnotesize
+      $D_m=1.5\times10^{-5}$ m$^2$ s$^{-1}$: molecular CO$_2$ diffusivity in the gas.
+      \par\smallskip
       $L_{ij}=\lVert\mathbf{x}_j-\mathbf{x}_i\rVert$ is the pore-centre distance.
       The irregular opening between three beads is approximated by an equivalent
       circular area
@@ -286,7 +289,7 @@
   \end{columns}
   \vspace{0.16cm}
   \result{The circular throat area is a geometric modelling assumption; $G_{ij}$ has units of m$^3$ s$^{-1}$.}
-\note{The particle centres define Delaunay tetrahedra. Valid circumcentres become pore nodes, and a shared triangular face defines a candidate throat between neighbouring nodes. The throat conductance follows the molecular diffusivity times an approximate opening area divided by length. Sobol sampling assigns gas volumes to nodes, while connectivity comes from geometry. This is the construction summary; the detailed sketches remain in the optional appendix. Now we have storage volumes and connections and can write a gas balance for every pore.}
+\note{The particle centres define Delaunay tetrahedra. Valid circumcentres become pore nodes, and a shared triangular face defines a candidate throat. D sub m is the prescribed molecular diffusivity of CO2 in the gas, 1.5 times ten to the minus five square metres per second. It is a fixed model input, not the fitted bed-scale effective diffusivity. Conductance equals this diffusivity times the approximate opening area divided by pore-centre distance. Sobol sampling assigns gas volumes to the nodes. Detailed construction sketches remain in the optional appendix.}
 \end{frame}
 
 \begin{frame}{The pore network solves diffusion and adsorption together}
@@ -750,29 +753,31 @@ The shaded band shows bootstrap uncertainty in the fitted relationship.
   \end{columns}
   \vspace{0.12cm}
   {\small\result{The fitted exponent is $n\approx2.50$ for this ensemble.}}
-\note{Each bed supplies a geometrically calculated accessibility diffusivity and a diffusivity fitted to its transient response. The power law relates them. This plot shows the fit to the complete ensemble. The band is pointwise bootstrap uncertainty in the relationship, not an individual-bed prediction interval. The exponent is specific to the studied conditions.}
+\note{Each bed supplies an accessibility diffusivity and a diffusivity fitted to its transient response. D sub m is the fixed molecular diffusivity defined on slide 8. Dividing both diffusivities by D sub m makes C dimensionless. This plot fits all twenty beds; its band is pointwise bootstrap uncertainty in the relationship, not a prediction interval for an individual bed. The power law is positive for positive access and tends to zero with access. We retain it as a physically admissible empirical form, not as an outright predictive winner. The next slide includes both linear-with-intercept alternatives. The exponent is specific to this ensemble.}
 \end{frame}
 
 \begin{frame}{The closure predicts diffusivity for a withheld bed}
   \begin{columns}[c,onlytextwidth]
-    \column{0.65\textwidth}
+    \column{0.62\textwidth}
     \centering
     \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_closure_held_out.pdf}
-    \column{0.32\textwidth}
-    \small
-    \hi{Closures compared}
-\[
-\begin{aligned}
- D_{\rm eff}&=a_0+a_1\varepsilon_b,\\
- D_{\rm eff}&=\alpha D_{\rm access},\\
- \frac{D_{\rm eff}}{D_m}&=C\left(\frac{D_{\rm access}}{D_m}\right)^n.
-\end{aligned}
-\]
-Fit on nineteen beds, then predict the remaining bed.
+    \column{0.35\textwidth}\small
+    \hi{Forms and held-out $R^2$}
+    \begin{tabular}{lr}\toprule
+    Predictor / form & $R^2$\\\midrule
+    $a_GG_{\rm access}+b_G$ & 0.898\\
+    $CD_m(D_{\rm access}/D_m)^n$ & 0.890\\
+    $a_DD_{\rm access}+b_D$ & 0.881\\
+    $\alpha D_{\rm access}$ & 0.555\\
+    $a_0+a_1\varepsilon_b$ & $-0.234$\\\bottomrule
+    \end{tabular}
+    \medskip\par
+    Each expression predicts $D_{\rm eff}$.
+    Fit on nineteen beds and predict the omitted bed.
   \end{columns}
   \vspace{0.12cm}
-  {\small\result{LOOCV $R^2$: power law $0.890$, proportional $0.555$, porosity $-0.234$.}}
-\note{We leave out one entire bed, fit each closure to the other nineteen, and predict the omitted diffusivity. Repeating this gives twenty held-out predictions. Blue circles show the power law, orange triangles show proportionality, and grey squares show porosity. Model form and diagnostic depth were compared within this ensemble, so these scores remain internal validation.}
+  {\small\result{Power-law and linear-with-intercept scores are close; the power law is not the outright winner.}}
+\note{We leave out one entire bed, fit every coefficient on the other nineteen beds, and predict the omitted diffusivity. Repeating this gives twenty predictions per model. The figure now includes the linear model with an intercept using accessibility diffusivity, as in the depth plot, and the separate linear model using raw conductance. Their R squared values are 0.881 and 0.898 respectively, compared with 0.890 for the power law. These are genuinely different predictors because accessibility diffusivity includes the bed height. Small differences in these scores do not establish a clear winner. The power law has positivity and a zero-access limit as modelling advantages. Model and depth selection occurred within this twenty-bed ensemble, so this is internal validation.}
 \end{frame}
 
 \begin{frame}{Why not predict uptake directly from $G_{\rm access}$?}
@@ -827,26 +832,25 @@ Depth is measured above each network's lowest pore.
 \note{The original descriptor places the diagnostic plane above the lowest pore in each network. We tested three, five, seven and ten particle diameters using that convention. Both linear and rank correlations remain high. These depths are not measured exactly from the physical bed bottom.}
 \end{frame}
 
-\begin{frame}{Predictive performance is stable across diagnostic depths}
+\begin{frame}{Predictive performance across diagnostic depths}
   \begin{columns}[c,onlytextwidth]
-    \column{0.65\textwidth}
-    \centering
+    \column{0.63\textwidth}\centering
     \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_depth_prediction.pdf}
-    \column{0.32\textwidth}
-    \small
-    \hi{Models in this comparison}
-\begin{itemize}
-\item linear model with intercept
-\[D_{\rm eff}=aD_{\rm access}+b\]
-\item proportional model
-\[D_{\rm eff}=\alpha D_{\rm access}\]
-\end{itemize}
-\medskip
-The $5d_p$ plane gives the highest linear-model score in this ensemble.
+    \column{0.34\textwidth}\small
+    \hi{Four transport models}\par\medskip
+    Power law\par
+    $D_{\rm eff}=CD_m(D_{\rm access}/D_m)^n$\par\smallskip
+    Linear in $D_{\rm access}$ + intercept\par
+    $D_{\rm eff}=a_DD_{\rm access}+b_D$\par\smallskip
+    Linear in $G_{\rm access}$ + intercept\par
+    $D_{\rm eff}=a_GG_{\rm access}+b_G$\par\smallskip
+    Proportional\par
+    $D_{\rm eff}=\alpha D_{\rm access}$\par\medskip
+    Refit on nineteen beds at each depth; predict the omitted bed.
   \end{columns}
   \vspace{0.12cm}
-  {\small\result{The linear model with intercept remains predictive from $3d_p$ to $10d_p$.}}
-\note{This plot compares affine and proportional closures at each depth. It does not plot the power-law score. Five particle diameters gives the best linear-model score among these tested depths. This sensitivity supports the association while independent beds are still needed to evaluate model and depth selection.}
+  {\small\result{Power-law $R^2=0.819$--$0.890$ across depths; no consistent advantage over the linear models.}}
+\note{All four transport models are now evaluated at every depth with leave-one-bed-out validation, refitting every coefficient using nineteen beds each time. The blue power-law scores at three, five, seven and ten particle diameters are 0.857, 0.890, 0.819 and 0.855. The purple linear-with-intercept model using accessibility diffusivity gives 0.858, 0.881, 0.834 and 0.855. The green linear-with-intercept model using raw conductance gives 0.869, 0.898, 0.869 and 0.891. The orange proportional model gives 0.712, 0.555, 0.409 and 0.324. Both linear forms and the power law remain predictive across these depths, whereas the proportional model deteriorates. The power law is not consistently better than either linear alternative. Five particle diameters gives the highest score for the three flexible forms in this ensemble. The porosity baseline on slide 28 has no inlet-plane depth. Independent beds are needed to assess model and depth selection.}
 \end{frame}
 
 \section[Conclusions]{Conclusions and next steps}

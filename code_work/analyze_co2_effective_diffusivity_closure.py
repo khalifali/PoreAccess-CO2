@@ -203,6 +203,31 @@ def permutation_tests(df, specs, observed_metrics, nperm, rng):
     return pd.DataFrame(rows)
 
 
+def depth_sensitivity(merged):
+    """Refit every closure on nineteen beds at each diagnostic depth."""
+    depth_rows = []
+    for depth, group in merged.groupby("depth_dp"):
+        group = group.dropna(subset=[YCOL, GCOL, "accessibility_diffusivity_m2_s"])
+        x, y = group["accessibility_diffusivity_m2_s"].to_numpy(), group[YCOL].to_numpy()
+        pred0 = loo_predictions("origin", x, y)
+        pred1 = loo_predictions("linear", x, y)
+        pred_power = loo_predictions("power", x, y)
+        pred_raw = loo_predictions("linear", group[GCOL].to_numpy(), y)
+        pr, pp, sr, sp = safe_correlations(x, y)
+        alpha = float(x @ y / (x @ x))
+        depth_rows.append({"depth_dp": depth, "n_beds": len(group),
+                           "pearson_r": pr, "pearson_p": pp,
+                           "spearman_rho": sr, "spearman_p": sp,
+                           "alpha_through_origin": alpha,
+                           **{f"origin_{k}": v for k, v in metrics(y, pred0).items()},
+                           **{f"linear_{k}": v for k, v in metrics(y, pred1).items()},
+                           **{f"power_{k}": v for k, v in metrics(y, pred_power).items()},
+                           **{f"raw_linear_{k}": v for k, v in metrics(y, pred_raw).items()}})
+    depth_df = pd.DataFrame(depth_rows).sort_values("depth_dp")
+
+    return depth_df
+
+
 def main():
     args = arguments()
     if args.tube_radius <= 0:
@@ -253,21 +278,7 @@ def main():
     bootstrap_df = bootstrap_coefficients(primary, specs, args.bootstrap, rng)
     permutation_df = permutation_tests(primary, specs, observed, args.permutations, rng)
 
-    depth_rows = []
-    for depth, group in merged.groupby("depth_dp"):
-        group = group.dropna(subset=[YCOL, GCOL, "accessibility_diffusivity_m2_s"])
-        x, y = group["accessibility_diffusivity_m2_s"].to_numpy(), group[YCOL].to_numpy()
-        pred0 = loo_predictions("origin", x, y)
-        pred1 = loo_predictions("linear", x, y)
-        pr, pp, sr, sp = safe_correlations(x, y)
-        alpha = float(x @ y / (x @ x))
-        depth_rows.append({"depth_dp": depth, "n_beds": len(group),
-                           "pearson_r": pr, "pearson_p": pp,
-                           "spearman_rho": sr, "spearman_p": sp,
-                           "alpha_through_origin": alpha,
-                           **{f"origin_{k}": v for k, v in metrics(y, pred0).items()},
-                           **{f"linear_{k}": v for k, v in metrics(y, pred1).items()}})
-    depth_df = pd.DataFrame(depth_rows).sort_values("depth_dp")
+    depth_df = depth_sensitivity(merged)
 
     physical_pred = predictions_df[predictions_df.model == "physical_through_origin"].copy()
     residual_map = physical_pred.set_index("seed")["loo_residual_m2_s"]

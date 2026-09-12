@@ -405,7 +405,9 @@ def figure_closure(args, closure, predictions, manifest):
     model_styles = {
         "porosity_linear": (COLORS["gray"], "porosity"),
         "physical_through_origin": (COLORS["orange"], "proportional"),
-        "accessibility_power_law": (COLORS["blue"], "power closure"),
+        "accessibility_power_law": (COLORS["blue"], "power law"),
+        "accessibility_linear": (COLORS["purple"], "linear + intercept (D_access)"),
+        "raw_conductance_linear": (COLORS["green"], "linear + intercept (G_access)"),
     }
     all_values = []
     for model, (color, label) in model_styles.items():
@@ -415,7 +417,7 @@ def figure_closure(args, closure, predictions, manifest):
         obs = d.observed_D_eff_m2_s.to_numpy()*1e6
         pred = d.loo_predicted_D_eff_m2_s.to_numpy()*1e6
         ax.scatter(obs, pred, color=color, s=28, alpha=.9, label=label,
-                   marker={"porosity_linear": "s", "physical_through_origin": "^", "accessibility_power_law": "o"}[model],
+                   marker={"porosity_linear": "s", "physical_through_origin": "^", "accessibility_power_law": "o", "accessibility_linear": "D", "raw_conductance_linear": "P"}[model],
                    edgecolor="white", linewidth=.4)
         all_values.extend(obs); all_values.extend(pred)
     lower, upper = min(all_values), max(all_values)
@@ -426,7 +428,7 @@ def figure_closure(args, closure, predictions, manifest):
     ax.set_aspect("equal", adjustable="box")
     ax.set_xlabel(r"Observed $D_{\mathrm{eff}}$ [$10^{-6}$ m$^2$ s$^{-1}$]")
     ax.set_ylabel("Leave-one-bed-out prediction [$10^{-6}$ m$^2$ s$^{-1}$]")
-    ax.legend(frameon=False); clean_axes(ax); panel_label(ax, "b")
+    ax.legend(frameon=False, fontsize=8); clean_axes(ax); panel_label(ax, "b")
 
     pd.DataFrame(boot, columns=["power_coefficient_SI", "power_exponent"]).to_csv(
         args.output / "closure_power_bootstrap_samples.csv", index=False)
@@ -444,7 +446,7 @@ def figure_closure(args, closure, predictions, manifest):
 
 def figure_depth(args, depth, manifest):
     require_columns(depth, ["depth_dp", "pearson_r", "spearman_rho",
-                            "linear_loo_r2"], "depth sensitivity")
+                            "linear_loo_r2", "power_loo_r2", "raw_linear_loo_r2"], "depth sensitivity")
     d = depth.sort_values("depth_dp")
     fig, axes = single_panels(2)
     ax = axes[0]
@@ -455,10 +457,14 @@ def figure_depth(args, depth, manifest):
     ax.set_xticks(d.depth_dp); ax.set_ylim(.80, 1.0)
     ax.legend(frameon=False); clean_axes(ax); panel_label(ax, "a")
     ax = axes[1]
-    ax.plot(d.depth_dp, d.linear_loo_r2, "o-", color=COLORS["orange"],
-            label="linear model with intercept")
+    ax.plot(d.depth_dp, d.power_loo_r2, "o-", color=COLORS["blue"],
+            label="power law")
+    ax.plot(d.depth_dp, d.linear_loo_r2, "D--", color=COLORS["purple"],
+            label="linear + intercept (D_access)")
+    ax.plot(d.depth_dp, d.raw_linear_loo_r2, "P-.", color=COLORS["green"],
+            label="linear + intercept (G_access)")
     if "origin_loo_r2" in d:
-        ax.plot(d.depth_dp, d.origin_loo_r2, "s--", color=COLORS["purple"],
+        ax.plot(d.depth_dp, d.origin_loo_r2, "s--", color=COLORS["orange"],
                 label="proportional model")
     ax.set_xlabel("Interior-plane depth [$d_p$]")
     ax.set_ylabel("Leave-one-bed-out $R^2$")
