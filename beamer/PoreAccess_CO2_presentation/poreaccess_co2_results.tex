@@ -251,6 +251,8 @@
 
   \vspace*{0.5cm}
   {\scriptsize\textsuperscript{*}Approximately 15 vol.\% CO$_2$ at atmospheric pressure and 298 K.}\par
+  
+  \vspace*{0.3cm}
 \result{The ensemble tests arrangement effects under otherwise identical conditions.}
 \end{frame}
 
@@ -301,6 +303,8 @@
         \frac{dq_k}{dt}=k_{\rm LDF}\,(q_k^*-q_k).
       \]
       \footnotesize
+      
+      \vspace*{-0.3cm}
       \begin{itemize}\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}
         \item $q_s$: maximum CO$_2$ loading [mol/kg adsorbent]
         \item $b$: Langmuir affinity [Pa$^{-1}$], with $b p_k$ dimensionless
@@ -323,6 +327,7 @@
         \item mean uptake $\overline q_{\rm PNM}(t)$
       \end{itemize}
   \end{columns}
+  \vspace*{0.3cm}
   \result{Coupled diffusion and adsorption conserve the CO$_2$ inventory.}
 \end{frame}
 
@@ -344,8 +349,8 @@
     \node[flowbox,right=of beds] (pair) {calculate paired\\$D_{\rm access},D_{\rm eff}$};
     \node[flowbox,right=of pair,fill=tumgreen!13] (close) {fit once\\$D_{\rm eff}=f(D_{\rm access})$};
     \draw[arr] (beds)--(pair);\draw[arr] (pair)--(close);
-    \node[font=\bfseries,text=tumblue,anchor=west] at (-1.22,-0.75) {Predict for a new bed};
-    \node[flowbox] (new) at (0,-1.5) {new bed\\pore network};
+    \node[font=\bfseries,text=tumblue,anchor=west] at (-1.22,-1.) {Predict for a new bed};
+    \node[flowbox] (new) at (0,-2) {new bed\\pore network};
     \node[flowbox,right=of new] (steady) {one steady solve\\$D_{\rm access}$};
     \node[flowbox,right=of steady,fill=tumgreen!13] (pred) {apply closure\\$D_{\rm eff}$};
     \node[flowbox,right=of pred,fill=tumgreen!13] (uptake) {1D model\\$\overline q(t)$};
@@ -371,6 +376,8 @@
 \frac{\partial q}{\partial t}
 =k_{\rm LDF}\left[\frac{q_s bRTc}{1+bRTc}-q\right].
 \]
+
+\vspace*{-0.2cm}
 \begin{itemize}\setlength{\itemsep}{2pt}
 \item Divide the bed height into 100 equal slices, each spanning the tube cross-section.
 \item Solve gas concentration and mean solid loading together in each slice.
@@ -386,6 +393,8 @@ For 100 equal axial cells:
 \[
 \overline q_{\rm 1D}(t;D)=\frac{1}{100}\sum_{\ell=1}^{100}q_\ell(t;D).
 \]
+
+\vspace*{-0.3cm}
 \begin{itemize}\setlength{\itemsep}{2pt}
 \item Match bed height, porosity and inlet condition to the network.
 \item Keep isotherm, kinetics and initial state fixed. Only $D$ changes.
@@ -430,10 +439,10 @@ For 100 equal axial cells:
         D_{\rm eff}&=\arg\min_D\mathrm{NRMSE}(D).
         \end{aligned}
       \]
-      The trapezoidal weights $w_m$ account for unequal time spacing and satisfy
-      $\sum_m w_m=1$.
+%      The trapezoidal weights $w_m$ account for unequal time spacing and satisfy
+%      $\sum_m w_m=1$.
   \end{columns}
-  \vspace{0.10cm}
+  \vspace{0.4cm}
   \begin{beamercolorbox}[rounded=true,sep=0.35em]{block body}
     \centering\small\bfseries\color{tumdark}
     $D_{\rm access}$ is cheap because it avoids adsorption dynamics and optimization.
@@ -528,7 +537,7 @@ For 100 equal axial cells:
 \medskip
 The bounded search operates in $\log_{10}D$ and starts deterministically.
 \end{columns}
-\vspace{0.2cm}
+\vspace{0.3cm}
 \result{Per-bed optimization supplies the targets for closure calibration.}
 
 \end{frame}
