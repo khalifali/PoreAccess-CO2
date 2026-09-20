@@ -91,12 +91,12 @@
     \Col{0.40}{\vspace{0.08cm}\centering
       \includegraphics[width=1.03\linewidth,height=4.55cm,keepaspectratio]{figures/uhrenturm.jpg}}
   \end{FlexRow}
-\note{Introduce the project: how random packing geometry can inform a reduced model of transient adsorption.}
+\note{Welcome everybody, and thank you for attending my presentation. Today, I would like to talk about a recent project that I have been working on together with Heiko. The general idea of this work is to investigate how the geometry of a randomly packed bed can inform a reduced model of transient adsorption. As an application example, we consider CO$_2$ adsorption in packed beds of zeolite particles.}
 \end{frame}
 
 \begin{frame}{Presentation outline}
 \tableofcontents
-\note{We first motivate inlet accessibility, then explain the PNM reference and its mean uptake output. Next we reduce it to a homogeneous bed and develop the diffusivity closure. Results and conclusions follow.}
+\note{Let me briefly outline the presentation. I will first motivate why we are interested in the structure of the packed bed, and in particular in the inlet accessibility dictated by the arrangement of particles near the inlet. From this, I will formulate the main research question. Then I will briefly introduce the pore-network model that we use to simulate transport and adsorption in the individual packings and to obtain the mean uptake of the bed over time. In the next step, we will reduce these geometrically complex beds to homogeneous one-dimensional beds and investigate how an effective diffusivity can be used as a closure for the influence of the underlying structure. Finally, I will show the results and summarize the main conclusions.}
 \end{frame}
 
 \section[Motivation]{Motivation and research question}
@@ -107,7 +107,7 @@
 {\LARGE\color{tumblue}\textbf{Motivation and research question}}\par\vspace{0.5cm}
 {\large Why should inlet-connected pathways matter?}
 \vfill
-\note{Why should inlet-connected pathways matter?.}
+\note{So, why should inlet pathways matter? The gas has to enter the packing through connected pore pathways, and their accessibility depends on the local particle arrangement.}
 \end{frame}
 
 \begin{frame}{Why examine access from the inlet?}
@@ -131,7 +131,7 @@
 \vspace{0.2cm}
 \result{Hypothesis: inlet-connected diffusive pathways contain information that porosity misses.}
 
-\note{The motivation is transport through random geometry. Two packings can have similar porosity but very different arrangements of constrictions and parallel pathways. In our experiment gas is supplied at the bottom and removed by adsorption as it enters. That makes the inlet a physically meaningful reference boundary. This leads us to test inlet-to-interior accessibility as a descriptor. It is a hypothesis, not a claim that the inlet alone controls every time scale. CO2 and zeolite provide a controlled application for studying this question.}
+\note{In other words, why should we care specifically about accessibility from the inlet? Packed-bed adsorption models typically use porosity as one of the main structural descriptors. Porosity tells us how much void space is available, but it does not tell us how this void space is connected. For example, it does not describe bottlenecks, path lengths, or the number of parallel pathways through which the gas can move. So two beds with very similar porosities can still provide quite different gas-supply pathways. In applications such as CO$_2$ adsorption, the gas enters the packed bed from a reservoir at the bottom. This makes the inlet a physically meaningful reference boundary. At the same time, adsorption continuously removes CO$_2$ from the gas phase as the gas diffuses through the packing. So the ability to supply gas from the inlet toward the interior may become important for the transient response. This motivates us to test inlet-to-interior accessibility as an additional structural descriptor. And I want to emphasize that this is a hypothesis that we are testing. We are not claiming that the inlet structure alone controls all adsorption time scales. CO$_2$ adsorption in zeolite provides us with a controlled application in which we can investigate this question.}
 \end{frame}
 
 \begin{frame}{Same porosity can hide different inlet-connected pathways}
