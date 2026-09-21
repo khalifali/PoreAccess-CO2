@@ -1,18 +1,24 @@
 #!/usr/bin/env python3
-"""Create a clean 2-D thin-slice view of one packed bed and its pore network.
+"""Create slide-ready 2-D inlet-region views of a packed bed and pore network.
 
 The script reads the existing `pore_network.npz` written by
-`extract_co2_pore_network.py`.  The left panel shows the true circular
-cross-sections of particles intersecting a thin y-slab.  The right panel shows
-pore centres and throats whose pore centres lie inside the same slab.
+`extract_co2_pore_network.py` and writes two matching figures:
+
+1. particles only;
+2. the identical particle slice with pore centres and throats overlaid.
+
+By default the view is a thin central slab and the bottom 8 particle diameters,
+which is useful for explaining inlet accessibility.
 
 Example
 -------
 python3 plot_pore_network_slice.py \
     --network co2_pore_networks_power22/seed_18427/pore_network.npz \
-    --output pore_network_slice_seed18427.pdf
+    --output-prefix seed18427_inlet_slice
 
-A PNG with the same basename is also written unless --pdf-only is used.
+This writes PDF and PNG versions of:
+  seed18427_inlet_slice_particles
+  seed18427_inlet_slice_particles_network
 """
 
 from __future__ import annotations
@@ -30,17 +36,61 @@ def arguments() -> argparse.Namespace:
     p = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     p.add_argument("--network", type=Path,
                    default=Path("co2_pore_networks_power22/seed_18427/pore_network.npz"))
-    p.add_argument("--output", type=Path,
-                   default=Path("pore_network_slice_seed18427.pdf"))
+    p.add_argument("--output-prefix", type=Path,
+                   default=Path("seed18427_inlet_slice"))
     p.add_argument("--slice-center-y", type=float, default=0.0,
                    help="Centre of the y-slice [m].")
-    p.add_argument("--slice-half-thickness-dp", type=float, default=0.55,
-                   help="Half-thickness of the visualized slab in particle diameters.")
+    p.add_argument("--slice-half-thickness-dp", type=float, default=0.50,
+                   help="Half-thickness of the pore-network slab in particle diameters.")
+    p.add_argument("--height-dp", type=float, default=8.0,
+                   help="Axial extent above the bed bottom in particle diameters.")
+    p.add_argument("--z-min", type=float, default=0.0,
+                   help="Lower axial bound of the displayed region [m].")
     p.add_argument("--tube-radius", type=float, default=0.008,
-                   help="Tube radius [m], used only for plot limits.")
+                   help="Tube radius [m], used for plot limits.")
     p.add_argument("--dpi", type=int, default=300)
     p.add_argument("--pdf-only", action="store_true")
     return p.parse_args()
+
+
+def draw_particles(ax, xyz, radius, y0, zmin, zmax):
+    """Draw true sphere/plane cross-sections for the plane y=y0."""
+    dy = np.abs(xyz[:, 1] - y0)
+    plane_mask = dy <= radius
+    cross_radius = np.sqrt(np.maximum(radius[plane_mask] ** 2 - dy[plane_mask] ** 2, 0.0))
+    pxyz = xyz[plane_mask]
+
+    # Keep particles whose 2-D cross-section intersects the requested z-window.
+    zmask = (pxyz[:, 2] + cross_radius >= zmin) & (pxyz[:, 2] - cross_radius <= zmax)
+    pxyz = pxyz[zmask]
+    cross_radius = cross_radius[zmask]
+
+    mm = 1e3
+    for (x, _, z), rr in zip(pxyz, cross_radius):
+        ax.add_patch(Circle((x * mm, z * mm), rr * mm,
+                            facecolor="0.86", edgecolor="0.25", linewidth=0.55))
+    return len(pxyz)
+
+
+def configure_axis(ax, tube_radius, zmin, zmax):
+    mm = 1e3
+    ax.set_xlabel("x [mm]")
+    ax.set_ylabel("z [mm]")
+    ax.set_aspect("equal", adjustable="box")
+    ax.set_xlim(-tube_radius * mm, tube_radius * mm)
+    ax.set_ylim(zmin * mm, zmax * mm)
+    ax.grid(False)
+
+
+def save_figure(fig, base: Path, dpi: int, pdf_only: bool):
+    base.parent.mkdir(parents=True, exist_ok=True)
+    pdf = base.with_suffix(".pdf")
+    fig.savefig(pdf, bbox_inches="tight")
+    print(f"wrote {pdf}")
+    if not pdf_only:
+        png = base.with_suffix(".png")
+        fig.savefig(png, dpi=dpi, bbox_inches="tight")
+        print(f"wrote {png}")
 
 
 def main() -> int:
@@ -65,100 +115,86 @@ def main() -> int:
                      if "throat_radius" in z else np.ones(len(throat_conns)))
 
     dp = 2.0 * float(np.median(particle_radius))
-    half = a.slice_half_thickness_dp * dp
+    slab_half = a.slice_half_thickness_dp * dp
+    zmin = a.z_min
+    zmax = zmin + a.height_dp * dp
     y0 = a.slice_center_y
+    mm = 1e3
 
-    # Particle cross-sections through the central plane y=y0.  A sphere whose
-    # centre is offset by dy intersects the plane with radius sqrt(r^2-dy^2).
-    dy_particle = np.abs(particle_xyz[:, 1] - y0)
-    particle_mask = dy_particle <= particle_radius
-    cross_radius = np.sqrt(
-        np.maximum(particle_radius[particle_mask] ** 2 - dy_particle[particle_mask] ** 2, 0.0)
+    # Pore/throat selection: same thin y-slab and same z-window.
+    pore_mask = (
+        (np.abs(pore_xyz[:, 1] - y0) <= slab_half)
+        & (pore_xyz[:, 2] >= zmin)
+        & (pore_xyz[:, 2] <= zmax)
     )
-
-    # For the pore network, use a thin slab rather than an exact plane because
-    # pores and throats are point/line objects in 3-D.
-    pore_mask = np.abs(pore_xyz[:, 1] - y0) <= half
     kept_pores = np.flatnonzero(pore_mask)
-    pore_local = np.full(len(pore_xyz), -1, dtype=int)
-    pore_local[kept_pores] = np.arange(len(kept_pores))
 
     edge_mask = pore_mask[throat_conns[:, 0]] & pore_mask[throat_conns[:, 1]]
     kept_edges = throat_conns[edge_mask]
 
-    # x-z coordinates in mm for presentation-friendly axes.
-    mm = 1e3
-    pxyz = particle_xyz[particle_mask]
-    qxyz = pore_xyz[kept_pores]
-    segments = np.stack(
-        [pore_xyz[kept_edges[:, 0]][:, [0, 2]],
-         pore_xyz[kept_edges[:, 1]][:, [0, 2]]],
-        axis=1
-    ) * mm if len(kept_edges) else np.empty((0, 2, 2))
+    segments = (
+        np.stack(
+            [pore_xyz[kept_edges[:, 0]][:, [0, 2]],
+             pore_xyz[kept_edges[:, 1]][:, [0, 2]]],
+            axis=1,
+        ) * mm
+        if len(kept_edges)
+        else np.empty((0, 2, 2))
+    )
 
-    fig, axes = plt.subplots(1, 2, figsize=(10.5, 5.2), constrained_layout=True)
+    # ------------------------------------------------------------------
+    # Figure 1: particles only
+    # ------------------------------------------------------------------
+    fig, ax = plt.subplots(figsize=(4.5, 5.5), constrained_layout=True)
+    nparticles = draw_particles(ax, particle_xyz, particle_radius, y0, zmin, zmax)
+    configure_axis(ax, a.tube_radius, zmin, zmax)
+    ax.set_title(f"Particle packing: bottom {a.height_dp:g} $d_p$")
+    save_figure(fig, Path(str(a.output_prefix) + "_particles"), a.dpi, a.pdf_only)
+    plt.close(fig)
 
-    ax = axes[0]
-    for (x, _, zz), rr in zip(pxyz, cross_radius):
-        ax.add_patch(Circle((x * mm, zz * mm), rr * mm,
-                            facecolor="0.86", edgecolor="0.25", linewidth=0.55))
-    ax.set_title("Particle packing: central cross-section")
-    ax.set_xlabel("x [mm]")
-    ax.set_ylabel("z [mm]")
-    ax.set_aspect("equal", adjustable="box")
-    ax.set_xlim(-a.tube_radius * mm, a.tube_radius * mm)
+    # ------------------------------------------------------------------
+    # Figure 2: same particles with network directly overlaid
+    # ------------------------------------------------------------------
+    fig, ax = plt.subplots(figsize=(4.5, 5.5), constrained_layout=True)
+    draw_particles(ax, particle_xyz, particle_radius, y0, zmin, zmax)
 
-    ax = axes[1]
     if len(segments):
         tr = throat_radius[edge_mask]
         if np.ptp(tr) > 0:
-            lw = 0.35 + 1.6 * (tr - tr.min()) / np.ptp(tr)
+            widths = 0.45 + 1.45 * (tr - tr.min()) / np.ptp(tr)
         else:
-            lw = np.full(len(tr), 0.8)
-        ax.add_collection(LineCollection(segments, linewidths=lw, alpha=0.7))
+            widths = np.full(len(tr), 0.8)
+        ax.add_collection(LineCollection(segments, linewidths=widths, alpha=0.75))
 
-    if len(qxyz):
+    if len(kept_pores):
         pr = pore_radius[kept_pores]
         if np.max(pr) > 0:
-            sizes = 7.0 + 34.0 * (pr / np.max(pr)) ** 1.2
+            sizes = 9.0 + 34.0 * (pr / np.max(pr)) ** 1.2
         else:
             sizes = np.full(len(pr), 12.0)
-        ax.scatter(qxyz[:, 0] * mm, qxyz[:, 2] * mm, s=sizes,
-                   edgecolors="none", alpha=0.9)
+        ax.scatter(
+            pore_xyz[kept_pores, 0] * mm,
+            pore_xyz[kept_pores, 2] * mm,
+            s=sizes,
+            edgecolors="none",
+            alpha=0.95,
+            zorder=5,
+        )
 
-    ax.set_title("Pore network: thin central slab")
-    ax.set_xlabel("x [mm]")
-    ax.set_ylabel("z [mm]")
-    ax.set_aspect("equal", adjustable="box")
-    ax.set_xlim(-a.tube_radius * mm, a.tube_radius * mm)
-
-    zmin = min(np.min(particle_xyz[:, 2]), np.min(pore_xyz[:, 2])) * mm
-    zmax = max(np.max(particle_xyz[:, 2]), np.max(pore_xyz[:, 2])) * mm
-    pad = 0.5
-    for ax in axes:
-        ax.set_ylim(zmin - pad, zmax + pad)
-        ax.grid(False)
-
-    fig.suptitle(
-        f"{a.network.parent.name}: packing and corresponding pore network\n"
-        f"network slab: |y - {y0*mm:.2f} mm| <= {half*mm:.2f} mm "
-        f"({a.slice_half_thickness_dp:.2f} d_p)"
-    )
-
-    a.output.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(a.output, bbox_inches="tight")
-    if not a.pdf_only:
-        png = a.output.with_suffix(".png")
-        fig.savefig(png, dpi=a.dpi, bbox_inches="tight")
+    configure_axis(ax, a.tube_radius, zmin, zmax)
+    ax.set_title(f"Same packing with pore network: bottom {a.height_dp:g} $d_p$")
+    save_figure(fig, Path(str(a.output_prefix) + "_particles_network"), a.dpi, a.pdf_only)
     plt.close(fig)
 
     print(
-        f"particles intersecting plane={particle_mask.sum()}, "
-        f"pores in slab={pore_mask.sum()}, throats in slab={edge_mask.sum()}"
+        f"region: z={zmin:.6g}..{zmax:.6g} m ({a.height_dp:g} dp), "
+        f"|y-{y0:.6g}|<={slab_half:.6g} m"
     )
-    print(f"wrote {a.output}")
-    if not a.pdf_only:
-        print(f"wrote {a.output.with_suffix('.png')}")
+    print(
+        f"particle cross-sections={nparticles}, "
+        f"pores in slab/window={pore_mask.sum()}, "
+        f"throats in slab/window={edge_mask.sum()}"
+    )
     return 0
 
 
