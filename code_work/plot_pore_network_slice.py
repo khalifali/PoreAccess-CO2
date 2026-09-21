@@ -1,24 +1,49 @@
 #!/usr/bin/env python3
 """Create slide-ready 2-D inlet-region views of a packed bed and pore network.
 
+USAGE
+-----
+Run from the `code_work` directory after the pore network has been extracted.
+
+Default example for seed 18427:
+
+    python3 plot_pore_network_slice.py \
+        --network co2_pore_networks_power22/seed_18427/pore_network.npz \
+        --output-prefix seed18427_inlet_slice
+
+This writes matching PDF and PNG files:
+
+    seed18427_inlet_slice_particles.pdf
+    seed18427_inlet_slice_particles.png
+    seed18427_inlet_slice_particles_network.pdf
+    seed18427_inlet_slice_particles_network.png
+
+Useful options:
+
+    --height-dp 6
+        Show only the bottom 6 particle diameters instead of the default 8.
+
+    --slice-half-thickness-dp 0.15
+        Use a thinner pore-network slab for a cleaner projection.
+
+    --slice-center-y VALUE
+        Manually prescribe the slice centre [m]. If omitted, the script
+        automatically chooses a slice containing as many inlet-labelled
+        pores as possible.
+
+    --pdf-only
+        Write only PDF output.
+
 The script reads the existing `pore_network.npz` written by
-`extract_co2_pore_network.py` and writes two matching figures:
+`extract_co2_pore_network.py` and creates two views of the same region:
 
 1. particles only;
-2. the identical particle slice with pore centres and throats overlaid.
+2. the identical particle slice with pore centres, throats, and
+   reservoir-to-inlet connections overlaid.
 
-By default the view is a thin central slab and the bottom 8 particle diameters,
-which is useful for explaining inlet accessibility.
-
-Example
--------
-python3 plot_pore_network_slice.py \
-    --network co2_pore_networks_power22/seed_18427/pore_network.npz \
-    --output-prefix seed18427_inlet_slice
-
-This writes PDF and PNG versions of:
-  seed18427_inlet_slice_particles
-  seed18427_inlet_slice_particles_network
+By default the displayed region is the bottom 8 particle diameters. The pore
+network is shown through a thin slab in y, while particles are drawn as their
+true intersections with the selected y-plane.
 """
 
 from __future__ import annotations
