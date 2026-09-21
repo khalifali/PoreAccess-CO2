@@ -38,8 +38,8 @@ def arguments() -> argparse.Namespace:
                    default=Path("co2_pore_networks_power22/seed_18427/pore_network.npz"))
     p.add_argument("--output-prefix", type=Path,
                    default=Path("seed18427_inlet_slice"))
-    p.add_argument("--slice-center-y", type=float, default=0.0,
-                   help="Centre of the y-slice [m].")
+    p.add_argument("--slice-center-y", type=float,
+                   help="Centre of the y-slice [m]. If omitted, choose it automatically to include as many inlet pores as possible.")
     p.add_argument("--slice-half-thickness-dp", type=float, default=0.50,
                    help="Half-thickness of the pore-network slab in particle diameters.")
     p.add_argument("--height-dp", type=float, default=8.0,
@@ -99,7 +99,7 @@ def main() -> int:
         raise SystemExit(f"Network file not found: {a.network}")
 
     z = np.load(a.network)
-    required = ("particle_xyz", "particle_radius", "pore_xyz", "throat_conns")
+    required = ("particle_xyz", "particle_radius", "pore_xyz", "throat_conns", "pore_inlet")
     missing = [k for k in required if k not in z]
     if missing:
         raise SystemExit(f"{a.network} lacks required arrays: {missing}")
@@ -108,6 +108,7 @@ def main() -> int:
     particle_radius = np.asarray(z["particle_radius"], dtype=float)
     pore_xyz = np.asarray(z["pore_xyz"], dtype=float)
     throat_conns = np.asarray(z["throat_conns"], dtype=int)
+    pore_inlet = np.asarray(z["pore_inlet"], dtype=bool)
 
     pore_radius = (np.asarray(z["pore_inscribed_radius"], dtype=float)
                    if "pore_inscribed_radius" in z else np.ones(len(pore_xyz)))
@@ -118,8 +119,23 @@ def main() -> int:
     slab_half = a.slice_half_thickness_dp * dp
     zmin = a.z_min
     zmax = zmin + a.height_dp * dp
-    y0 = a.slice_center_y
     mm = 1e3
+
+    # Choose a thin slice that actually intersects inlet-connected pores.
+    if a.slice_center_y is None:
+        inlet_ids = np.flatnonzero(pore_inlet)
+        if len(inlet_ids) == 0:
+            raise SystemExit("Network contains no inlet-labelled pores.")
+        inlet_y = pore_xyz[inlet_ids, 1]
+        counts = np.asarray([
+            np.count_nonzero(np.abs(inlet_y - yc) <= slab_half)
+            for yc in inlet_y
+        ])
+        best = np.flatnonzero(counts == counts.max())
+        pick = best[np.argmin(np.abs(inlet_y[best]))]
+        y0 = float(inlet_y[pick])
+    else:
+        y0 = float(a.slice_center_y)
 
     # Pore/throat selection: same thin y-slab and same z-window.
     pore_mask = (
@@ -128,6 +144,8 @@ def main() -> int:
         & (pore_xyz[:, 2] <= zmax)
     )
     kept_pores = np.flatnonzero(pore_mask)
+    inlet_overlay_mask = pore_mask & pore_inlet
+    kept_inlet_pores = np.flatnonzero(inlet_overlay_mask)
 
     edge_mask = pore_mask[throat_conns[:, 0]] & pore_mask[throat_conns[:, 1]]
     kept_edges = throat_conns[edge_mask]
@@ -166,6 +184,13 @@ def main() -> int:
             widths = np.full(len(tr), 0.8)
         ax.add_collection(LineCollection(segments, linewidths=widths, alpha=0.75))
 
+    # External reservoir and reservoir-to-inlet connections.
+    ax.axhspan(zmin * mm, (zmin + 0.18 * dp) * mm, alpha=0.12, zorder=0)
+    for pid in kept_inlet_pores:
+        xi = pore_xyz[pid, 0] * mm
+        zi = pore_xyz[pid, 2] * mm
+        ax.plot([xi, xi], [zmin * mm, zi], linewidth=1.3, alpha=0.95, zorder=4)
+
     if len(kept_pores):
         pr = pore_radius[kept_pores]
         if np.max(pr) > 0:
@@ -182,7 +207,7 @@ def main() -> int:
         )
 
     configure_axis(ax, a.tube_radius, zmin, zmax)
-    ax.set_title(f"Same packing with pore network: bottom {a.height_dp:g} $d_p$")
+    ax.set_title(f"Same packing with inlet-connected pore network: bottom {a.height_dp:g} $d_p$")
     save_figure(fig, Path(str(a.output_prefix) + "_particles_network"), a.dpi, a.pdf_only)
     plt.close(fig)
 
@@ -193,6 +218,7 @@ def main() -> int:
     print(
         f"particle cross-sections={nparticles}, "
         f"pores in slab/window={pore_mask.sum()}, "
+        f"inlet pores in slab/window={inlet_overlay_mask.sum()}, "
         f"throats in slab/window={edge_mask.sum()}"
     )
     return 0
