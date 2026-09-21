@@ -212,6 +212,44 @@
   }
 \end{frame}
 
+
+\begin{frame}{From detailed structure to a reduced 1D model}
+\centering
+\begin{tikzpicture}[
+  node distance=5mm and 5mm,
+  model/.style={draw=tumdark!75,rounded corners=2pt,fill=tumlight,align=center,
+    text width=3.25cm,minimum height=1.15cm,font=\small,inner sep=4pt},
+  ref/.style={draw=tumblue!80!black,rounded corners=2pt,fill=tumblue!10,align=center,
+    text width=3.25cm,minimum height=1.15cm,font=\small,inner sep=4pt},
+  red/.style={draw=tumgreen!70!black,rounded corners=2pt,fill=tumgreen!12,align=center,
+    text width=3.35cm,minimum height=1.15cm,font=\small,inner sep=4pt},
+  arr2/.style={-{Latex[length=2mm]},thick,tumblue}
+]
+\node[model] (detail) {\textbf{Structure-resolved models}\\
+Reactive CFD--DEM: convection\\
+PNM: diffusion-dominated};
+\node[ref,right=of detail] (pnm) {\textbf{Reference in this work}\\
+PNM $\rightarrow$ mean uptake $\overline q(t)$\\
++ structural information};
+\node[red,right=of pnm] (oned) {\textbf{Engineering model}\\
+homogeneous 1D bed\\
+fast prediction of $\overline q(t)$};
+\draw[arr2] (detail)--(pnm);
+\draw[arr2] (pnm)--(oned);
+
+\node[model,below=7mm of pnm,text width=3.75cm] (por) {\textbf{Typical structural input:} porosity $\varepsilon$\\
+\scriptsize amount of void space, but not connectivity};
+\node[red,right=7mm of por,text width=3.75cm] (acc) {\textbf{Proposed here:} inlet accessibility\\
+\scriptsize captures bottlenecks and connected inlet pathways};
+\draw[arr2] (por)--(acc);
+\draw[arr2] (acc.north)--(oned.south);
+\end{tikzpicture}
+
+\vspace{0.32cm}
+\result{Use the PNM to bridge random packing structure to a simple 1D transport closure.}
+\note{Before going into the pore-network details, this is the modelling idea of the work. If convection is important, a structure-resolved reactive CFD--DEM model can be used; when diffusion dominates, a pore-network model is more appropriate. These detailed models are useful but relatively expensive, while many engineering applications mainly need the bed-average uptake rather than the loading of every particle. We therefore use the PNM as a reference model and data generator for a homogeneous 1D model. The key closure question is structural: reduced models typically rely on porosity, but porosity alone does not describe connectivity, bottlenecks or inlet-connected pathways. We therefore test inlet accessibility as a more informative descriptor for the effective transport closure.}
+\end{frame}
+
 \section[Pore-network model]{Pore-network reference model}
 
 \begin{frame}{}
