@@ -1,6 +1,6 @@
 # Beamer presentation
 
-Both audience and presenter versions contain 31 main slides and 15 appendix slides and use G_access as the
+Both audience and presenter versions contain 35 main slides and 15 appendix slides and use G_access as the
 sole inlet-access descriptor. D_eff remains the fitted/predicted coefficient used
 by the 1D transient model. Speaker notes follow the same slide order and describe
 both coefficient prediction and held-out uptake-history validation.
@@ -80,3 +80,12 @@ unchanged results and optional normalized-descriptor comparisons.
 
 The PNM equation appendix includes the prescribed LDF coefficient: literature
 D_particle/R_p^2, the spherical factor-15 conversion, and the temperature assumption.
+
+## Tortuosity and translated-slab controls
+
+Both decks include four new main slides with identical content and presenter notes:
+raw-network global tortuosity, the distinction between inlet-depth and translated-window
+tests, a source/sink boundary control, and the numerical translated-slab results. The figures come from
+`code_work/analyze_co2_translated_slabs.py`; see
+`code_work/co2_translated_slabs/README.md` for definitions, results and reproduction.
+The matched 0–5 dp slab is weak too, so inlet-specific causation remains unresolved.

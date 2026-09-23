@@ -814,6 +814,74 @@ The porosity baseline is independent of plane depth.
 \note{The figure contains four curves: power-law, linear-with-intercept and proportional relations using G access, plus the porosity baseline. Every conductance relation is refitted within every leave-one-bed-out fold at each depth. The porosity curve stays constant because the predictor does not depend on the chosen plane. Five particle diameters gives the best power-law and linear score among these four planes for this ensemble. This establishes sensitivity within our existing data; it does not establish an optimal plane for other geometries or independently validate the model and depth choice. The normalized alternatives are kept in the separate optional appendix.}
 \end{frame}
 
+\begin{frame}{Global tortuosity has weak to moderate associations}
+\centering
+\includegraphics[width=\linewidth,height=0.49\textheight,keepaspectratio]{figures/fig_global_tortuosity.pdf}
+\vspace{0.1cm}
+\begin{itemize}\small
+\item $\tau_g$: shortest inlet--outlet path divided by the axial boundary span.
+\item $t_{50}$ refers to half of each bed's uptake at $5000$ s, not equilibrium.
+\item Original $G_{\rm access}$: $\rho_s(q_{5000})=0.968$, $\rho_s(f_{\rm under})=-0.959$.
+\end{itemize}
+\result{This geometric tortuosity descriptor does not reproduce the strong uptake association.}
+\note{Recomputed directly from all twenty power22 networks, matching the repository campaign tortuosity to numerical precision. Spearman correlations are minus 0.459 for final uptake, minus 0.110 for t50 and plus 0.428 for underutilization. These replace the earlier conversation's minus 0.507, minus 0.006 and plus 0.444, which the current repository data do not reproduce. Underutilization is the fraction of particles below half the inlet-equilibrium loading. Final uptake means 5000 seconds, not equilibrium capacity. This shortest-path geometric ratio is one particular tortuosity definition. Its weak or moderate associations do not rule out all transport-tortuosity explanations or establish independent causation.}
+\end{frame}
+
+\begin{frame}{Inlet depth and translated slabs test different questions}
+\begin{columns}[T,onlytextwidth]
+\column{0.48\textwidth}
+\hi{Existing inlet-depth test}\par\medskip
+$G(0\!\rightarrow\!3d_p),\quad G(0\!\rightarrow\!5d_p)$\par\smallskip
+$G(0\!\rightarrow\!7d_p),\quad G(0\!\rightarrow\!10d_p)$\par\medskip
+Retain the hull-labelled inlet pores. Move the interior sink plane.\par\smallskip
+Tests sensitivity to diagnostic depth.
+\column{0.48\textwidth}
+\hi{New translated-window control}\par\medskip
+$G_{0-5},\quad G_{5-10},\quad G_{10-15},\quad G_{15-20}$\par\medskip
+Translate a fixed $5d_p$ window. Use identical boundary bands at every position.\par\smallskip
+Tests whether local slab conductance predicts the same outcomes.
+\end{columns}
+\vspace{0.25cm}
+{\small Inside each slab: $c=1$ in the bottom $1d_p$, $c=0$ in the top $1d_p$. Remove exterior links. Check $0.5$ and $1.5d_p$ bands.}
+\vspace{0.1cm}
+\result{All 20 networks evaluated. The $20$--$25d_p$ window exceeds every bed.}
+\note{Depth is measured from the lowest retained pore in each bed. Each new solve uses the induced graph inside the five-diameter window. We remove every throat leading outside, preventing a path from bypassing the slab. Source and sink bands lie inside each window and use exactly the same rule at every position. Conductances retain D times area divided by length. Components that do not connect both bands carry no through-flux. The default bands are one diameter thick; half and one-and-a-half diameters provide a sensitivity check. Band centres are closer than five diameters, so these are window conductances, not plane-to-plane conductances across a full five-diameter distance. The original diagnostic uses hull-labelled inlet pores, which are not equivalent to a complete source band. We therefore retain the original diagnostic as a separate benchmark, not as the first member of the matched slab series. Network heights span about 22.0 to 22.3 diameters. No truncated 20 to 25 window is included.}
+\end{frame}
+
+\begin{frame}{Why the two $0$--$5d_p$ diagnostics differ}
+\hi{The old source is the labelled inlet. The new source is a full pore band.}
+\par\medskip
+\centering
+\begin{tabular}{llr}
+\toprule
+Source held at $c=1$ & Sink held at $c=0$ & Uptake $\rho_s$\\
+\midrule
+Original inlet pores & All pores above $5d_p$ & $+0.968$\\
+Original inlet pores & All pores above $4d_p$ & $+0.968$\\
+All pores in bottom $1d_p$ & All pores above $5d_p$ & $+0.023$\\
+All pores in bottom $1d_p$ & All pores above $4d_p$ & $-0.065$\\
+\bottomrule
+\end{tabular}
+\par\medskip
+{\small Same 20 networks and uptake outcomes. Each row changes only the steady diagnostic.}
+\par\medskip
+\result{Changing the source-pore selection removes the strong association. These are different boundary tests.}
+\note{This additional control changes source and sink separately on the full original network, so no slab cutting is involved in this table. Original inlet means the hull-labelled pores used by the existing diagnostic and transient boundary model. The full one-diameter band fixes every pore in that band, including pores that were previously internal unknowns, while some original inlet labels may extend above that band. It is a replacement of the source set, not necessarily a superset. Keeping the original source and moving the sink from five to four diameters leaves the uptake rank correlation at 0.968. Replacing only the source with the full band drops the correlation to 0.023. Replacing both gives minus 0.065, the same uptake rank correlation as the cropped matched slab. Thus source selection is the dominant reason for the observed correlation change under these tested conditions. This does not identify a unique microscopic bottleneck or prove physical causation. A literal translation of the original labelled inlet requires a separate definition of matched interior source patches.}
+\end{frame}
+
+\begin{frame}{Translated slabs do not reproduce the uptake association}
+\centering
+\includegraphics[width=\linewidth,height=0.49\textheight,keepaspectratio]{figures/fig_translated_slab_correlations.pdf}
+\vspace{0.1cm}
+\begin{itemize}\small
+\item With $1d_p$ bands, uptake $\rho_s=-0.065,\,-0.048,\,+0.432,\,-0.296$.
+\item Even the matched $0$--$5d_p$ slab has a weak uptake association.
+\item Original inlet pores and full source bands impose different boundary conditions.
+\end{itemize}
+\result{The inlet boundary definition remains a competing explanation for the strong $G_{\rm access}$ result.}
+\note{The plotted points summarize 240 steady solves: twenty beds, four slab positions and three boundary-band thicknesses. All 240 slabs span their boundary bands. The dashed line is the original inlet diagnostic on the same beds. For one-diameter bands, underutilization correlations are plus 0.080, plus 0.007, minus 0.408 and plus 0.275; t50 correlations are plus 0.197, plus 0.262, plus 0.152 and plus 0.221. Uptake correlations remain far below the original plus 0.968 across all tested bands. The largest absolute slab uptake correlation is 0.432. These are exploratory associations on the existing ensemble, not new held-out validation or a formal test of differences between dependent correlations. The control fails to reproduce the original association, but also fails to identify the lowest matched slab as special. This points to the labelled inlet connection and boundary representation as important next controls. Continue the transport-closure work with an association claim. Establishing inlet-specific causation requires a boundary-matched control or controlled changes to inlet connectivity.}
+\end{frame}
+
 \section[Conclusions]{Conclusions and next steps}
 
 \begin{frame}{}
@@ -831,7 +899,7 @@ The porosity baseline is independent of plane depth.
       \hi{Supported}
       \begin{itemize}
         \item porosity alone misses important packing variability
-        \item inlet-connected topology controls transient utilization
+        \item inlet-connected conductance strongly predicts utilization
         \item one $D_{\rm eff}$ reproduces each detailed curve accurately
         \item $G_{\rm access}$ provides an interpretable predictive closure
       \end{itemize}}
@@ -841,7 +909,7 @@ The porosity baseline is independent of plane depth.
         \item industrial breakthrough performance
         \item effects of flow, heat or water competition
         \item transfer to other bead sizes or $D_{\rm tube}/d_p$
-        \item a universal conductance--diffusivity relation
+        \item inlet-specific causation or a universal closure
       \end{itemize}}
   \end{FlexRow}
 

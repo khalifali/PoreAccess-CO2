@@ -1,0 +1,13 @@
+source,sink_start_dp,target,n,spearman_rho
+full_1dp_band,4,final_uptake_mol_kg,20,-0.06466165413533834
+full_1dp_band,4,t50_final_uptake_s,20,0.1969924812030075
+full_1dp_band,4,underutilized_particle_fraction,20,0.08048138967046659
+full_1dp_band,5,final_uptake_mol_kg,20,0.022556390977443608
+full_1dp_band,5,t50_final_uptake_s,20,0.1789473684210526
+full_1dp_band,5,underutilized_particle_fraction,20,0.0
+hull_inlet,4,final_uptake_mol_kg,20,0.9684210526315788
+hull_inlet,4,t50_final_uptake_s,20,-0.4300751879699248
+hull_inlet,4,underutilized_particle_fraction,20,-0.9627680259644602
+hull_inlet,5,final_uptake_mol_kg,20,0.9684210526315788
+hull_inlet,5,t50_final_uptake_s,20,-0.41503759398496237
+hull_inlet,5,underutilized_particle_fraction,20,-0.9590072133630365
