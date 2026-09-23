@@ -295,19 +295,20 @@ fast prediction of $\overline q(t)$};
 \begin{aligned}
 V_i\frac{d\textcolor{tumred}{c_i}}{dt}
 &=\sum_{j\in\mathcal N(i)}G_{ij}(\textcolor{tumred}{c_j}-\textcolor{tumred}{c_i})\\
-&\quad+G_{iR}(\textcolor{tumred}{c_R}-\textcolor{tumred}{c_i})-S_i.
+&\quad+G_{iR}(\textcolor{tumred}{c_R}-\textcolor{tumred}{c_i})\\
+&\quad-m_b\sum_{k\in\mathcal B(i)}w_{ik}\:\textcolor{tumred}{\frac{dq_k}{dt}}.
 \end{aligned}
 \]
 \smallskip
 \hi{For each bead:}
 \[
-\frac{dq_k}{dt}=k_{\rm LDF}(\textcolor{tumred}{q_k^*}-q_k).
+\textcolor{tumred}{\frac{dq_k}{dt}}=k_{\rm LDF}(\textcolor{tumred}{q_k^*}-q_k).
 \]
 {\footnotesize $\textcolor{tumred}{q_k^*}$: equilibrium target from the mean gas concentration around bead $k$ and the saturation loading $q_s$ (Langmuir isotherm).\par}
 \end{columns}
 \smallskip
 \result{One coupled system: one concentration per pore, one loading per bead.}
-\note{The PNM is the structure-resolved numerical reference for each bed. It retains the actual pore connections and solves gas diffusion and bead adsorption as one coupled system: one gas concentration per pore and one loading per bead. Averaging the loadings of the identical beads gives $\overline q_{\rm PNM}(t)$, the full transient reference curve used to fit the reduced model. The red gas concentrations set the equilibrium target through the Langmuir isotherm, with saturation loading $q_s$ and fixed affinity and temperature. Adsorption feeds back into the gas balance through the sink $S_i$. The drawing is schematic, not simulation data. Detailed construction, balances and isotherm definitions are retained in the PNM appendix.}
+\note{The PNM is the structure-resolved reference for each bed, with one gas concentration per pore and one loading per bead. Averaging the identical beads' loadings gives the full reference curve $\overline q_{\rm PNM}(t)$. Red concentrations determine the Langmuir equilibrium target; the red uptake rate feeds back into the gas balance. Here $m_b$ is the common bead mass and $\mathcal B(i)$ contains beads associated with pore $i$. The weights $w_{ik}$ allocate bead $k$'s uptake among its surrounding pores, with $\sum_i w_{ik}=1$ for each bead. This prevents counting its uptake more than once. During adsorption, the implementation multiplies incidence weights by positive pore concentration and normalizes per bead; during desorption it uses normalized incidence weights. Thus the allocation can depend on the state, while $q_k$ remains one loading per bead. The Langmuir target uses the mean surrounding concentration, saturation loading, and fixed affinity and temperature. The drawing is schematic; detailed equations remain in the appendix.}
 \end{frame}
 
 \section[1D reduction]{Reduction and diffusivity prediction}
