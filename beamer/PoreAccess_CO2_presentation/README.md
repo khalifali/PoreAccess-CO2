@@ -1,6 +1,6 @@
 # Beamer presentation
 
-Both audience and presenter versions contain 31 main slides and 14 appendix slides and use G_access as the
+Both audience and presenter versions contain 31 main slides and 15 appendix slides and use G_access as the
 sole inlet-access descriptor. D_eff remains the fitted/predicted coefficient used
 by the 1D transient model. Speaker notes follow the same slide order and describe
 both coefficient prediction and held-out uptake-history validation.
@@ -42,7 +42,7 @@ and 7.58% (porosity). The earlier 1.58% is the per-bed fitted reduction error.
 Both decks include the model details after the 31-slide main story:
 
 ```latex
-\input{pnm_backup_slides.tex}    % PNM equations and construction sections (12 pages)
+\input{pnm_backup_slides.tex}    % PNM equations and construction sections (13 pages)
 \input{one_d_model_details.tex} % 1D section divider + 2 detailed slides
 % \input{normalization_appendix.tex} % 5 optional comparison pages
 ```
@@ -77,3 +77,6 @@ The outputs in `code_work/co2_conductance_closure` contain all model scores,
 Copy its figure PDFs into both deck figure directories before rebuilding.
 The older `generate_co2_publication_figures.py` outputs remain valid for the
 unchanged results and optional normalized-descriptor comparisons.
+
+The PNM equation appendix includes the prescribed LDF coefficient: literature
+D_particle/R_p^2, the spherical factor-15 conversion, and the temperature assumption.
