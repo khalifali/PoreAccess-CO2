@@ -406,30 +406,29 @@ V_i\frac{d\textcolor{tumred}{c_i}}{dt}
 \note{We replace the detailed network by a homogeneous bed with 100 equal finite-volume cells, each spanning the full tube cross-section. The thin band illustrates a differential control volume; the displayed continuum balances are discretized on those cells to solve one gas concentration and one loading per cell. Equal cell volumes and uniform adsorbent density make the bed-average loading the arithmetic mean shown here. We keep the bed geometry, porosity, inlet condition, isotherm and kinetics fixed and adjust the single effective diffusivity to reproduce the full PNM uptake history for that bed. The red concentration determines the red equilibrium target $q^*$ through the same Langmuir isotherm used in the PNM. Uptake feeds back through the adsorption term in the gas balance. The curves illustrate the fitting target, not measured data or a sequence of optimization trials. The detailed model slides remain in the 1D appendix.}
 \end{frame}
 
-\begin{frame}{Fit the effective diffusivity to the complete uptake curve}
-
+\begin{frame}{Fit effective diffusivity to the uptake curve}
 \begin{columns}[T,onlytextwidth]
-\column{0.53\textwidth}\hi{Actual optimization trials: bed 18427}
+\column{0.54\textwidth}\hi{Trial curves: bed 18427}\par\smallskip
 \includegraphics[width=\linewidth]{figures/fig_optimization_trials.pdf}
-{\scriptsize\color{tumgray}Selected evaluations in recorded order; individual trials need not improve the fit.\par}
-\column{0.44\textwidth}\hi{Curve error and fitted coefficient}\small
+{\scriptsize\color{tumgray}Selected trials; each curve uses one constant diffusivity.\par}
+\column{0.43\textwidth}\hi{Compare with the PNM reference}\small
+\setlength{\abovedisplayskip}{9pt}\setlength{\belowdisplayskip}{9pt}
 \[
-e_m(D)=\overline q_{\rm 1D}(t_m;D)-\overline q_{\rm PNM}(t_m).
+e_m(D)=\overline q_{\rm 1D}(t_m;D)-\overline q_{\rm PNM}(t_m)
 \]
 \[
-\mathrm{NRMSE}(D)=\frac{\sqrt{\sum_m w_m e_m(D)^2}}{\overline q_{\rm PNM}(t_f)},
-\] \[ \sum_m w_m=1.
+\mathrm{NRMSE}(D)
+=\frac{\sqrt{\sum_m w_m\:e_m(D)^2}}{\overline q_{\rm PNM}(t_f)}
 \]
+{\footnotesize $w_m$: normalized weights accounting for unequal spacing of output times.\par}
+\medskip
 \[
-D_{\rm eff}=\arg\min_D\mathrm{NRMSE}(D).
+D_{\rm eff}=\arg\min_D\mathrm{NRMSE}(D)
 \]
-{\footnotesize Time weights account for unequal output spacing.}\par\smallskip
-{\footnotesize Change $D$, rerun the 1D model, compare the curve and repeat.}
 \end{columns}
-\vspace{0.2cm}
-\result{Fit one constant $D_{\rm eff}$ per bed to the complete PNM uptake curve.}
-
-\note{The plot shows the PNM curve in black and actual recorded trials 1, 2, 4 and 8 for bed 18427. The first trial underpredicts uptake, with 38.6 percent error. Trial 2 is already close, but the optimizer explores another value at trial 4 before converging. Trial 8 is the best fit, with D equal to 8.742 times 10 to the minus 7 square metres per second and 1.41 percent error. Trial numbers denote objective evaluations, not time steps. Each curve uses one constant D throughout the simulation. For each bed, we repeatedly solve the homogeneous model with different diffusivities. The search range is $10^{-8}$ to $1.5\times10^{-5}$ m$^2$ s$^{-1}$. The upper bound is oriented by the molecular diffusivity of CO$_2$ in the gas, while the lower bound extends the search by a little more than three orders of magnitude to allow for a strong reduction of effective transport by tortuosity and constrictions. NRMSE means normalized root-mean-square error. Here we weight squared errors by elapsed time using trapezoidal weights, take the square root and divide by the final reference loading. This prevents densely saved times from dominating the fit. These comparison times are deliberately saved on a logarithmic grid, so early transients are sampled more densely. This output-time grid is separate from the BDF solver's internal adaptive time steps, which are chosen from the integration-error estimate. The $w_m$ values are therefore trapezoidal time weights used only in the fitting metric, so the objective represents elapsed physical time rather than the number of saved points. The bounded scalar optimizer operates in log10 D; it starts deterministically and previous errors guide later trials. Only D changes. This produces one reduction target per packing. The next question is whether a cheaper calculation from geometry can predict that target.}
+\medskip
+{\small\color{tumdark}\centering Trial $D$ $\rightarrow$ one transient 1D solve $\rightarrow$ average cell loadings $\rightarrow$ compare\par}
+\note{For each bed, we search for one effective diffusivity between $10^{-8}$ and $1.5\times10^{-5}$ m$^2$ s$^{-1}$. The upper bound is the molecular CO$_2$ diffusivity in the gas, representing diffusion without the bed's geometric restrictions. The lower bound is just over three orders of magnitude smaller. The optimizer chooses trial values adaptively in log diffusivity. For each trial, we run one transient 1D solve, obtain the loading in every finite-volume cell, and average the 100 cell loadings to form the curve shown here. We compare that history with the PNM reference using the normalized root-mean-square error, NRMSE. Output times are more densely spaced near the beginning to capture the steep initial transient. The normalized trapezoidal weights $w_m$ account for unequal time spacing, so those numerous early points do not dominate simply because there are more of them. The error is normalized by the final PNM loading. We retain the diffusivity with the smallest error. The graph shows selected recorded trials, which need not improve at every evaluation.}
 \end{frame}
 
 \begin{frame}{Can inlet conductance predict the fitted diffusivity?}
