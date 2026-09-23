@@ -1,0 +1,81 @@
+\ifdefined\poreaccessappendixstarted\else\appendix\def\poreaccessappendixstarted{1}\fi
+\section[1D model]{Appendix C: homogeneous 1D model}
+\begin{frame}{}
+\vfill
+{\large\color{tumgray}Appendix C}\par\vspace{0.4cm}
+{\LARGE\color{tumblue}\textbf{Homogeneous 1D model}}\par\vspace{0.5cm}
+{\large Discretization, balances and bed-average uptake}
+\vfill
+\end{frame}
+
+
+\begin{frame}{Reduce the detailed network to a homogeneous 1D bed}
+
+\begin{columns}[T,onlytextwidth]
+\column{0.47\textwidth}\hi{Detailed pore-network model}\small
+\begin{itemize}
+\item Actual pores and throats from each packing
+\item One gas concentration per pore
+\item One loading per bead
+\item Reference mean uptake $\overline q_{\rm PNM}(t)$
+\end{itemize}
+\column{0.49\textwidth}\hi{Homogeneous 1D model}\small
+\begin{itemize}
+\item Replace the network by 100 equal axial slices
+\item Each slice spans the full tube cross-section
+\item One gas concentration and one mean solid loading per slice
+\item Represent unresolved pathways with a single diffusivity $D$
+\end{itemize}
+\end{columns}
+\vspace{0.25cm}
+\result{Fit $D$ so the reduced model reproduces the network's mean uptake history.}
+
+\note{The one-dimensional cells do not come from the pore-network extraction. We create a separate grid by dividing bed height into one hundred equal slices spanning the tube cross-section. Each slice contains homogenized gas and adsorbent phases. The detailed pore paths disappear from this representation. Their impact on transient uptake is represented by one fitted diffusivity. The reduced system has two hundred concentration and loading states, while the PNM has a state for every pore and bead. We compare their mean uptake curves rather than attempting a one-to-one mapping of their internal fields.}
+\end{frame}
+
+\begin{frame}{The homogeneous 1D uptake model}
+\setlength{\abovedisplayskip}{7pt}\setlength{\belowdisplayskip}{7pt}
+\begin{columns}[T,onlytextwidth]
+\column{0.54\textwidth}
+\small
+\hi{Gas balance in each axial cell}
+\[
+\varepsilon_b\frac{\partial c}{\partial t}
+=D\frac{\partial^2c}{\partial z^2}
+-(1-\varepsilon_b)\rho_p\frac{\partial q}{\partial t}.
+\]
+\hi{Adsorbent loading in each axial cell}
+\[
+\frac{\partial q}{\partial t}
+=k_{\rm LDF}\left[\frac{q_s\:b\:R\:T\:c}{1+b\:R\:T\:c}-q\right].
+\]
+
+\vspace*{-0.2cm}
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item Divide the bed height into 100 equal slices, each spanning the tube cross-section.
+\item Solve gas concentration and mean solid loading together in each slice.
+\item Trial $D$ changes $c$, which changes adsorption.
+\end{itemize}
+\column{0.43\textwidth}
+\small
+\hi{Average the calculated loading}
+\[
+\overline q_{\rm 1D}(t;D)=\frac{1}{H}\int_0^H q(z,t;D)\,dz.
+\]
+For 100 equal axial cells:
+\[
+\overline q_{\rm 1D}(t;D)=\frac{1}{100}\sum_{\ell=1}^{100}q_\ell(t;D).
+\]
+
+\vspace*{-0.3cm}
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item Match bed height, porosity and inlet condition to the network.
+\item Keep isotherm, kinetics and initial state fixed. Only $D$ changes.
+\end{itemize}
+\end{columns}
+\vspace{-0.1cm}
+\result{$\varepsilon_b$: bed porosity, uniform in all 100 cells of each bed.}
+
+\note{This slide describes the homogeneous one-dimensional model, not the individual pore network. Each axial cell contains gas and a homogenized amount of adsorbent. Epsilon b is the dimensionless bed void fraction, not bulk density. It is uniform over all 100 cells and constant in time, but differs slightly between packings. The mass of adsorbent per bed volume is one minus epsilon b, multiplied by the apparent bead density rho p. We solve one gas concentration and one solid loading per cell, giving 200 coupled state equations for 100 cells. The loading equation explicitly substitutes the Langmuir equilibrium relation and p equals cRT. The diffusivity appears in the gas balance. Changing it changes the gas concentration history and therefore the adsorption history. The right-hand side is a spatial average of the calculated loadings, not an additional independent evolution equation. For equal cells and uniform adsorbent density, the arithmetic average is the bed mean loading.}
+\end{frame}
+
