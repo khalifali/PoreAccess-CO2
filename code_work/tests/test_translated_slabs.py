@@ -4,10 +4,21 @@ import unittest
 from pathlib import Path
 import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from analyze_co2_translated_slabs import slab_conductance
+from analyze_co2_translated_slabs import slab_conductance, reconstruct_inlet_labels
+from extract_co2_pore_network import circumcenter_tetra
 
 
 class SlabTests(unittest.TestCase):
+    def test_inlet_rule_uses_face_beads_not_pore_height(self):
+        particles = np.array([[0.,0.,0.], [1.,0.,0.], [0.,1.,0.], [0.,0.,3.]])
+        radii = np.full(4, .1)
+        center, _ = circumcenter_tetra(particles)
+        self.assertGreater(center[2], 1.25*2*radii[0])
+        self.assertTrue(reconstruct_inlet_labels(center[None, :], particles, radii)[0])
+        shift = np.array([0.,0.,10.])
+        self.assertFalse(reconstruct_inlet_labels((center+shift)[None, :], particles+shift, radii)[0])
+        self.assertTrue(reconstruct_inlet_labels((center+shift)[None, :], particles+shift, radii, bottom=10.)[0])
+
     def test_series_translation_and_scaling(self):
         xyz = np.column_stack([np.zeros(6), np.zeros(6), np.arange(6.)])
         edges = np.array([[i, i+1] for i in range(5)])

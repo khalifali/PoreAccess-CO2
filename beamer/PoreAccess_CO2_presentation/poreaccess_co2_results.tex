@@ -800,25 +800,35 @@ Tests whether local slab conductance predicts the same outcomes.
 \note{Depth is measured from the lowest retained pore in each bed. Each new solve uses the induced graph inside the five-diameter window. We remove every throat leading outside, preventing a path from bypassing the slab. Source and sink bands lie inside each window and use exactly the same rule at every position. Conductances retain D times area divided by length. Components that do not connect both bands carry no through-flux. The default bands are one diameter thick; half and one-and-a-half diameters provide a sensitivity check. Band centres are closer than five diameters, so these are window conductances, not plane-to-plane conductances across a full five-diameter distance. The original diagnostic uses hull-labelled inlet pores, which are not equivalent to a complete source band. We therefore retain the original diagnostic as a separate benchmark, not as the first member of the matched slab series. Network heights span about 22.0 to 22.3 diameters. No truncated 20 to 25 window is included.}
 \end{frame}
 
-\begin{frame}{Why the two $0$--$5d_p$ diagnostics differ}
-\hi{The old source is the labelled inlet. The new source is a full pore band.}
+\begin{frame}{How the original inlet pores are selected}
+\begin{itemize}
+\item Each retained Delaunay tetrahedron defines a pore.
+\item The tetrahedron must have an exposed outer face with no neighbour.
+\item At least one bead on that face must satisfy
+\end{itemize}
+\[
+\min_{i\,\in\,\mathrm{face}}(z_i-r_i)
+\le z_{\mathrm{bottom}}+1.25d_p.
+\]
+{\small This tests the bead surfaces on the face, not the pore-centre height.}
 \par\medskip
+\hi{20/20 saved inlet selections reproduced from particle geometry.}\par\smallskip
+Labelled inlet: $12$--$23$ pores per bed. Full bottom-$1d_p$ band: $193$--$283$ pores.
+\par\medskip
+\result{The labelled pores are the model's entry connections. Internal pores receive gas through the network.}
+\note{Inlet labels are determined during network construction, before adsorption is simulated. For each retained pore we inspect the faces of its Delaunay tetrahedron. A face must belong to the convex hull, meaning that it has no neighbouring tetrahedron. At least one of its three beads must have its bottom surface within 1.25 bead diameters of the physical bottom, which is zero in this campaign. This is not a height cutoff on pore centres. The analysis independently reconstructs this rule and requires exact agreement with all saved labels. The rule does not require the face to intersect the physical bottom plane or have a downward normal, so physical inlet fidelity remains a modelling question. In the finite-inlet transient calculation these labelled pores connect to the reservoir; the diagnostic fixes their concentrations for a steady unit-drop calculation. The replacement source fixes all pores within one diameter above the lowest retained pore, including many otherwise internal pores. The full band is not necessarily a superset of the labelled inlet, because some inlet centres lie above it.}
+\end{frame}
+
+\begin{frame}{Inlet selection dominates the tested plane-depth changes}
 \centering
-\begin{tabular}{llr}
-\toprule
-Source held at $c=1$ & Sink held at $c=0$ & Uptake $\rho_s$\\
-\midrule
-Original inlet pores & All pores above $5d_p$ & $+0.968$\\
-Original inlet pores & All pores above $4d_p$ & $+0.968$\\
-All pores in bottom $1d_p$ & All pores above $5d_p$ & $+0.023$\\
-All pores in bottom $1d_p$ & All pores above $4d_p$ & $-0.065$\\
-\bottomrule
-\end{tabular}
-\par\medskip
-{\small Same 20 networks and uptake outcomes. Each row changes only the steady diagnostic.}
-\par\medskip
-\result{Changing the source-pore selection removes the strong association. These are different boundary tests.}
-\note{This additional control changes source and sink separately on the full original network, so no slab cutting is involved in this table. Original inlet means the hull-labelled pores used by the existing diagnostic and transient boundary model. The full one-diameter band fixes every pore in that band, including pores that were previously internal unknowns, while some original inlet labels may extend above that band. It is a replacement of the source set, not necessarily a superset. Keeping the original source and moving the sink from five to four diameters leaves the uptake rank correlation at 0.968. Replacing only the source with the full band drops the correlation to 0.023. Replacing both gives minus 0.065, the same uptake rank correlation as the cropped matched slab. Thus source selection is the dominant reason for the observed correlation change under these tested conditions. This does not identify a unique microscopic bottleneck or prove physical causation. A literal translation of the original labelled inlet requires a separate definition of matched interior source patches.}
+\includegraphics[width=\linewidth,height=0.49\textheight,keepaspectratio]{figures/fig_inlet_selection_depth.pdf}
+\begin{itemize}\small
+\item Same networks and uptake outcomes. Move the sink to $3,4,5,7,10d_p$.
+\item Labelled inlet: uptake $\rho_s=0.950$--$0.970$ at every tested depth.
+\item Full bottom-$1d_p$ source band: uptake $\rho_s=-0.065$ to $0.188$.
+\end{itemize}
+\result{The strong uptake relationship survives plane-depth changes but disappears with the full-band source.}
+\note{These 200 full-network solves use twenty beds, two source selections and five interior sink depths. Within each source selection only the sink position changes. With labelled inlet pores, uptake correlations at depths 3, 4, 5, 7 and 10 diameters are 0.950, 0.968, 0.968, 0.964 and 0.970. Replacing the source by every pore within one diameter of the lowest pore gives 0.150, minus 0.065, 0.023, zero and 0.188. Thus inlet selection matters much more than sink-plane placement for uptake in the tested range. We do not claim independence of depth everywhere in the bed. The plotted underutilization and t50 outcomes remain distinct; the strong uptake statement should not be generalized to t50. A bottom band means all pores at or below lowest-pore height plus one diameter, not pores exactly on a plane. The original conductance and adsorption model use the same labelled entry connections. The full-band diagnostic bypasses some entrance restrictions, so it measures a different supply problem. These controls support inlet-connected conductance as a descriptor but do not alone validate the inlet geometry experimentally or establish causation.}
 \end{frame}
 
 \begin{frame}{Translated slabs do not reproduce the uptake association}
@@ -830,8 +840,8 @@ All pores in bottom $1d_p$ & All pores above $4d_p$ & $-0.065$\\
 \item Even the matched $0$--$5d_p$ slab has a weak uptake association.
 \item Original inlet pores and full source bands impose different boundary conditions.
 \end{itemize}
-\result{The inlet boundary definition remains a competing explanation for the strong $G_{\rm access}$ result.}
-\note{The plotted points summarize 240 steady solves: twenty beds, four slab positions and three boundary-band thicknesses. All 240 slabs span their boundary bands. The dashed line is the original inlet diagnostic on the same beds. For one-diameter bands, underutilization correlations are plus 0.080, plus 0.007, minus 0.408 and plus 0.275; t50 correlations are plus 0.197, plus 0.262, plus 0.152 and plus 0.221. Uptake correlations remain far below the original plus 0.968 across all tested bands. The largest absolute slab uptake correlation is 0.432. These are exploratory associations on the existing ensemble, not new held-out validation or a formal test of differences between dependent correlations. The control fails to reproduce the original association, but also fails to identify the lowest matched slab as special. This points to the labelled inlet connection and boundary representation as important next controls. Continue the transport-closure work with an association claim. Establishing inlet-specific causation requires a boundary-matched control or controlled changes to inlet connectivity.}
+\result{Uniformly supplied slabs measure a different entry condition from the labelled inlet.}
+\note{The plotted points summarize 240 steady solves: twenty beds, four slab positions and three boundary-band thicknesses. All 240 slabs span their boundary bands. The dashed line is the original inlet diagnostic on the same beds. For one-diameter bands, underutilization correlations are plus 0.080, plus 0.007, minus 0.408 and plus 0.275; t50 correlations are plus 0.197, plus 0.262, plus 0.152 and plus 0.221. Uptake correlations remain far below the original plus 0.968 across all tested bands. The largest absolute slab uptake correlation is 0.432. These are exploratory associations on the existing ensemble, not new held-out validation or a formal test of differences between dependent correlations. The control fails to reproduce the original association, but also fails to identify the lowest matched slab as special. The source-versus-depth controls show that retaining the labelled inlet preserves the uptake relationship across the tested sink depths. The inlet selection is therefore central to interpreting this diagnostic. Continue the transport-closure work with an association claim. Establishing inlet-specific causation requires a boundary-matched control or controlled changes to inlet connectivity.}
 \end{frame}
 
 \section[Conclusions]{Conclusions and next steps}

@@ -2,13 +2,20 @@
 
 ## Result and research decision
 
-Continue investigating the predictive transport closure, but retain an association claim.
-The current evidence does not establish inlet-specific causation or literature novelty.
-The shortest-path geometric tortuosity descriptor has substantially weaker uptake and
-underutilization associations than the original inlet-connected conductance.
-Matched translated slabs also fail to reproduce the original uptake correlation.
-However, the matched lowest slab is weak too: source-boundary representation is a
-competing explanation, not a resolved control.
+Inlet-pore selection is central to the uptake relationship in this ensemble.
+With the original labelled inlet held fixed, moving the interior sink through
+3, 4, 5, 7 and 10 dp preserves a strong uptake correlation (rho = 0.950–0.970).
+Replacing that source by all pores in the bottom 1 dp band loses the strong
+relationship at every tested depth (rho = -0.065–0.188). Thus source selection
+matters more than interior-plane placement over this tested range. This is not
+an assertion about arbitrary depths or about every outcome, particularly t50.
+
+The original source identifies the model's entry connections. The full-band
+source supplies many otherwise internal pores directly and changes the transport
+problem. Uniform slabs therefore cannot substitute for a literal translation of
+the inlet-access diagnostic. Continue investigating the predictive closure while
+validating the physical fidelity of inlet selection. These controls establish
+neither inlet-specific causation nor literature novelty.
 
 All values below are Spearman correlations across the same 20 beds.
 
@@ -35,7 +42,9 @@ campaign descriptor. The new slides use the verified current values.
 
 ## Why the old and new 0–5 dp results differ
 
-An additional 80 full-network solves change the source and sink separately:
+The original 4/5 dp comparison below is now part of 200 full-network solves at
+3, 4, 5, 7 and 10 dp. See `inlet_selection_summary.md` and
+`fig_inlet_selection_depth.pdf` for the complete source-versus-depth comparison:
 
 | Source held at 1 | Sink held at 0 | Uptake Spearman rho |
 |---|---|---:|
@@ -55,6 +64,25 @@ values. This identifies sensitivity to the diagnostic boundary definition, not a
 unique microscopic mechanism. A matched interior translation of the original inlet
 requires a separate choice of source patches. The two 0–5 dp quantities should not be
 presented as interchangeable measurements of the same conductance.
+
+## Exact inlet-pore selection
+
+The original extractor builds Delaunay tetrahedra from bead centres and retains
+valid pore centres. A retained pore is labelled inlet when its tetrahedron has
+an exposed convex-hull face (no neighbouring tetrahedron), and at least one bead
+on that face satisfies `z_bead - radius <= physical_bottom + 1.25 * dp`.
+Physical bottom is zero for this campaign. The 1.25 dp criterion applies to bead
+surfaces, not pore-centre height. It does not require a face to point downward or
+intersect the physical bottom plane.
+
+The analysis reconstructs this rule independently and fails if any saved inlet
+label differs. All 20 beds match exactly. There are 12–23 labelled inlet pores,
+versus 193–283 pores in the alternative source band. `inlet_selection_audit.csv`
+records the counts, source overlap and inlet heights for each bed.
+
+The alternative is all pores with `z_pore <= min(z_pore) + dp`: a full bottom band,
+not pores exactly at 1 dp. Some labelled inlet centres lie above the band, so
+replacing the source is not necessarily just adding pores to it.
 
 ## Exact definitions
 
@@ -94,7 +122,8 @@ python -m unittest discover -s tests -p 'test_translated_slabs.py' -v
 ```
 
 The analysis requires an exact 20-seed match and finite outcomes. It produces 240
-slab rows, descriptor/outcome tables, all correlation values, two figures in PDF/PNG,
+slab rows, 200 source/depth rows, an inlet-label audit, descriptor/outcome tables,
+all correlation values, three figures in PDF/PNG,
 and input SHA-256 hashes in `provenance.json`. It does not modify raw inputs or rerun
 transient adsorption. The original G_access is always the 5 dp benchmark even when
 changing the optional slab width. The analytical tests check a known series network,
@@ -102,7 +131,7 @@ translation invariance, conductance scaling, exclusion of an exterior bypass,
 disconnection and invalid/empty boundary bands.
 
 Both Beamer folders contain copies of the generated PDFs for independent compilation.
-If regenerating, copy both figure PDFs to each deck's `figures` directory, then compile
+If regenerating, copy all three figure PDFs to each deck's `figures` directory, then compile
 both decks twice as documented in the presentation README.
 
 ## Next scientific control

@@ -1,6 +1,6 @@
 # Beamer presentation
 
-Both audience and presenter versions contain 35 main slides and 15 appendix slides and use G_access as the
+Both audience and presenter versions contain 36 main slides and 15 appendix slides and use G_access as the
 sole inlet-access descriptor. D_eff remains the fitted/predicted coefficient used
 by the 1D transient model. Speaker notes follow the same slide order and describe
 both coefficient prediction and held-out uptake-history validation.
@@ -83,9 +83,11 @@ D_particle/R_p^2, the spherical factor-15 conversion, and the temperature assump
 
 ## Tortuosity and translated-slab controls
 
-Both decks include four new main slides with identical content and presenter notes:
+Both decks include five new main slides with identical content and presenter notes:
 raw-network global tortuosity, the distinction between inlet-depth and translated-window
-tests, a source/sink boundary control, and the numerical translated-slab results. The figures come from
+tests, the exact inlet selection rule, a source/sink depth control, and the numerical translated-slab results. The figures come from
 `code_work/analyze_co2_translated_slabs.py`; see
 `code_work/co2_translated_slabs/README.md` for definitions, results and reproduction.
 The matched 0–5 dp slab is weak too, so inlet-specific causation remains unresolved.
+
+The inlet-selection control now evaluates sink planes at 3, 4, 5, 7 and 10 dp for both sources. It reconstructs the saved inlet labels from particle geometry. Uptake correlations stay at 0.950–0.970 with labelled inlets and fall to −0.065–0.188 with the full bottom-1dp source band. This conclusion applies to the tested depths, not arbitrary plane positions.

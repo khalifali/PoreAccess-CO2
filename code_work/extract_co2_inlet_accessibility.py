@@ -6,6 +6,14 @@ The resulting CSV can be merged directly with the adsorption campaign dataset
 using ``seed``.  Conductances use the same diffusive throat expression as the
 transport solver, g = D A / L.
 
+The source is the saved ``pore_inlet`` mask, not every low-lying pore. In the
+power22 campaign, a retained pore adjoins an exposed Delaunay hull face for which
+at least one face bead satisfies z_bead - radius <= physical_bottom + 1.25 dp.
+This is a bead-surface criterion, not a pore-centre cutoff. Changing it to a full
+bottom-1dp source band changes the supply problem and loses the strong uptake
+association across the tested 3, 4, 5, 7 and 10 dp sink depths. See
+``analyze_co2_translated_slabs.py`` for the source/depth control and label audit.
+
 The steady conductance to an interior plane is a geometry diagnostic, not a new
 transient adsorption simulation. Inlet pores are fixed at c=1 and pores at or
 beyond the requested interior depth are fixed at c=0; all remaining pore
