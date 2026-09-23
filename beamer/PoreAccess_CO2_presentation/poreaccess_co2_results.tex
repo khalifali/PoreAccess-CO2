@@ -707,21 +707,26 @@ Repeat for all twenty beds.
 \begin{frame}{Predicted diffusivity reproduces the uptake history}
 \begin{columns}[c,onlytextwidth]
 \column{0.62\textwidth}\centering
-\includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{figures/g_held_out_uptake.pdf}
+\includegraphics[width=\linewidth,height=0.65\textheight,keepaspectratio]{figures/g_held_out_uptake.pdf}\par\smallskip
+{\scriptsize\color{tumgray}Dashed: power law fitted without the plotted seed.\par}
 \column{0.35\textwidth}\small
-\hi{Mean curve NRMSE, twenty beds}\par\medskip
+\hi{Mean NRMSE (20 beds)}\par\medskip
 \begin{tabular}{lr}\toprule
 Relationship & Error\\\midrule
-$G_{\rm access}$ / power law & 2.61\%\\
-$G_{\rm access}$ / linear & 2.64\%\\
-$G_{\rm access}$ / proportional & 4.80\%\\
-Porosity / linear & 7.58\%\\\bottomrule
+$G_{\rm access}$ / power law & 2.61\%\\\bottomrule
 \end{tabular}\par\medskip
-Use each held-out $D_{\rm eff}$ in the 1D solver, with no refitting.\par\smallskip
-Time-weighted RMSE divided by the bed's final PNM uptake.
+\hi{For each omitted bed}
+\footnotesize
+\begin{enumerate}\setlength{\itemsep}{3pt}
+\item Fit the power law on the other 19 beds.
+\item Predict this bed's $D_{\rm eff}$ from its $G_{\rm access}$.
+\item Run the 1D model without fitting its uptake curve.
+\end{enumerate}
+{\footnotesize One predicted $D_{\rm eff}$ per bed, constant in time.\par}
 \end{columns}
 \vspace{0.12cm}
-\result{Conductance predicts a transport coefficient and therefore the full history, not only final uptake.}
+\result{Leave one bed out, predict its diffusivity, then predict its uptake history.}
+\note{Each dashed curve is a separate leave-one-bed-out prediction. For the seed being shown, we exclude its conductance--fitted-diffusivity pair and fit the power-law coefficients using the other 19 beds. We evaluate that relation at the omitted bed's conductance to predict its effective diffusivity. Therefore the power-law form is the same, but its fitted coefficients generally differ for each omitted seed. Each bed receives its own predicted diffusivity, held constant throughout its transient simulation. We run the 100-cell 1D model with that bed's height and porosity and the prescribed material properties, inlet condition and initial state. We do not fit this diffusivity to the omitted bed's uptake history. Solid curves are PNM references for beds with low, median and high final uptake; dashed curves are their power-law predictions. The table reports the mean curve NRMSE across all 20 held-out beds, not only the three plotted. Errors use normalized trapezoidal time weights and each bed's final PNM loading. The 2.61 percent includes diffusivity-prediction and model-reduction errors; the earlier 1.58 percent measures per-bed fitted reduction error.}
 \end{frame}
 
 \begin{frame}{Conductance correlation across diagnostic depths}
