@@ -1,6 +1,6 @@
 # Beamer presentation
 
-Both audience and presenter versions contain 30 main slides and 12 appendix slides and use G_access as the
+Both audience and presenter versions contain 31 main slides and 14 appendix slides and use G_access as the
 sole inlet-access descriptor. D_eff remains the fitted/predicted coefficient used
 by the 1D transient model. Speaker notes follow the same slide order and describe
 both coefficient prediction and held-out uptake-history validation.
@@ -39,13 +39,17 @@ and 7.58% (porosity). The earlier 1.58% is the per-bed fitted reduction error.
 
 ## Model appendices and optional normalization
 
-Both decks include the model details after the 30-slide main story:
+Both decks include the model details after the 31-slide main story:
 
 ```latex
-\input{pnm_backup_slides.tex}    % 4 moved model slides + 6 construction pages
-\input{one_d_model_details.tex} % 2 moved 1D model slides
+\input{pnm_backup_slides.tex}    % PNM equations and construction sections (12 pages)
+\input{one_d_model_details.tex} % 1D section divider + 2 detailed slides
 % \input{normalization_appendix.tex} % 5 optional comparison pages
 ```
+
+A thank-you/questions slide closes the main story. Appendix A contains PNM
+equations, Appendix B covers network construction, and Appendix C contains the
+homogeneous 1D model; each section starts with a divider.
 
 The existing PNM appendix now inputs `pnm_model_details.tex` before its original
 construction pages. It retains the four former main-body PNM slides (8–11),

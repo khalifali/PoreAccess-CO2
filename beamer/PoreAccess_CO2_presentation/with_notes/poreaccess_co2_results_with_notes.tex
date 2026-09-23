@@ -323,20 +323,25 @@ fast prediction of $\overline q(t)$};
 \overline q_{\rm PNM}(t)=\frac{1}{N_b}\sum_{k=1}^{N_b}q_k(t).
 \]
 \column{0.51\textwidth}\small
-\hi{Coupled diffusion and uptake}
-\vspace{0.25cm}
+\setlength{\abovedisplayskip}{5pt}\setlength{\belowdisplayskip}{7pt}
+\hi{For each pore:}
 \[
 \begin{aligned}
-V_i\frac{dc_i}{dt}
-&=\sum_{j\in\mathcal N(i)}G_{ij}(c_j-c_i)\\
-&\quad+G_{iR}(c_R-c_i)-S_i,\\[1.2em]
-\frac{dq_k}{dt}&=k_{\rm LDF}(q_k^*-q_k).
+V_i\frac{d\textcolor{tumred}{c_i}}{dt}
+&=\sum_{j\in\mathcal N(i)}G_{ij}(\textcolor{tumred}{c_j}-\textcolor{tumred}{c_i})\\
+&\quad+G_{iR}(\textcolor{tumred}{c_R}-\textcolor{tumred}{c_i})-S_i.
 \end{aligned}
 \]
+\smallskip
+\hi{For each bead:}
+\[
+\frac{dq_k}{dt}=k_{\rm LDF}(\textcolor{tumred}{q_k^*}-q_k).
+\]
+{\footnotesize $\textcolor{tumred}{q_k^*}$: equilibrium target from the mean gas concentration around bead $k$ and the saturation loading $q_s$ (Langmuir isotherm).\par}
 \end{columns}
 \smallskip
 \result{One coupled system: one concentration per pore, one loading per bead.}
-\note{The PNM is the structure-resolved numerical reference for each bed. It retains the actual pore connections and solves gas diffusion and bead adsorption as one coupled system: one gas concentration per pore and one loading per bead. Averaging the loadings of the identical beads gives $\overline q_{\rm PNM}(t)$, the full transient reference curve used to fit the reduced model. The drawing is schematic, not simulation data. Detailed construction, balances and isotherm definitions are retained in the PNM appendix.}
+\note{The PNM is the structure-resolved numerical reference for each bed. It retains the actual pore connections and solves gas diffusion and bead adsorption as one coupled system: one gas concentration per pore and one loading per bead. Averaging the loadings of the identical beads gives $\overline q_{\rm PNM}(t)$, the full transient reference curve used to fit the reduced model. The red gas concentrations set the equilibrium target through the Langmuir isotherm, with saturation loading $q_s$ and fixed affinity and temperature. Adsorption feeds back into the gas balance through the sink $S_i$. The drawing is schematic, not simulation data. Detailed construction, balances and isotherm definitions are retained in the PNM appendix.}
 \end{frame}
 
 \section[1D reduction]{Reduction and diffusivity prediction}
@@ -375,13 +380,13 @@ V_i\frac{dc_i}{dt}
 \]
 \raggedright\hi{Gas and loading balances in each cell}
 \[
-\varepsilon_b\frac{\partial c}{\partial t}
-=D_{\rm eff}\frac{\partial^2c}{\partial z^2}
+\varepsilon_b\frac{\partial \textcolor{tumred}{c}}{\partial t}
+=D_{\rm eff}\frac{\partial^2\textcolor{tumred}{c}}{\partial z^2}
 -(1-\varepsilon_b)\:\rho_p\:\frac{\partial q}{\partial t},
 \]
 \[
 \frac{\partial q}{\partial t}
-=k_{\rm LDF}\:\left[\frac{q_s\:b\:R\:T\:c}{1+b\:R\:T\:c}-q\right].
+=k_{\rm LDF}\:\left(\textcolor{tumred}{q^*}-q\right).
 \]
 \column{0.42\textwidth}\centering
 \hi{Match the PNM reference}\par\vspace{0.45cm}
@@ -397,7 +402,7 @@ V_i\frac{dc_i}{dt}
   \node[tumgray,font=\scriptsize] at (2.45,-.45) {schematic fitting target};
 \end{tikzpicture}
 \end{columns}
-\note{We replace the detailed network by a homogeneous bed with 100 equal finite-volume cells, each spanning the full tube cross-section. The thin band illustrates a differential control volume; the displayed continuum balances are discretized on those cells to solve one gas concentration and one loading per cell. Equal cell volumes and uniform adsorbent density make the bed-average loading the arithmetic mean shown here. We keep the bed geometry, porosity, inlet condition, isotherm and kinetics fixed and adjust the single effective diffusivity to reproduce the full PNM uptake history for that bed. The curves illustrate the fitting target, not measured data or a sequence of optimization trials. The detailed model slides remain in the 1D appendix.}
+\note{We replace the detailed network by a homogeneous bed with 100 equal finite-volume cells, each spanning the full tube cross-section. The thin band illustrates a differential control volume; the displayed continuum balances are discretized on those cells to solve one gas concentration and one loading per cell. Equal cell volumes and uniform adsorbent density make the bed-average loading the arithmetic mean shown here. We keep the bed geometry, porosity, inlet condition, isotherm and kinetics fixed and adjust the single effective diffusivity to reproduce the full PNM uptake history for that bed. The red concentration determines the red equilibrium target $q^*$ through the same Langmuir isotherm used in the PNM. Uptake feeds back through the adsorption term in the gas balance. The curves illustrate the fitting target, not measured data or a sequence of optimization trials. The detailed model slides remain in the 1D appendix.}
 \end{frame}
 
 \begin{frame}{Fit the effective diffusivity to the complete uptake curve}
@@ -817,6 +822,15 @@ The porosity baseline is independent of plane depth.
     \column{0.31\textwidth}\centering\hi{2.61\%}\\held-out curve error
   \end{columns}
 \note{The central result is that inlet-connected gas conductance supplies information that porosity misses. Starting from a packing we calculate the network and its steady conductance, predict the effective diffusivity from a calibrated relationship, and run the homogeneous 1D transient model. The twenty-bed ensemble provides a fitted reduction error of 1.58 percent and a power-law held-out uptake-history error of 2.61 percent. These describe different steps in the workflow. The power-law diffusivity R squared is 0.906 and is close to the linear model score of 0.898. The aim is a simpler interpretable predictor for the controlled problem, not a claim of universal model superiority.}
+\end{frame}
+
+\begin{frame}{}
+\vfill
+\centering
+{\LARGE\color{tumblue}\textbf{Thank you!}}\par\vspace{0.6cm}
+{\Large\color{tumdark}Any questions?}
+\vfill
+\note{Thank you for your attention. I welcome questions and discussion. The following appendix sections retain the detailed PNM equations, network construction and 1D model.}
 \end{frame}
 
 % Model details follow the main story; normalization remains optional.
