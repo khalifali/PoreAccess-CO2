@@ -1,0 +1,70 @@
+\ifdefined\poreaccessappendixstarted\else\appendix\def\poreaccessappendixstarted{1}\fi
+\section[1D details]{Backup: homogeneous 1D model}
+\begin{frame}{Reduce the detailed network to a homogeneous 1D bed}
+
+\begin{columns}[T,onlytextwidth]
+\column{0.47\textwidth}\hi{Detailed pore-network model}\small
+\begin{itemize}
+\item Actual pores and throats from each packing
+\item One gas concentration per pore
+\item One loading per bead
+\item Reference mean uptake $\overline q_{\rm PNM}(t)$
+\end{itemize}
+\column{0.49\textwidth}\hi{Homogeneous 1D model}\small
+\begin{itemize}
+\item Replace the network by 100 equal axial slices
+\item Each slice spans the full tube cross-section
+\item One gas concentration and one mean solid loading per slice
+\item Represent unresolved pathways with a single diffusivity $D$
+\end{itemize}
+\end{columns}
+\vspace{0.25cm}
+\result{Fit $D$ so the reduced model reproduces the network's mean uptake history.}
+
+\end{frame}
+
+\begin{frame}{The homogeneous 1D uptake model}
+\setlength{\abovedisplayskip}{7pt}\setlength{\belowdisplayskip}{7pt}
+\begin{columns}[T,onlytextwidth]
+\column{0.54\textwidth}
+\small
+\hi{Gas balance in each axial cell}
+\[
+\varepsilon_b\frac{\partial c}{\partial t}
+=D\frac{\partial^2c}{\partial z^2}
+-(1-\varepsilon_b)\rho_p\frac{\partial q}{\partial t}.
+\]
+\hi{Adsorbent loading in each axial cell}
+\[
+\frac{\partial q}{\partial t}
+=k_{\rm LDF}\left[\frac{q_s\:b\:R\:T\:c}{1+b\:R\:T\:c}-q\right].
+\]
+
+\vspace*{-0.2cm}
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item Divide the bed height into 100 equal slices, each spanning the tube cross-section.
+\item Solve gas concentration and mean solid loading together in each slice.
+\item Trial $D$ changes $c$, which changes adsorption.
+\end{itemize}
+\column{0.43\textwidth}
+\small
+\hi{Average the calculated loading}
+\[
+\overline q_{\rm 1D}(t;D)=\frac{1}{H}\int_0^H q(z,t;D)\,dz.
+\]
+For 100 equal axial cells:
+\[
+\overline q_{\rm 1D}(t;D)=\frac{1}{100}\sum_{\ell=1}^{100}q_\ell(t;D).
+\]
+
+\vspace*{-0.3cm}
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item Match bed height, porosity and inlet condition to the network.
+\item Keep isotherm, kinetics and initial state fixed. Only $D$ changes.
+\end{itemize}
+\end{columns}
+\vspace{-0.1cm}
+\result{$\varepsilon_b$: bed porosity, uniform in all 100 cells of each bed.}
+
+\end{frame}
+

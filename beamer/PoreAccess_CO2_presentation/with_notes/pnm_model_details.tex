@@ -1,0 +1,126 @@
+% Detailed PNM slides retained from the main presentation.
+\begin{frame}{Pore-network geometry and throat diffusion}
+\setlength{\abovedisplayskip}{5pt}\setlength{\belowdisplayskip}{5pt}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.46\textwidth}
+      \hi{Network construction}
+      \footnotesize
+      \begin{itemize}\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}
+        \item four bead centres define a Delaunay tetrahedron; its valid circumcentre represents a pore node
+        \item tetrahedra sharing a triangular face are joined by a throat
+        \item topology comes from particle coordinates, not voxels
+      \end{itemize}
+      \vspace{0.12cm}
+      \begin{itemize}\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}
+        \item $2^{22}$ Sobol points sample the solid and gas space.
+        \item Gas-point counts allocate the calculated void volume to pores.
+      \end{itemize}
+    \column{0.50\textwidth}
+      \hi{Diffusion through throat $i$--$j$}
+      \[
+        G_{ij}=D_m\frac{A_{ij}}{L_{ij}},\qquad
+        \dot n_{ij}=G_{ij}(c_j-c_i).
+      \]
+      \footnotesize
+      $D_m=1.5\times10^{-5}$ m$^2$ s$^{-1}$: molecular CO$_2$ diffusivity in the gas.
+      \par\smallskip
+      $L_{ij}=\lVert\mathbf{x}_j-\mathbf{x}_i\rVert$ is the pore-centre distance.
+      The irregular opening between three beads is approximated by an equivalent
+      circular area
+      \[
+        A_{ij}=\pi r_{ij}^{2},
+      \]
+      where $r_{ij}$ is the clearance of the shared Delaunay face.
+  \end{columns}
+  \vspace{0.16cm}
+  \result{The circular throat area is a geometric modelling assumption; $G_{ij}$ has units of m$^3$ s$^{-1}$.}
+\note{\footnotesize The particle centres define Delaunay tetrahedra. Valid circumcentres become pore nodes, and a shared triangular face defines a candidate throat. We do not explicitly reconstruct the full three-dimensional geometry of each pore body. Instead, we associate a control volume with each pore node. To estimate these pore volumes, we sample $2^{22}$ Sobol points in the cylindrical bed domain. Sobol points form a low-discrepancy quasi-random sequence, so they fill the domain more uniformly than ordinary random sampling. Each sample is first classified as solid or void. Every void-space sample is then assigned to its nearest pore centre. The fraction of void samples assigned to each pore provides its relative pore volume, and the resulting volumes are normalized so that their sum equals the analytically calculated total void volume of the bed. D sub m is the prescribed molecular diffusivity of CO2 in the gas, 1.5 times ten to the minus five square metres per second. It is a fixed model input, not the fitted bed-scale effective diffusivity. Conductance equals this diffusivity times the approximate throat opening area divided by the pore-centre distance. The throat geometry is therefore treated separately from the pore-body volume allocation. Detailed construction sketches remain in the optional appendix.}
+\end{frame}
+
+\begin{frame}{The pore network solves diffusion and adsorption together}
+
+\begin{columns}[T,onlytextwidth]
+\column{0.56\textwidth}\small
+\hi{Gas balance for each pore $i$}
+\[
+V_i\frac{dc_i}{dt}=\sum_{j\in\mathcal N(i)}G_{ij}(c_j-c_i)
++G_{iR}(c_R-c_i)-S_i.
+\]
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item $V_i$: gas volume, $c_i$: gas concentration
+\item $G_{ij}$: throat conductance [m$^3$ s$^{-1}$]
+\item $G_{iR}$: connection to reservoir at $c_R$, zero away from the inlet
+\item $S_i$: net gas transfer to adjacent beads [mol s$^{-1}$]
+\end{itemize}
+\column{0.40\textwidth}\small
+\hi{Uptake for each bead $k$}
+\[
+\frac{dq_k}{dt}=k_{\rm LDF}(q_k^*-q_k).
+\]
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item $q_k$: current loading [mol kg$^{-1}$]
+\item $k_{\rm LDF}$ [s$^{-1}$]: linear-driving-force rate coefficient
+\item $1/k_{\rm LDF}$: relaxation time at fixed gas concentration
+\end{itemize}
+\end{columns}
+\vspace{0.15cm}
+\result{One coupled system: one concentration per pore and one loading per bead.}
+
+\note{This is the transient diffusion equation on the network, expressed as a balance on each pore volume. The first term exchanges gas with neighbouring pores, the second connects inlet pores to the finite-conductance reservoir, and the final term transfers gas to beads. Each bead has one loading equation even if several pores surround it. LDF means linear driving force: the rate is proportional to the difference between equilibrium and current loading. All pore concentrations and bead loadings are integrated together from the prescribed initial state as one coupled transient system. Numerically, the system is solved with an implicit BDF time integrator. This is suitable for a stiff diffusion--adsorption system, where fast and slow time scales coexist. The solver uses adaptive time stepping and changes the step size automatically to satisfy the prescribed relative and absolute error tolerances. The total transfer satisfies $\sum_i S_i=\sum_k m_k\,dq_k/dt$, so adsorption transfers gas into the solid inventory. In the code, positive uptake is allocated among incident pores using incidence weights multiplied by positive gas concentration, preventing empty pores from supplying gas. Desorption uses normalized incidence weights. No independent gas-flow or pressure equation is solved.}
+\end{frame}
+
+\begin{frame}{Local equilibrium sets the adsorption target}
+\begin{columns}[T,onlytextwidth]
+\column{0.48\textwidth}\hi{Local equilibrium loading}\small
+\[
+p_k=c_k\:R\:T,\qquad q_k^*=\frac{q_s\:b\:p_k}{1+b\:p_k}.
+\]
+\begin{itemize}\setlength{\itemsep}{3pt}
+\item $c_k$: average gas concentration around bead $k$
+\item $p_k$: local CO$_2$ partial pressure [Pa]
+\item $q_k^*$: equilibrium target [mol kg$^{-1}$]
+\end{itemize}
+\column{0.48\textwidth}\hi{Fixed material parameters}\small
+\begin{itemize}\setlength{\itemsep}{3pt}
+\item $q_s$: maximum CO$_2$ loading [mol kg$^{-1}$]
+\item $b$: Langmuir affinity [Pa$^{-1}$], so $b\:p_k$ is dimensionless
+\item $k_{\rm LDF}$: kinetic coefficient [s$^{-1}$]
+\end{itemize}
+\medskip
+\hi{Actual loading evolves in time}
+\[
+\frac{dq_k}{dt}=k_{\rm LDF}(q_k^*-q_k).
+\]
+\end{columns}
+\vspace{0.25cm}
+\result{Local gas concentrations set the target. Kinetics determine how quickly beads approach it.}
+\note{The local gas concentration around bead k is a normalized, pore-volume-weighted average over its associated pores. The implementation uses nonnegative concentrations in this calculation. The ideal-gas relation gives the local CO2 partial pressure and the Langmuir isotherm supplies the equilibrium loading. This equilibrium target is not a new differential unknown. The actual loading evolves through the LDF equation introduced on the preceding slide. The parameter $q_s$ is the saturation, or maximum, CO2 loading of the zeolite according to the Langmuir model; in this work we use $q_s=5.332$ mol kg$^{-1}$. It is the asymptotic loading approached at sufficiently high CO2 partial pressure, not the actual loading reached at every operating condition. The saturation loading and affinity are prescribed material parameters, and $k_{\rm LDF}$ is fixed across packings. Adsorption removes gas from the incident pores and adds it to the bead, preserving the combined inventory apart from reservoir exchange.}
+\end{frame}
+
+\begin{frame}{The pore network delivers the reference uptake curve}
+
+\begin{columns}[T,onlytextwidth]
+\column{0.47\textwidth}\hi{Resolved transient outputs}\small
+\begin{itemize}
+\item Gas concentration $c_i(t)$ in every pore
+\item Adsorbed loading $q_k(t)$ of every bead
+\item Different bead loadings reveal incomplete utilization
+\end{itemize}
+\medskip
+The detailed model retains the actual pore connections and bead associations.
+\column{0.49\textwidth}\hi{Bed-average uptake}\small
+\[
+\overline q_{\rm PNM}(t)=\frac{\sum_k m_k q_k(t)}{\sum_k m_k}.
+\]
+For identical beads:
+\[
+\overline q_{\rm PNM}(t)=\frac{1}{N_b}\sum_{k=1}^{N_b}q_k(t).
+\]
+This curve is the reference for fitting the reduced 1D model.
+\end{columns}
+\vspace{0.25cm}
+\result{Next: can a homogeneous 1D bed reproduce this complete uptake curve?}
+
+\note{The network calculation produces many concentration and loading histories. For model reduction, we summarize the adsorbed inventory as the mass-weighted mean loading of all beads. Because the beads have equal masses, this is their arithmetic mean. We retain the full time series, not only the final loading. The PNM curve is a numerical reference under our modelling assumptions, not an experimental measurement. We now ask whether a much smaller homogeneous model can reproduce this curve.}
+\end{frame}
+
