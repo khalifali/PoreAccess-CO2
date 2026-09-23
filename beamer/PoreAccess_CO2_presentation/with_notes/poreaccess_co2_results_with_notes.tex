@@ -327,22 +327,22 @@ fast prediction of $\overline q(t)$};
 \hi{For each pore:}
 \[
 \begin{aligned}
-V_i\frac{d\textcolor{tumred}{c_i}}{dt}
-&=\sum_{j\in\mathcal N(i)}G_{ij}(\textcolor{tumred}{c_j}-\textcolor{tumred}{c_i})\\
-&\quad+G_{iR}(\textcolor{tumred}{c_R}-\textcolor{tumred}{c_i})\\
+V_i\frac{d\textcolor{tumblue}{c_i}}{dt}
+&=\sum_{j\in\mathcal N(i)}G_{ij}(\textcolor{tumblue}{c_j}-\textcolor{tumblue}{c_i})\\
+&\quad+G_{iR}(\textcolor{tumblue}{c_R}-\textcolor{tumblue}{c_i})\\
 &\quad-m_b\sum_{k\in\mathcal B(i)}w_{ik}\:\textcolor{tumred}{\frac{dq_k}{dt}}.
 \end{aligned}
 \]
 \smallskip
 \hi{For each bead:}
 \[
-\textcolor{tumred}{\frac{dq_k}{dt}}=k_{\rm LDF}(\textcolor{tumred}{q_k^*}-q_k).
+\textcolor{tumred}{\frac{dq_k}{dt}}=k_{\rm LDF}(\textcolor{tumblue}{q_k^*}-q_k).
 \]
-{\footnotesize $\textcolor{tumred}{q_k^*}$: equilibrium target from the mean gas concentration around bead $k$ and the saturation loading $q_s$ (Langmuir isotherm).\par}
+{\footnotesize $\textcolor{tumblue}{q_k^*}$: equilibrium target from the mean gas concentration around bead $k$ and the saturation loading $q_s$ (Langmuir isotherm).\par}
 \end{columns}
 \smallskip
 \result{One coupled system: one concentration per pore, one loading per bead.}
-\note{The PNM is the structure-resolved reference for each bed, with one gas concentration per pore and one loading per bead. Averaging the identical beads' loadings gives the full reference curve $\overline q_{\rm PNM}(t)$. Red concentrations determine the Langmuir equilibrium target; the red uptake rate feeds back into the gas balance. Here $m_b$ is the common bead mass and $\mathcal B(i)$ contains beads associated with pore $i$. The weights $w_{ik}$ allocate bead $k$'s uptake among its surrounding pores, with $\sum_i w_{ik}=1$ for each bead. This prevents counting its uptake more than once. During adsorption, the implementation multiplies incidence weights by positive pore concentration and normalizes per bead; during desorption it uses normalized incidence weights. Thus the allocation can depend on the state, while $q_k$ remains one loading per bead. The Langmuir target uses the mean surrounding concentration, saturation loading, and fixed affinity and temperature. The drawing is schematic; detailed equations remain in the appendix.}
+\note{The PNM is the structure-resolved reference for each bed, with one gas concentration per pore and one loading per bead. Averaging the identical beads' loadings gives the full reference curve $\overline q_{\rm PNM}(t)$. Blue concentrations determine the blue Langmuir equilibrium target; the red uptake rate feeds back into the gas balance. Here $m_b$ is the common bead mass and $\mathcal B(i)$ contains beads associated with pore $i$. The weights $w_{ik}$ allocate bead $k$'s uptake among its surrounding pores, with $\sum_i w_{ik}=1$ for each bead. This prevents counting its uptake more than once. During adsorption, the implementation multiplies incidence weights by positive pore concentration and normalizes per bead; during desorption it uses normalized incidence weights. Thus the allocation can depend on the state, while $q_k$ remains one loading per bead. The Langmuir target uses the mean surrounding concentration, saturation loading, and fixed affinity and temperature. The drawing is schematic; detailed equations remain in the appendix.}
 \end{frame}
 
 \section[1D reduction]{Reduction and diffusivity prediction}
@@ -381,13 +381,13 @@ V_i\frac{d\textcolor{tumred}{c_i}}{dt}
 \]
 \raggedright\hi{Gas and loading balances in each cell}
 \[
-\varepsilon_b\frac{\partial \textcolor{tumred}{c}}{\partial t}
-=D_{\rm eff}\frac{\partial^2\textcolor{tumred}{c}}{\partial z^2}
--(1-\varepsilon_b)\:\rho_p\:\textcolor{tumred}{\frac{\partial q}{\partial t}},
+\varepsilon_b\frac{\partial c}{\partial t}
+=\textcolor{tumorange}{D_{\rm eff}}\frac{\partial^2c}{\partial z^2}
+-(1-\varepsilon_b)\:\rho_p\:\frac{\partial q}{\partial t},
 \]
 \[
-\textcolor{tumred}{\frac{\partial q}{\partial t}}
-=k_{\rm LDF}\:\left(\textcolor{tumred}{q^*}-q\right).
+\frac{\partial q}{\partial t}
+=k_{\rm LDF}\:\left(q^*-q\right).
 \]
 \column{0.42\textwidth}\centering
 \hi{Match the PNM reference}\par\vspace{0.45cm}
@@ -403,7 +403,7 @@ V_i\frac{d\textcolor{tumred}{c_i}}{dt}
   \node[tumgray,font=\scriptsize] at (2.45,-.45) {schematic fitting target};
 \end{tikzpicture}
 \end{columns}
-\note{We replace the detailed network by a homogeneous bed with 100 equal finite-volume cells, each spanning the full tube cross-section. The thin band illustrates a differential control volume; the displayed continuum balances are discretized on those cells to solve one gas concentration and one loading per cell. Equal cell volumes and uniform adsorbent density make the bed-average loading the arithmetic mean shown here. We keep the bed geometry, porosity, inlet condition, isotherm and kinetics fixed and adjust the single effective diffusivity to reproduce the full PNM uptake history for that bed. The red concentration determines the red equilibrium target $q^*$ through the same Langmuir isotherm used in the PNM. Uptake feeds back through the adsorption term in the gas balance. The curves illustrate the fitting target, not measured data or a sequence of optimization trials. The detailed model slides remain in the 1D appendix.}
+\note{We replace the detailed network by a homogeneous bed with 100 equal finite-volume cells, each spanning the full tube cross-section. The thin band illustrates a differential control volume; the displayed continuum balances are discretized on those cells to solve one gas concentration and one loading per cell. Equal cell volumes and uniform adsorbent density make the bed-average loading the arithmetic mean shown here. We keep the bed geometry, porosity, inlet condition, isotherm and kinetics fixed and adjust the single effective diffusivity to reproduce the full PNM uptake history for that bed. The orange $D_{m eff}$ in the gas balance is the coefficient adjusted to reproduce the PNM reference curve. The diffusion--adsorption coupling is the same as already explained for the PNM. The curves illustrate the fitting target, not measured data or a sequence of optimization trials. The detailed model slides remain in the 1D appendix.}
 \end{frame}
 
 \begin{frame}{Fit effective diffusivity to the uptake curve}
