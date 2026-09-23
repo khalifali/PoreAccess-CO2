@@ -403,7 +403,8 @@ V_i\frac{d\textcolor{tumblue}{c_i}}{dt}
   \node[tumgray,font=\scriptsize] at (2.45,-.45) {schematic fitting target};
 \end{tikzpicture}
 \end{columns}
-\note{We replace the detailed network by a homogeneous bed with 100 equal finite-volume cells, each spanning the full tube cross-section. The thin band illustrates a differential control volume; the displayed continuum balances are discretized on those cells to solve one gas concentration and one loading per cell. Equal cell volumes and uniform adsorbent density make the bed-average loading the arithmetic mean shown here. We keep the bed geometry, porosity, inlet condition, isotherm and kinetics fixed and adjust the single effective diffusivity to reproduce the full PNM uptake history for that bed. The orange $D_{m eff}$ in the gas balance is the coefficient adjusted to reproduce the PNM reference curve. The diffusion--adsorption coupling is the same as already explained for the PNM. The curves illustrate the fitting target, not measured data or a sequence of optimization trials. The detailed model slides remain in the 1D appendix.}
+\note{We replace the detailed network by a homogeneous bed with 100 equal finite-volume cells, each spanning the full tube cross-section. The thin band illustrates a differential control volume; the displayed continuum balances are discretized on those cells to solve one gas concentration and one loading per cell. Equal cell volumes and uniform adsorbent density make the bed-average loading the arithmetic mean shown here. We keep the bed geometry, porosity, inlet condition, isotherm and kinetics fixed and adjust the single effective diffusivity to reproduce the full PNM uptake history for that bed. The orange $D_{
+m eff}$ in the gas balance is the coefficient adjusted to reproduce the PNM reference curve. The diffusion--adsorption coupling is the same as already explained for the PNM. The curves illustrate the fitting target, not measured data or a sequence of optimization trials. The detailed model slides remain in the 1D appendix.}
 \end{frame}
 
 \begin{frame}{Fit effective diffusivity to the uptake curve}
@@ -431,27 +432,56 @@ D_{\rm eff}=\arg\min_D\mathrm{NRMSE}(D)
 \note{For each bed, we search for one effective diffusivity between $10^{-8}$ and $1.5\times10^{-5}$ m$^2$ s$^{-1}$. The upper bound is the molecular CO$_2$ diffusivity in the gas, representing diffusion without the bed's geometric restrictions. The lower bound is just over three orders of magnitude smaller. The optimizer chooses trial values adaptively in log diffusivity. For each trial, we run one transient 1D solve, obtain the loading in every finite-volume cell, and average the 100 cell loadings to form the curve shown here. We compare that history with the PNM reference using the normalized root-mean-square error, NRMSE. Output times are more densely spaced near the beginning to capture the steep initial transient. The normalized trapezoidal weights $w_m$ account for unequal time spacing, so those numerous early points do not dominate simply because there are more of them. The error is normalized by the final PNM loading. We retain the diffusivity with the smallest error. The graph shows selected recorded trials, which need not improve at every evaluation.}
 \end{frame}
 
-\begin{frame}{Can inlet conductance predict the fitted diffusivity?}
+\begin{frame}{Inlet access from a steady diffusion solve}
 \begin{columns}[T,onlytextwidth]
-\column{0.47\textwidth}\hi{Calculate steady inlet access}\small
-\begin{itemize}
-\item Use the pore network with adsorption disabled.
-\item Fix concentrations at the inlet and an interior plane.
-\item Solve steady diffusion and sum the molar flux $\dot n$.
-\end{itemize}
-\[G_{\rm access}=\frac{\dot n}{\Delta c}\qquad[\mathrm{m^3/s}].\]
-Conductance measures how much gas the inlet-connected pathways can supply per concentration difference.
-\column{0.49\textwidth}\hi{Calibrate the transport coefficient}\small
-\begin{itemize}
-\item Pair each calculated $G_{\rm access}$ with its fitted $D_{\rm eff}$.
-\item Fit $D_{\rm eff}=f(G_{\rm access})$ on training beds.
-\item Predict the omitted bed's diffusivity.
-\item Run its 1D model and compare the complete uptake curve.
-\end{itemize}
+\column{0.50\textwidth}\centering
+\begin{tikzpicture}[x=.92cm,y=.88cm,font=\small]
+  \fill[tumlight] (0,0) rectangle (3.5,3.0);
+  \fill[gray!8] (0,3.0) rectangle (3.5,4.3);
+  \draw[tumdark,thick] (0,0) rectangle (3.5,4.3);
+  \node[tumgray,font=\scriptsize,align=center] at (1.75,3.93) {At / above the plane\\$c=c_{\rm out}$};
+  \foreach \name/\x/\y in {a/.45/.2,b/1.7/.2,c/3.05/.2,d/.8/1.05,e/2.45/1.15,f/.45/2.05,g/1.65/2.15,h/3.0/2.1,i/.7/3.0,j/2.8/3.0}
+    \coordinate (\name) at (\x,\y);
+  \foreach \a/\b in {a/d,b/d,b/e,c/e,d/f,d/g,e/g,e/h,f/i,g/i,g/j,h/j}
+    \draw[throat] (\a)--(\b);
+  \draw[tumorange,line width=1.4pt,dashed] (-.1,3)--(3.65,3);
+  \foreach \n in {d,e,f,g,h} \node[pore,minimum size=2.5mm] at (\n) {};
+  \foreach \n in {a,b,c} \filldraw[fill=tumblue,draw=tumdark] (\n) circle (.075);
+  \foreach \n in {i,j} \filldraw[fill=tumorange,draw=tumorange!80!black] (\n) circle (.075);
+  \draw[tumblue,line width=1.4pt] (0,0)--(3.5,0);
+  \node[anchor=west,align=left,font=\footnotesize,tumorange!85!black] at (3.7,3) {$5d_p$ plane\\$c_{\rm out}$};
+  \node[anchor=west,align=left,font=\footnotesize,tumblue] at (3.7,.2) {inlet pores\\$c_{\rm in}$};
+  \draw[-{Latex},very thick,tumblue] (1.75,-.65)--(1.75,-.05);
+  \node[anchor=east,tumblue,font=\footnotesize] at (1.48,-.40) {$\dot n_{\rm in}$};
+  \draw[-{Latex},tumgray] (-.32,.2)--(-.32,3) node[midway,left,font=\scriptsize] {$z$};
+  \node[font=\scriptsize,tumgray] at (1.75,-.98) {Schematic pore network};
+\end{tikzpicture}
+\column{0.47\textwidth}\small
+\hi{Steady diffusion only}\par\smallskip
+{\footnotesize No accumulation, adsorption or imposed flow.\par}
+\[
+0=\sum_{j\in\mathcal N(i)}G_{ij}(c_j-c_i)
+\]
+{\footnotesize At every free pore; $G_{ij}=D_m\,A_{ij}/L_{ij}$.\par}
+\medskip
+\hi{Sum the inlet flux}\par
+\[
+\textcolor{tumblue}{G_{\rm access}}
+=\frac{\dot n_{\rm in}}{c_{\rm in}-c_{\rm out}}
+\qquad[\mathrm{m^3/s}]
+\]
+{\footnotesize Conductance of the connected pathways from the inlet to the interior plane.\par}
 \end{columns}
-\vspace{0.2cm}
-\result{One steady conductance calculation supplies the input for transient prediction.}
-\note{G access is calculated from a steady diffusion solve on the network, not predicted. Total molar flux divided by the imposed concentration difference has units of cubic metres per second. We use this conductance directly as the descriptor. A relationship learned from other beds maps it to the effective diffusivity in the transient 1D model. Conductance can also correlate with final uptake, but here its target is the coefficient fitted to the complete uptake history. For validation we first predict the omitted bed diffusivity and then run its 1D model without fitting to that bed history. The optional normalization appendix presents the alternative descriptor.}
+\smallskip
+\centering
+\begin{tikzpicture}[font=\small,node distance=5mm]
+\node[text=tumblue] (g) {$G_{\rm access}$};
+\node[right=of g] (arrow1) {$\longrightarrow$};
+\node[right=of arrow1,align=center] (closure) {calibrated relation\\$D_{\rm eff}=f(G_{\rm access})$};
+\node[right=of closure] (arrow2) {$\longrightarrow$};
+\node[right=of arrow2,text=tumdark] (uptake) {1D uptake curve};
+\end{tikzpicture}
+\note{This is a steady geometric diagnostic on the existing pore network. Adsorption and accumulation are disabled, and there is no imposed gas flow. We fix inlet pores at a high concentration and pores at or beyond the chosen interior plane at a low concentration. The implementation uses values of one and zero, so the imposed concentration difference is one. The plane is five bead diameters above the lowest retained pore. Throat conductances use the prescribed molecular gas diffusivity. A sparse linear solve balances diffusive fluxes at every free pore; only components connecting source and sink contribute. We sum the net inlet molar flux and divide by the imposed concentration difference to obtain $G_{\rm access}$ in cubic metres per second. These fixed pore concentrations are diagnostic boundary conditions, separate from the finite-transfer reservoir used in transient adsorption. During development we pair this conductance with fitted diffusivities and calibrate their relation on training beds. For an omitted bed we predict its diffusivity, run the 1D model, and compare its uptake history with the PNM reference.}
 \end{frame}
 
 \begin{frame}{Why use an interior plane?}
