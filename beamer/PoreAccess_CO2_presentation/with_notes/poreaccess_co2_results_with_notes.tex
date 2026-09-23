@@ -440,6 +440,9 @@ D_{\rm eff}=\arg\min_D\mathrm{NRMSE}(D)
   \fill[gray!8] (0,3.0) rectangle (3.5,4.3);
   \draw[tumdark,thick] (0,0) rectangle (3.5,4.3);
   \node[tumgray,font=\scriptsize,align=center] at (1.75,3.93) {At / above the plane\\$c=c_{\rm out}$};
+  % Equal beads occupy the spaces between pore nodes and throat links.
+  \foreach \x/\y in {1.03/.43,2.49/.48,1.62/1.28,1.03/1.85,.88/2.39,2.48/2.38}
+    \node[bead,minimum size=4.5mm] at (\x,\y) {};
   \foreach \name/\x/\y in {a/.45/.2,b/1.7/.2,c/3.05/.2,d/.8/1.05,e/2.45/1.15,f/.45/2.05,g/1.65/2.15,h/3.0/2.1,i/.7/3.0,j/2.8/3.0}
     \coordinate (\name) at (\x,\y);
   \foreach \a/\b in {a/d,b/d,b/e,c/e,d/f,d/g,e/g,e/h,f/i,g/i,g/j,h/j}
@@ -448,6 +451,12 @@ D_{\rm eff}=\arg\min_D\mathrm{NRMSE}(D)
   \foreach \n in {d,e,f,g,h} \node[pore,minimum size=2.5mm] at (\n) {};
   \foreach \n in {a,b,c} \filldraw[fill=tumblue,draw=tumdark] (\n) circle (.075);
   \foreach \n in {i,j} \filldraw[fill=tumorange,draw=tumorange!80!black] (\n) circle (.075);
+  \node[anchor=west,font=\scriptsize,tumdark] at (3.7,2.12) {pore};
+  \draw[tumdark,thin] (3.62,2.12)--(3.14,2.1);
+  \node[anchor=west,font=\scriptsize,tumdark] at (3.7,1.55) {throat};
+  \draw[tumdark,thin] (3.62,1.55)--(2.73,1.63);
+  \node[anchor=west,font=\scriptsize,tumgray] at (3.7,.95) {bead};
+  \draw[tumgray,thin] (3.62,.95)--(2.67,.60);
   \draw[tumblue,line width=1.4pt] (0,0)--(3.5,0);
   \node[anchor=west,align=left,font=\footnotesize,tumorange!85!black] at (3.7,3) {$5d_p$ plane\\$c_{\rm out}$};
   \node[anchor=west,align=left,font=\footnotesize,tumblue] at (3.7,.2) {inlet pores\\$c_{\rm in}$};
@@ -481,7 +490,7 @@ D_{\rm eff}=\arg\min_D\mathrm{NRMSE}(D)
 \node[right=of closure] (arrow2) {$\longrightarrow$};
 \node[right=of arrow2,text=tumdark] (uptake) {1D uptake curve};
 \end{tikzpicture}
-\note{This is a steady geometric diagnostic on the existing pore network. Adsorption and accumulation are disabled, and there is no imposed gas flow. We fix inlet pores at a high concentration and pores at or beyond the chosen interior plane at a low concentration. The implementation uses values of one and zero, so the imposed concentration difference is one. The plane is five bead diameters above the lowest retained pore. Throat conductances use the prescribed molecular gas diffusivity. A sparse linear solve balances diffusive fluxes at every free pore; only components connecting source and sink contribute. We sum the net inlet molar flux and divide by the imposed concentration difference to obtain $G_{\rm access}$ in cubic metres per second. These fixed pore concentrations are diagnostic boundary conditions, separate from the finite-transfer reservoir used in transient adsorption. During development we pair this conductance with fitted diffusivities and calibrate their relation on training beds. For an omitted bed we predict its diffusivity, run the 1D model, and compare its uptake history with the PNM reference.}
+\note{This steady diagnostic uses the existing pore network. Grey beads surround blue pore nodes and throat links; the drawing is schematic. Adsorption and accumulation are disabled, and there is no imposed gas flow. We fix inlet pores at a high concentration and pores at or beyond the chosen interior plane at a low concentration. The implementation uses values of one and zero, so the imposed concentration difference is one. The plane is five bead diameters above the lowest retained pore. Throat conductances use the prescribed molecular gas diffusivity. A sparse linear solve balances diffusive fluxes at every free pore; only components connecting source and sink contribute. We sum the net inlet molar flux and divide by the imposed concentration difference to obtain $G_{\rm access}$ in cubic metres per second. These fixed pore concentrations are diagnostic boundary conditions, separate from the finite-transfer reservoir used in transient adsorption. We calibrate the conductance--diffusivity relation on training beds, then predict diffusivity and 1D uptake for an omitted bed and compare with its PNM reference.}
 \end{frame}
 
 \begin{frame}{Why use an interior plane?}
