@@ -466,20 +466,22 @@ D_{\rm eff}=\arg\min_D\mathrm{NRMSE}(D)
   \node[font=\scriptsize,tumgray] at (1.75,-.98) {Schematic pore network};
 \end{tikzpicture}
 \column{0.47\textwidth}\small
-\hi{Steady diffusion only}\par\smallskip
+\hi{Solve steady pore concentrations}\par\smallskip
 {\footnotesize No accumulation, adsorption or imposed flow.\par}
-\[
-0=\sum_{j\in\mathcal N(i)}G_{ij}(c_j-c_i)
-\]
-{\footnotesize At every free pore; $G_{ij}=D_m\,A_{ij}/L_{ij}$.\par}
-\medskip
-\hi{Sum the inlet flux}\par
-\[
-\textcolor{tumblue}{G_{\rm access}}
-=\frac{\dot n_{\rm in}}{c_{\rm in}-c_{\rm out}}
+\par\smallskip\centering
+\setlength{\jot}{2pt}
+$\displaystyle\begin{gathered}
+0=\sum_{j\in\mathcal N(i)}G_{ij}(c_j-c_i)\\[2pt]
+\textcolor{tumblue}{\downarrow}\quad\text{Sum throat fluxes leaving the inlet}\\[2pt]
+\textcolor{tumblue}{\dot n_{\rm in}}
+=\sum_{\substack{i\in\mathcal I\\j\in\mathcal N(i)\setminus\mathcal I}}
+G_{ij}(c_{\rm in}-c_j)\\[2pt]
+\textcolor{tumblue}{\downarrow}\quad\text{Divide by the concentration difference}\\[2pt]
+G_{\rm access}
+=\frac{\textcolor{tumblue}{\dot n_{\rm in}}}{c_{\rm in}-c_{\rm out}}
 \qquad[\mathrm{m^3/s}]
-\]
-{\footnotesize Conductance of the connected pathways from the inlet to the interior plane.\par}
+\end{gathered}$\par\smallskip
+{\footnotesize $\mathcal I$: inlet-pore set.\par}
 \end{columns}
 \smallskip
 \centering
@@ -490,7 +492,7 @@ D_{\rm eff}=\arg\min_D\mathrm{NRMSE}(D)
 \node[right=of closure] (arrow2) {$\longrightarrow$};
 \node[right=of arrow2,text=tumdark] (uptake) {1D uptake curve};
 \end{tikzpicture}
-\note{This steady diagnostic uses the existing pore network. Grey beads surround blue pore nodes and throat links; the drawing is schematic. Adsorption and accumulation are disabled, and there is no imposed gas flow. We fix inlet pores at a high concentration and pores at or beyond the chosen interior plane at a low concentration. The implementation uses values of one and zero, so the imposed concentration difference is one. The plane is five bead diameters above the lowest retained pore. Throat conductances use the prescribed molecular gas diffusivity. A sparse linear solve balances diffusive fluxes at every free pore; only components connecting source and sink contribute. We sum the net inlet molar flux and divide by the imposed concentration difference to obtain $G_{\rm access}$ in cubic metres per second. These fixed pore concentrations are diagnostic boundary conditions, separate from the finite-transfer reservoir used in transient adsorption. We calibrate the conductance--diffusivity relation on training beds, then predict diffusivity and 1D uptake for an omitted bed and compare with its PNM reference.}
+\note{This steady diagnostic uses the existing pore network. Grey beads surround blue pore nodes and throat links; the drawing is schematic. Adsorption and accumulation are disabled, and there is no imposed gas flow. We fix inlet pores at a high concentration and pores at or beyond the chosen interior plane at a low concentration. The implementation uses values of one and zero, so the imposed concentration difference is one. The plane is five bead diameters above the lowest retained pore. Throat conductances use the prescribed molecular gas diffusivity. A sparse linear solve balances diffusive fluxes at every free pore; only components connecting source and sink contribute. The solve first gives the unknown pore concentrations. We then sum $G_{ij}(c_{\rm in}-c_j)$ over throats leaving the inlet-pore set $\mathcal I$, counting each crossing throat once. This gives the blue molar flux $\dot n_{\rm in}$. Dividing it by the imposed concentration difference gives $G_{\rm access}$ in cubic metres per second. These diagnostic boundary conditions differ from the transient reservoir connection. We calibrate the conductance--diffusivity relation on training beds, then predict diffusivity and 1D uptake for an omitted bed and compare with its PNM reference.}
 \end{frame}
 
 \begin{frame}{Why use an interior plane?}
