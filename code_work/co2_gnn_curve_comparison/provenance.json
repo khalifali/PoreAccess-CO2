@@ -1,0 +1,137 @@
+{
+  "arguments": {
+    "output": "co2_gnn_curve_comparison",
+    "epochs": 200,
+    "initializations": [
+      11,
+      29,
+      47
+    ],
+    "timing_repeats": 5
+  },
+  "torch": "2.10.0+cu128",
+  "numpy": "2.3.3",
+  "scipy": "1.16.2",
+  "cpu": "x86_64",
+  "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39",
+  "threads": 1,
+  "cuda_used": false,
+  "knots_s": [
+    0.0,
+    1.0,
+    5.0,
+    20.0,
+    60.0,
+    150.0,
+    350.0,
+    700.0,
+    1200.0,
+    2000.0,
+    3000.0,
+    4000.0,
+    5000.0
+  ],
+  "inputs": [
+    {
+      "seed": 18427,
+      "network_sha256": "e70802bef78f72d0cc841f377057bcb0483a961b3a4ab42ddb13eac9ce2456ef",
+      "curve_sha256": "349e4d32923434b3f711753ded393ce34c2d3ab02fb7d315733d9d3c8fee4a79"
+    },
+    {
+      "seed": 27183,
+      "network_sha256": "9f36cf9d5ae3f722ab733d9c6518005f4e73d420d7630e9c5fdacc0539e62177",
+      "curve_sha256": "196a7f74949a236f62ae6093ed870ecf88dd4f204dace59c439dcb04cffc985e"
+    },
+    {
+      "seed": 31991,
+      "network_sha256": "806e7f3ff4bafdc1c29c1b29fbbcc6abfd3525e635107bc179332029f83b9d1b",
+      "curve_sha256": "43929bc8aea0ec5923bdc09d7be4b916be7eb5abdc3cda08c6dd187cecfde4cb"
+    },
+    {
+      "seed": 40213,
+      "network_sha256": "dd7048b636f669b398719ce1f6831fc6a798c711ae2a8ea94b9f7aa99d5717f2",
+      "curve_sha256": "9e4a7b73bd55b88ccd81c4de787f0bf5904256d46d1b3ce1e89289f33f66ddaf"
+    },
+    {
+      "seed": 47837,
+      "network_sha256": "81bcb6367b3a228bdcad705c518b24328c2722bedc0825c8caed4b199fffa10b",
+      "curve_sha256": "3b219dcaf731e5acbde26f9fd2f45539468a253613d57ee28c0151b9e6e10d06"
+    },
+    {
+      "seed": 52691,
+      "network_sha256": "edd011f1de0d7f66ea27509f2ace8aba672450e443e03375119f473dc9173b68",
+      "curve_sha256": "d36e52c92f0daa69d0e1f50ba5cc307c5e408a8bafa566b2edccb639f70d2fda"
+    },
+    {
+      "seed": 61417,
+      "network_sha256": "ebf86bd0477d3a5069396930084ea1e92c06a2da376c31e05258cadc6e80429d",
+      "curve_sha256": "11d638dfe198a97fb5ba9feccf5e0705bcd8b587a3ef90e7e822c955053b93dd"
+    },
+    {
+      "seed": 69371,
+      "network_sha256": "cd6de2945f7467c0a8ab3f2079fd262fbeb75304e413da89a5413cb184fec263",
+      "curve_sha256": "7306b2b2888fb8933cdba1ae0b049ae60aab62fd5278ac5bf7e953f052fc6b33"
+    },
+    {
+      "seed": 74167,
+      "network_sha256": "e60df502b88c4f92f1f8e016e4dd39f9b72ea4beb824eda3718db873e4475847",
+      "curve_sha256": "5bc8bed9f1803b78be44f61fa61181cf6dfe6ed4fd1a6bb0fa7ccd15f6f180be"
+    },
+    {
+      "seed": 81929,
+      "network_sha256": "d440bac7b33638b214286f75475744fec8fed921bc1654377348496de94cd8bd",
+      "curve_sha256": "7939ea853f311aa85f41cb860f6bd7d80de8af9f7c9f0c9c87197f096d88f98b"
+    },
+    {
+      "seed": 90709,
+      "network_sha256": "2827dd61e97436fe37ef7e132e1eb922ccf6a4c1b7f852ea24e1908459d64f69",
+      "curve_sha256": "dd1a4d9ed8716cd15d768ab687b0b8452d93a6afaa1864bac1c9924d0bf8def9"
+    },
+    {
+      "seed": 98251,
+      "network_sha256": "5a2777b6b4ab180d526282670459376b2a10145c507ca73bbf40cb4a27105758",
+      "curve_sha256": "39ee8161131ff0a35fc8a280100fe3fe8c78e21291735b22cc112ca42cea5550"
+    },
+    {
+      "seed": 105019,
+      "network_sha256": "b210bfaa20d74d5fafed31635de913e03f523388da4be5a3a09037f08748c97f",
+      "curve_sha256": "d1751f7574317a3d90e3d1368d66b0b6ba36627df6cac93c32be9ecd39f71c75"
+    },
+    {
+      "seed": 113117,
+      "network_sha256": "c55bf0572be97203106d999b6cbf124e24a43e013177bfc6836c1a8a83ef219c",
+      "curve_sha256": "7e6f28e7bfed1a31351ef7d9d7b9f52f7726e6bf2e81167ef568664010afd640"
+    },
+    {
+      "seed": 121021,
+      "network_sha256": "6658d753660bd03379fba5809eb7697486870b20de9a3073b687ead7476d10cb",
+      "curve_sha256": "9640e243a89c664556a2f0e622341264a9da9f00b6948132cd3d97da839669be"
+    },
+    {
+      "seed": 129121,
+      "network_sha256": "b6871ebb5f2259737bd7108375c8f455dd6c80edb109f5e9623688263d5af0e3",
+      "curve_sha256": "5f0547ae475f75bd2437dece91c3d7fd367603bd2ee3260d486357576a02c580"
+    },
+    {
+      "seed": 137077,
+      "network_sha256": "68d807d8749b491da19a68c57c8db39f7ec68fcecd814e2f5d7d4970f1cea6ca",
+      "curve_sha256": "a6cb07b6806773d37f92eb2f87e908d7ec5d1e22de8b9b11581b02ff28690242"
+    },
+    {
+      "seed": 145093,
+      "network_sha256": "221426ecea58bd385f3aa87a19a8b4dee8aae6893347e6955ffd772695c866b2",
+      "curve_sha256": "cbe7e36e195435757d782e0f24d2e90ab102d7867f087ca6f5980a7914a268e8"
+    },
+    {
+      "seed": 153133,
+      "network_sha256": "25a55499e792f3e6853b723a7a4516d86f6e55da2b5636104218cb66b36a8100",
+      "curve_sha256": "7a67f28c799f3ff93c82469c2c9503983232d70b085a1306dcdbfbd968d3ca7c"
+    },
+    {
+      "seed": 161123,
+      "network_sha256": "ffb80b38337d470b7f4cdeed233906bd905d8a979a6aba420d4588da21b64c3c",
+      "curve_sha256": "21dd7c9006e3e1eeae6aa4030f1405ec15fb654c36ed1766c504b9ee3f3b7557"
+    }
+  ],
+  "cpu_model": "AMD Ryzen 7 PRO 7840U w/ Radeon 780M Graphics"
+}

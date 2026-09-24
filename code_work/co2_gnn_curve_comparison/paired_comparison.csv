@@ -1,0 +1,2 @@
+comparison,mean_difference_percentage_points,bootstrap_2p5,bootstrap_97p5,gnn_better_beds,n_beds
+GNN ensemble minus G_access plus 1D,4.206725577088645,1.8049971041562818,6.846697789525989,5,20
