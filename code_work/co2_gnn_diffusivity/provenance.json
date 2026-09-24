@@ -1,0 +1,28 @@
+{
+  "torch": "2.10.0+cu128",
+  "numpy": "2.3.3",
+  "inputs": {
+    "co2_pore_networks_power22/seed_18427/pore_network.npz": "e70802bef78f72d0cc841f377057bcb0483a961b3a4ab42ddb13eac9ce2456ef",
+    "co2_pore_networks_power22/seed_27183/pore_network.npz": "9f36cf9d5ae3f722ab733d9c6518005f4e73d420d7630e9c5fdacc0539e62177",
+    "co2_pore_networks_power22/seed_31991/pore_network.npz": "806e7f3ff4bafdc1c29c1b29fbbcc6abfd3525e635107bc179332029f83b9d1b",
+    "co2_pore_networks_power22/seed_40213/pore_network.npz": "dd7048b636f669b398719ce1f6831fc6a798c711ae2a8ea94b9f7aa99d5717f2",
+    "co2_pore_networks_power22/seed_47837/pore_network.npz": "81bcb6367b3a228bdcad705c518b24328c2722bedc0825c8caed4b199fffa10b",
+    "co2_pore_networks_power22/seed_52691/pore_network.npz": "edd011f1de0d7f66ea27509f2ace8aba672450e443e03375119f473dc9173b68",
+    "co2_pore_networks_power22/seed_61417/pore_network.npz": "ebf86bd0477d3a5069396930084ea1e92c06a2da376c31e05258cadc6e80429d",
+    "co2_pore_networks_power22/seed_69371/pore_network.npz": "cd6de2945f7467c0a8ab3f2079fd262fbeb75304e413da89a5413cb184fec263",
+    "co2_pore_networks_power22/seed_74167/pore_network.npz": "e60df502b88c4f92f1f8e016e4dd39f9b72ea4beb824eda3718db873e4475847",
+    "co2_pore_networks_power22/seed_81929/pore_network.npz": "d440bac7b33638b214286f75475744fec8fed921bc1654377348496de94cd8bd",
+    "co2_pore_networks_power22/seed_90709/pore_network.npz": "2827dd61e97436fe37ef7e132e1eb922ccf6a4c1b7f852ea24e1908459d64f69",
+    "co2_pore_networks_power22/seed_98251/pore_network.npz": "5a2777b6b4ab180d526282670459376b2a10145c507ca73bbf40cb4a27105758",
+    "co2_pore_networks_power22/seed_105019/pore_network.npz": "b210bfaa20d74d5fafed31635de913e03f523388da4be5a3a09037f08748c97f",
+    "co2_pore_networks_power22/seed_113117/pore_network.npz": "c55bf0572be97203106d999b6cbf124e24a43e013177bfc6836c1a8a83ef219c",
+    "co2_pore_networks_power22/seed_121021/pore_network.npz": "6658d753660bd03379fba5809eb7697486870b20de9a3073b687ead7476d10cb",
+    "co2_pore_networks_power22/seed_129121/pore_network.npz": "b6871ebb5f2259737bd7108375c8f455dd6c80edb109f5e9623688263d5af0e3",
+    "co2_pore_networks_power22/seed_137077/pore_network.npz": "68d807d8749b491da19a68c57c8db39f7ec68fcecd814e2f5d7d4970f1cea6ca",
+    "co2_pore_networks_power22/seed_145093/pore_network.npz": "221426ecea58bd385f3aa87a19a8b4dee8aae6893347e6955ffd772695c866b2",
+    "co2_pore_networks_power22/seed_153133/pore_network.npz": "25a55499e792f3e6853b723a7a4516d86f6e55da2b5636104218cb66b36a8100",
+    "co2_pore_networks_power22/seed_161123/pore_network.npz": "ffb80b38337d470b7f4cdeed233906bd905d8a979a6aba420d4588da21b64c3c",
+    "co2_effective_diffusivity_closure/closure_dataset.csv": "6794085ded6217c5f49afff5802626caa586719190900a38c9847a733a84e387"
+  },
+  "parameters": 19425
+}
